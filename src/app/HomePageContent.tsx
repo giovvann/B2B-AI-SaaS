@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   BarChart3,
   Sparkles,
@@ -26,6 +26,12 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
   const router = useRouter()
   const { theme, setTheme } = useTheme()
   const [showSettings, setShowSettings] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // ✅ CRÍTICO: Esperar a que el componente se monte en el cliente
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -117,12 +123,16 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
+            {/* ✅ Botón de tema con protección contra hydration mismatch */}
             <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
               aria-label="Cambiar tema"
+              disabled={!mounted}
             >
-              {theme === 'dark' ? (
+              {!mounted ? (
+                <div className="w-5 h-5" /> // Placeholder del mismo tamaño
+              ) : theme === 'dark' ? (
                 <Sun className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
               ) : (
                 <Moon className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
@@ -178,15 +188,12 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
                 onClick={() => router.push(action.href)}
                 className="group bg-white dark:bg-[#1a1a1a] rounded-3xl p-8 md:p-10 border border-zinc-200 dark:border-zinc-800 hover:border-transparent shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-[0.98] text-left relative overflow-hidden"
               >
-                {/* Gradiente sutil en hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
                 
-                {/* Ícono */}
                 <div className={`relative w-16 h-16 bg-gradient-to-br ${action.gradient} rounded-2xl flex items-center justify-center shadow-xl ${action.shadowColor} mb-6 group-hover:scale-110 transition-transform`}>
                   <Icon className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
 
-                {/* Texto */}
                 <h2 className="relative text-2xl md:text-3xl font-black tracking-tight text-zinc-900 dark:text-white mb-2">
                   {action.title}
                 </h2>
@@ -194,7 +201,6 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
                   {action.description}
                 </p>
 
-                {/* Flecha decorativa */}
                 <div className="relative mt-6 flex items-center gap-2 text-sm font-bold text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
                   <span>ACCEDER</span>
                   <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
@@ -206,7 +212,6 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
           })}
         </div>
 
-        {/* Footer sutil */}
         <div className="mt-16 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1a1a1a] rounded-full border border-zinc-200 dark:border-zinc-800">
             <div className={`w-2 h-2 rounded-full ${role === 'owner' ? 'bg-blue-500' : 'bg-emerald-500'}`} />

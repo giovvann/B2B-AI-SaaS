@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { Crown, User, Sun, Moon, Loader2 } from 'lucide-react'
@@ -11,6 +11,12 @@ export function RoleSelector() {
   const { theme, setTheme } = useTheme()
   const [isPending, startTransition] = useTransition()
   const [selectedRole, setSelectedRole] = useState<'owner' | 'employee' | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  // ✅ CRÍTICO: Esperar a que el componente se monte
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSelectRole = (role: 'owner' | 'employee') => {
     setSelectedRole(role)
@@ -24,7 +30,6 @@ export function RoleSelector() {
         return
       }
 
-      // Guardar el rol en la metadata del usuario
       const { error } = await supabase.auth.updateUser({
         data: { role: role }
       })
@@ -34,20 +39,22 @@ export function RoleSelector() {
         return
       }
 
-      // Recargar la página para mostrar la vista correcta
       router.refresh()
     })
   }
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300 flex items-center justify-center">
-      {/* Botón de tema (arriba derecha) */}
+      {/* ✅ Botón de tema con protección */}
       <button
-        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
         className="fixed top-4 right-4 p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800 z-10"
         aria-label="Cambiar tema"
+        disabled={!mounted}
       >
-        {theme === 'dark' ? (
+        {!mounted ? (
+          <div className="w-6 h-6" />
+        ) : theme === 'dark' ? (
           <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />
         ) : (
           <Moon className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />
@@ -55,7 +62,6 @@ export function RoleSelector() {
       </button>
 
       <div className="max-w-3xl w-full">
-        {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
             BIENVENIDO
@@ -65,7 +71,6 @@ export function RoleSelector() {
           </p>
         </div>
 
-        {/* Opciones de rol */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Dueño */}
           <button
@@ -154,7 +159,6 @@ export function RoleSelector() {
           </button>
         </div>
 
-        {/* Info abajo */}
         <p className="text-center text-xs text-zinc-400 dark:text-zinc-600 mt-8">
           Tu rol se guarda en tu cuenta. Puedes cambiarlo más tarde desde configuración.
         </p>
