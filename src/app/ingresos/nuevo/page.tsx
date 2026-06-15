@@ -269,14 +269,14 @@ export default function NewIncomePage() {
     }
   };
 
-  // Función cancelar con confirmación si hay cambios
+  // Función cancelar - LLEVA AL INICIO (/)
   const handleCancel = () => {
     if (products.length > 0) {
       if (confirm('¿Estás seguro de que quieres cancelar? Se perderán todos los productos extraídos.')) {
-        router.push('/ingresos');
+        router.push('/');
       }
     } else {
-      router.push('/ingresos');
+      router.push('/');
     }
   };
 
@@ -323,7 +323,6 @@ export default function NewIncomePage() {
       <div className="max-w-7xl mx-auto pb-8">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
-          {/* Título (ya sin la flecha de volver) */}
           <div>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
               NUEVO INGRESO
@@ -333,7 +332,6 @@ export default function NewIncomePage() {
             </p>
           </div>
 
-          {/* Acciones (derecha): Tema + Cancelar */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
