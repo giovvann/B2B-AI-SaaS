@@ -1,84 +1,203 @@
 'use client';
 
-import { useState, useRef, useMemo } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { useState, useRef, useMemo, useEffect } from 'react';
+import { createClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { 
-  Upload, 
-  X, 
-  Loader2, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Upload,
+  X,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
   Trash2,
   ShoppingCart,
   Package,
-  FileText,
   Check,
-  ArrowLeft,
   Sun,
-  Moon
+  Moon,
+  Camera,
+  Image as ImageIcon,
+  Sparkles,
+  CheckCheck
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
-// Configuración de Supabase
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 interface Product {
+  id: string;
   name: string;
   brand: string;
   season: string;
   purchase_price: number;
   quantity: number;
-  edited?: boolean;
+  status: 'new' | 'edited';
+  sourceImageId: string;
+}
+
+interface UploadedImage {
+  id: string;
+  preview: string;
+  file: File;
+  productsCount: number;
 }
 
 export default function NewIncomePage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+  const [boutiqueId, setBoutiqueId] = useState<string | null>(null);
+  const [loadingBoutique, setLoadingBoutique] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  const handleFileSelect = (file: File) => {
-    setError('');
-    setSuccess('');
-    
+  useEffect(() => {
+    const fetchBoutique = async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (!user) {
+          router.push('/login');
+          return;
+        }
+
+        const { data: boutique, error: boutiqueError } = await supabase
+          .from('boutiques')
+          .select('id')
+          .eq('owner_id', user.id)
+          .single();
+
+        if (boutiqueError || !boutique) {
+          setError('No se encontró tu boutique. Contacta soporte.');
+          setLoadingBoutique(false);
+          return;
+        }
+
+        setBoutiqueId(boutique.id);
+      } catch (err) {
+        console.error('Error obteniendo boutique:', err);
+        setError('Error al cargar tu boutique');
+      } finally {
+        setLoadingBoutique(false);
+      }
+    };
+
+    fetchBoutique();
+  }, [router]);
+
+  const validateFile = (file: File): string | null => {
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {
-      setError('Tipo de archivo no válido. Use JPG, PNG o WebP');
-      return;
+      return `${file.name}: tipo no válido`;
     }
-
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      setError('La imagen es muy grande. Máximo 10MB');
-      return;
+      return `${file.name}: muy grande (máx 10MB)`;
+    }
+    return null;
+  };
+
+  const handleFiles = async (files: FileList | File[]) => {
+    setError('');
+    setSuccess('');
+    const fileArray = Array.from(files);
+    const validationErrors: string[] = [];
+    const validFiles: File[] = [];
+
+    fileArray.forEach(file => {
+      const err = validateFile(file);
+      if (err) validationErrors.push(err);
+      else validFiles.push(file);
+    });
+
+    if (validationErrors.length > 0) {
+      setError(validationErrors.join('. '));
     }
 
-    setSelectedFile(file);
-    
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreviewImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-    
-    processImage(file);
+    if (validFiles.length === 0) return;
+
+    const newImages: UploadedImage[] = [];
+    for (const file of validFiles) {
+      const id = `img_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const preview = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+      newImages.push({ id, preview, file, productsCount: 0 });
+    }
+
+    setUploadedImages(prev => [...prev, ...newImages]);
+
+    setIsProcessing(true);
+    for (const img of newImages) {
+      try {
+        const formData = new FormData();
+        formData.append('image', img.file);
+        const response = await fetch('/api/extract-invoice', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          setError(`Error procesando imagen: ${data.error || 'Desconocido'}`);
+          continue;
+        }
+        if (data.products.length === 0) {
+          setError(`No se encontraron productos en una de las imágenes`);
+          continue;
+        }
+
+        const newProducts: Product[] = data.products.map((p: any) => ({
+          id: `prod_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+          name: p.name,
+          brand: p.brand || '',
+          season: p.season || '',
+          purchase_price: p.purchase_price,
+          quantity: p.quantity,
+          status: 'new',
+          sourceImageId: img.id,
+        }));
+
+        setProducts(prev => [...prev, ...newProducts]);
+        img.productsCount = newProducts.length;
+      } catch (err: any) {
+        setError(`Error al procesar imagen: ${err.message}`);
+      }
+    }
+    setIsProcessing(false);
+    setSuccess(`${newImages.length} imagen(es) procesada(s) correctamente`);
+    setTimeout(() => setSuccess(''), 3000);
+  };
+
+  const removeImage = (imageId: string) => {
+    setUploadedImages(prev => prev.filter(img => img.id !== imageId));
+    setProducts(prev => prev.filter(p => p.sourceImageId !== imageId));
+  };
+
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFiles(e.target.files);
+      e.target.value = '';
+    }
+  };
+
+  const handleCameraChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFiles(e.target.files);
+      e.target.value = '';
+    }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      handleFileSelect(file);
+    if (e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
     }
   };
 
@@ -86,59 +205,22 @@ export default function NewIncomePage() {
     e.preventDefault();
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
+  const updateProduct = (id: string, field: keyof Product, value: any) => {
+    setProducts(prev => prev.map(p => 
+      p.id === id 
+        ? { ...p, [field]: value, status: 'edited' }
+        : p
+    ));
   };
 
-  const processImage = async (file: File) => {
-    setIsProcessing(true);
-    setError('');
-    setProducts([]);
-
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch('/api/extract-invoice', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error al procesar la imagen');
-      }
-
-      if (data.products.length === 0) {
-        setError('No se encontraron productos en la imagen. Intenta con otra foto más clara');
-      } else {
-        setProducts(data.products);
-        setSuccess(`${data.products.length} productos encontrados`);
-      }
-    } catch (err: any) {
-      setError(err.message || 'Error al procesar la imagen. Intente de nuevo');
-    } finally {
-      setIsProcessing(false);
-    }
+  const removeProduct = (id: string) => {
+    setProducts(prev => prev.filter(p => p.id !== id));
   };
 
-  const updateProduct = (index: number, field: keyof Product, value: any) => {
-    const updated = [...products];
-    updated[index] = {
-      ...updated[index],
-      [field]: value,
-      edited: true,
-    };
-    setProducts(updated);
-  };
-
-  const removeProduct = (index: number) => {
-    const updated = products.filter((_, i) => i !== index);
-    setProducts(updated);
+  const acceptAll = () => {
+    setProducts(prev => prev.map(p => ({ ...p, status: 'edited' })));
+    setSuccess(`${products.length} productos aceptados`);
+    setTimeout(() => setSuccess(''), 2000);
   };
 
   const handleSaveToInventory = async () => {
@@ -147,20 +229,28 @@ export default function NewIncomePage() {
       return;
     }
 
+    if (!boutiqueId) {
+      setError('No se encontró tu boutique. Recarga la página.');
+      return;
+    }
+
     setIsSaving(true);
     setError('');
-
     try {
+      const supabase = createClient();
+      
       const productsToInsert = products.map((product) => ({
         name: product.name,
-        brand: product.brand,
-        season: product.season,
+        brand: product.brand || null,
+        season: product.season || null,
         purchase_price: product.purchase_price,
-        quantity: product.quantity,
+        sale_price: product.purchase_price * 2.5,
+        stock: product.quantity,
+        boutique_id: boutiqueId,
         created_at: new Date().toISOString(),
       }));
 
-      const { data, error: supabaseError } = await supabase
+      const { error: supabaseError } = await supabase
         .from('products')
         .insert(productsToInsert);
 
@@ -168,11 +258,10 @@ export default function NewIncomePage() {
         throw new Error(supabaseError.message);
       }
 
-      setSuccess(`${products.length} productos guardados exitosamente`);
-      
+      setSuccess(`¡${products.length} productos guardados exitosamente!`);
       setTimeout(() => {
         router.push('/ingresos');
-      }, 2000);
+      }, 1500);
     } catch (err: any) {
       setError(`Error al guardar: ${err.message}`);
     } finally {
@@ -180,47 +269,76 @@ export default function NewIncomePage() {
     }
   };
 
+  // Función cancelar con confirmación si hay cambios
   const handleCancel = () => {
-    router.back();
-  };
-
-  const resetForm = () => {
-    setSelectedFile(null);
-    setPreviewImage(null);
-    setProducts([]);
-    setError('');
-    setSuccess('');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (products.length > 0) {
+      if (confirm('¿Estás seguro de que quieres cancelar? Se perderán todos los productos extraídos.')) {
+        router.push('/ingresos');
+      }
+    } else {
+      router.push('/ingresos');
     }
   };
 
-  const totalInvestment = useMemo(() => {
-    return products.reduce(
-      (sum, p) => sum + p.purchase_price * p.quantity,
-      0
-    );
-  }, [products]);
+  const resetAll = () => {
+    setUploadedImages([]);
+    setProducts([]);
+    setError('');
+    setSuccess('');
+  };
 
-  const totalProducts = useMemo(() => {
-    return products.reduce((sum, p) => sum + p.quantity, 0);
-  }, [products]);
+  const totalInvestment = useMemo(
+    () => products.reduce((sum, p) => sum + p.purchase_price * p.quantity, 0),
+    [products]
+  );
+
+  const totalProducts = useMemo(
+    () => products.reduce((sum, p) => sum + p.quantity, 0),
+    [products]
+  );
+
+  const totalSaleValue = useMemo(
+    () => products.reduce((sum, p) => sum + (p.purchase_price * 2.5) * p.quantity, 0),
+    [products]
+  );
+
+  const newProductsCount = useMemo(
+    () => products.filter(p => p.status === 'new').length,
+    [products]
+  );
+
+  if (loadingBoutique) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 animate-spin text-blue-500 mx-auto mb-4" />
+          <p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">Cargando tu boutique...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto pb-8">
         {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white">
+        <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
+          {/* Título (ya sin la flecha de volver) */}
+          <div>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
               NUEVO INGRESO
             </h1>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">
+              Sube facturas o toma fotos para agregar productos
+            </p>
           </div>
-          
-          <div className="flex items-center gap-4">
+
+          {/* Acciones (derecha): Tema + Cancelar */}
+          <div className="flex items-center gap-3">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
+              aria-label="Cambiar tema"
             >
               {theme === 'dark' ? (
                 <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />
@@ -230,359 +348,357 @@ export default function NewIncomePage() {
             </button>
             <button
               onClick={handleCancel}
-              className="px-8 py-4 text-xl font-bold bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+              className="flex items-center gap-2 px-5 md:px-6 py-4 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 font-bold rounded-2xl transition-colors border border-red-200 dark:border-red-900/50"
             >
-              CANCELAR
+              <X className="w-5 h-5" strokeWidth={3} />
+              <span className="text-base md:text-lg">CANCELAR</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column - Upload & Products */}
-          <div className="space-y-6">
-            {/* Upload Zone */}
-            {!previewImage && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ============== COLUMNA IZQUIERDA ============== */}
+          <div className="lg:col-span-2 space-y-6">
+            
+            {/* ====== SECCIÓN 1: UPLOAD ====== */}
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800">
+              <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+                <Upload className="w-5 h-5 md:w-6 md:h-6" />
+                Subir imágenes
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                <button
+                  onClick={() => galleryInputRef.current?.click()}
+                  className="flex items-center justify-center gap-3 min-h-[80px] bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all active:scale-[0.98]"
+                >
+                  <ImageIcon className="w-6 h-6" strokeWidth={2.5} />
+                  <span>Galería</span>
+                </button>
+                <button
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="flex items-center justify-center gap-3 min-h-[80px] bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold text-lg rounded-2xl shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all active:scale-[0.98]"
+                >
+                  <Camera className="w-6 h-6" strokeWidth={2.5} />
+                  <span>Tomar foto</span>
+                </button>
+              </div>
+
+              <input
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleGalleryChange}
+                className="hidden"
+              />
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleCameraChange}
+                className="hidden"
+              />
+
               <div
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                className="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-2xl p-12 text-center hover:border-zinc-400 dark:hover:border-zinc-600 transition-colors bg-white dark:bg-zinc-900"
+                onClick={() => galleryInputRef.current?.click()}
+                className="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-2xl p-6 text-center cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all"
               >
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="cursor-pointer space-y-4"
-                >
-                  <div className="flex justify-center">
-                    <div className="p-6 bg-zinc-100 dark:bg-zinc-800 rounded-2xl">
-                      <Upload className="w-10 h-10 text-zinc-800 dark:text-zinc-200" />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xl font-medium mb-1">
-                      Arrastra una foto de tu factura
-                    </p>
-                    <p className="text-zinc-500 dark:text-zinc-400 mb-4">
-                      o haz clic para seleccionar
-                    </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        fileInputRef.current?.click();
-                      }}
-                      className="inline-flex items-center gap-3 px-6 py-3 bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-                    >
-                      <FileText className="w-6 h-6" />
-                      Usar cámara
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/jpg,image/png,image/webp"
-              capture="environment"
-              onChange={handleInputChange}
-              className="hidden"
-            />
-
-            {/* Image Preview */}
-            {previewImage && (
-              <div className="relative bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  className="w-full max-h-96 object-contain"
-                />
-                <button
-                  onClick={resetForm}
-                  className="absolute top-4 right-4 p-3 bg-zinc-100 dark:bg-zinc-800 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-                >
-                  <X className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />
-                </button>
-              </div>
-            )}
-
-            {/* Processing State */}
-            {isProcessing && (
-              <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-8 text-center">
-                <Loader2 className="w-10 h-10 animate-spin mx-auto mb-4 text-zinc-800 dark:text-zinc-200" />
-                <p className="font-medium text-lg">Procesando factura...</p>
-                <p className="text-zinc-500 dark:text-zinc-400 mt-1">
-                  La IA está extrayendo los productos
+                <Upload className="w-8 h-8 text-zinc-400 mx-auto mb-2" />
+                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                  O arrastra imágenes aquí · JPG, PNG, WebP (máx 10MB c/u)
                 </p>
               </div>
-            )}
 
-            {/* Error Alert */}
-            {error && (
-              <div className="bg-destructive/10 border border-destructive/50 rounded-2xl p-6 flex items-start gap-4">
-                <AlertCircle className="w-6 h-6 text-destructive mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="font-medium text-destructive text-lg">{error}</p>
+              {isProcessing && (
+                <div className="mt-4 flex items-center justify-center gap-3 text-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span className="font-semibold">Procesando imagen con IA...</span>
                 </div>
-              </div>
-            )}
-
-            {/* Success Alert */}
-            {success && !error && (
-              <div className="bg-green-500/10 border border-green-500/50 rounded-2xl p-6 flex items-start gap-4 dark:bg-green-900/20">
-                <CheckCircle2 className="w-6 h-6 text-green-500 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="font-medium text-green-600 dark:text-green-400 text-lg">
-                    {success}
-                  </p>
+              )}
+              {error && (
+                <div className="mt-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-500 rounded-xl p-4 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-700 dark:text-red-400 font-semibold text-sm">{error}</p>
                 </div>
-              </div>
-            )}
-
-            {/* Products List */}
-            {products.length > 0 && !isProcessing && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold flex items-center gap-3 text-zinc-900 dark:text-white">
-                    <Package className="w-6 h-6" />
-                    Productos detectados ({products.length})
-                  </h2>
-                  <button
-                    onClick={resetForm}
-                    className="text-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-                  >
-                    Nueva foto
-                  </button>
+              )}
+              {success && (
+                <div className="mt-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-500 rounded-xl p-4 flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-green-700 dark:text-green-400 font-semibold text-sm">{success}</p>
                 </div>
+              )}
 
-                <div className="space-y-4">
-                  {products.map((product, index) => (
-                    <div
-                      key={index}
-                      className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 space-y-4"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg font-medium text-zinc-500 dark:text-zinc-400">
-                            #{index + 1}
-                          </span>
-                          {product.edited && (
-                            <span className="text-sm text-amber-500">
-                              Editado
-                            </span>
-                          )}
-                        </div>
+              {uploadedImages.length > 0 && (
+                <div className="mt-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-bold text-zinc-500 dark:text-zinc-400 tracking-wider uppercase">
+                      Imágenes cargadas ({uploadedImages.length})
+                    </h3>
+                    {uploadedImages.length > 1 && (
+                      <button
+                        onClick={resetAll}
+                        className="text-xs font-bold text-red-500 hover:text-red-600 uppercase tracking-wider"
+                      >
+                        Limpiar todo
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {uploadedImages.map(img => (
+                      <div key={img.id} className="relative group">
+                        <img
+                          src={img.preview}
+                          alt="Preview"
+                          className="w-20 h-20 md:w-24 md:h-24 object-cover rounded-xl border-2 border-zinc-200 dark:border-zinc-700"
+                        />
+                        {img.productsCount > 0 && (
+                          <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center border-2 border-white dark:border-zinc-900">
+                            {img.productsCount}
+                          </div>
+                        )}
                         <button
-                          onClick={() => removeProduct(index)}
-                          className="p-3 hover:bg-destructive/10 hover:text-destructive rounded-xl transition-colors"
+                          onClick={() => removeImage(img.id)}
+                          className="absolute -top-1 -right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <Trash2 className="w-5 h-5" />
+                          <X className="w-3 h-3" />
                         </button>
                       </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="col-span-2">
-                          <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 block">
-                            Nombre del producto
-                          </label>
+            {/* ====== SECCIÓN 2: PRODUCTOS EXTRAÍDOS ====== */}
+            {products.length > 0 && (
+              <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800">
+                <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+                  <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <Package className="w-5 h-5 md:w-6 md:h-6" />
+                    Productos extraídos
+                    <span className="text-base font-normal text-zinc-500 dark:text-zinc-400">
+                      ({products.length})
+                    </span>
+                  </h2>
+                  {newProductsCount > 0 && (
+                    <button
+                      onClick={acceptAll}
+                      className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-xl transition-colors"
+                    >
+                      <CheckCheck className="w-4 h-4" />
+                      Aceptar todos
+                    </button>
+                  )}
+                </div>
+
+                {newProductsCount > 0 && (
+                  <div className="mb-4 flex items-center gap-2 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 rounded-xl px-4 py-3">
+                    <Sparkles className="w-4 h-4" />
+                    {newProductsCount} producto(s) nuevo(s) sin revisar · edítalos si es necesario
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <div className="hidden md:grid md:grid-cols-12 gap-2 px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                    <div className="col-span-4">Producto</div>
+                    <div className="col-span-2">Marca</div>
+                    <div className="col-span-2">Temporada</div>
+                    <div className="col-span-1 text-right">Precio</div>
+                    <div className="col-span-1 text-right">Stock</div>
+                    <div className="col-span-2 text-right">Acción</div>
+                  </div>
+
+                  {products.map(product => (
+                    <div
+                      key={product.id}
+                      className={`rounded-2xl border-2 transition-all ${
+                        product.status === 'new'
+                          ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-900/50'
+                          : 'bg-zinc-50 dark:bg-[#0a0a0a] border-zinc-200 dark:border-zinc-800'
+                      } ${editingId === product.id ? 'ring-2 ring-blue-500' : ''}`}
+                    >
+                      {/* Mobile layout */}
+                      <div className="md:hidden p-4">
+                        <div className="flex items-start justify-between mb-3">
                           <input
                             type="text"
                             value={product.name}
-                            onChange={(e) =>
-                              updateProduct(index, 'name', e.target.value)
-                            }
-                            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                            placeholder="Nombre del producto"
+                            onFocus={() => setEditingId(product.id)}
+                            onBlur={() => setEditingId(null)}
+                            onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                            className="flex-1 text-lg font-bold bg-transparent border-2 border-transparent focus:border-blue-500 rounded-lg px-2 py-1 text-zinc-900 dark:text-white focus:outline-none"
                           />
+                          <div className="flex items-center gap-1 ml-2">
+                            {product.status === 'new' && (
+                              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+                            )}
+                            <button
+                              onClick={() => removeProduct(product.id)}
+                              className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
-
-                        <div>
-                          <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 block">
-                            Marca
-                          </label>
+                        <div className="grid grid-cols-2 gap-2">
                           <input
                             type="text"
                             value={product.brand}
-                            onChange={(e) =>
-                              updateProduct(index, 'brand', e.target.value)
-                            }
-                            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             placeholder="Marca"
+                            onChange={(e) => updateProduct(product.id, 'brand', e.target.value)}
+                            className="bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
                           />
-                        </div>
-
-                        <div>
-                          <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 block">
-                            Temporada
-                          </label>
                           <input
                             type="text"
                             value={product.season}
-                            onChange={(e) =>
-                              updateProduct(index, 'season', e.target.value)
-                            }
-                            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                             placeholder="Temporada"
+                            onChange={(e) => updateProduct(product.id, 'season', e.target.value)}
+                            className="bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
+                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
+                            <input
+                              type="number"
+                              step="0.01"
+                              value={product.purchase_price}
+                              onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
+                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-7 pr-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
+                            />
+                          </div>
+                          <input
+                            type="number"
+                            value={product.quantity}
+                            placeholder="Stock"
+                            onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
+                            className="bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
                           />
                         </div>
+                      </div>
 
-                        <div>
-                          <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 block">
-                            Precio de compra
-                          </label>
+                      {/* Desktop layout */}
+                      <div className="hidden md:grid md:grid-cols-12 gap-2 items-center px-3 py-3">
+                        <div className="col-span-4 flex items-center gap-2">
+                          {product.status === 'new' && (
+                            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse flex-shrink-0"></div>
+                          )}
+                          <input
+                            type="text"
+                            value={product.name}
+                            onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                            className="flex-1 text-base font-semibold bg-transparent border-2 border-transparent focus:border-blue-500 rounded-lg px-2 py-1.5 text-zinc-900 dark:text-white focus:outline-none min-w-0"
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <input
+                            type="text"
+                            value={product.brand}
+                            onChange={(e) => updateProduct(product.id, 'brand', e.target.value)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div className="col-span-2">
+                          <input
+                            type="text"
+                            value={product.season}
+                            onChange={(e) => updateProduct(product.id, 'season', e.target.value)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div className="col-span-1 relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
                           <input
                             type="number"
                             step="0.01"
                             value={product.purchase_price}
-                            onChange={(e) =>
-                              updateProduct(
-                                index,
-                                'purchase_price',
-                                parseFloat(e.target.value)
-                              )
-                            }
-                            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                            placeholder="0.00"
+                            onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-6 pr-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right"
                           />
                         </div>
-
-                        <div>
-                          <label className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-1.5 block">
-                            Cantidad
-                          </label>
+                        <div className="col-span-1">
                           <input
                             type="number"
                             value={product.quantity}
-                            onChange={(e) =>
-                              updateProduct(
-                                index,
-                                'quantity',
-                                parseInt(e.target.value)
-                              )
-                            }
-                            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                            placeholder="1"
+                            onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right"
                           />
                         </div>
-                      </div>
-
-                      <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex justify-between items-center">
-                        <span className="text-lg text-zinc-500 dark:text-zinc-400">
-                          Subtotal:
-                        </span>
-                        <span className="font-bold text-xl text-zinc-900 dark:text-white">
-                          ${(product.purchase_price * product.quantity).toFixed(2)}
-                        </span>
+                        <div className="col-span-2 flex justify-end">
+                          <button
+                            onClick={() => removeProduct(product.id)}
+                            className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
-
-                {/* Summary */}
-                <div className="bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 space-y-3">
-                  <div className="flex justify-between text-lg">
-                    <span className="text-zinc-500 dark:text-zinc-400">
-                      Total de productos:
-                    </span>
-                    <span className="font-bold text-zinc-900 dark:text-white">{products.length}</span>
-                  </div>
-                  <div className="flex justify-between text-lg">
-                    <span className="text-zinc-500 dark:text-zinc-400">
-                      Unidades totales:
-                    </span>
-                    <span className="font-bold text-zinc-900 dark:text-white">{totalProducts}</span>
-                  </div>
-                  <div className="flex justify-between text-2xl font-bold pt-2 border-t border-zinc-200 dark:border-zinc-800">
-                    <span className="text-zinc-500 dark:text-zinc-400">Inversión total:</span>
-                    <span className="text-zinc-900 dark:text-white">${totalInvestment.toFixed(2)}</span>
-                  </div>
-                </div>
-
-                {/* Save Button */}
-                <button
-                  onClick={handleSaveToInventory}
-                  disabled={isSaving}
-                  className="w-full py-5 bg-gradient-to-br from-green-500 to-green-600 text-white font-bold text-2xl rounded-2xl shadow-xl shadow-green-500/30 flex items-center justify-center gap-3 transition-all duration-150 active:scale-95"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-8 h-8 animate-spin" />
-                      Guardando...
-                    </>
-                  ) : (
-                    <>
-                      <Check className="w-8 h-8" />
-                      Guardar en inventario
-                    </>
-                  )}
-                </button>
               </div>
             )}
           </div>
 
-          {/* Right Column - Cart/Summary */}
-          <div className="lg:sticky lg:top-6 h-fit">
-            <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
-              <h2 className="text-xl font-semibold flex items-center gap-3 mb-6 text-zinc-900 dark:text-white">
-                <ShoppingCart className="w-6 h-6" />
+          {/* ============== COLUMNA DERECHA: RESUMEN ============== */}
+          <div className="lg:col-span-1">
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800 lg:sticky lg:top-6">
+              <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white mb-6 flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
                 Resumen
               </h2>
 
-              {products.length === 0 && !isProcessing && (
-                <div className="text-center py-12">
-                  <div className="inline-flex p-6 bg-zinc-100 dark:bg-zinc-800 rounded-2xl mb-4">
-                    <FileText className="w-10 h-10 text-zinc-800 dark:text-zinc-200" />
-                  </div>
-                  <p className="font-medium text-xl mb-1 text-zinc-900 dark:text-white">
-                    Sin productos
-                  </p>
-                  <p className="text-lg text-zinc-500 dark:text-zinc-400">
-                    Sube una foto de tu factura para comenzar
-                  </p>
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between items-center py-3 border-b border-zinc-200 dark:border-zinc-700">
+                  <span className="text-zinc-600 dark:text-zinc-400 font-semibold">Productos:</span>
+                  <span className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white">
+                    {totalProducts}
+                  </span>
                 </div>
-              )}
-
-              {products.length > 0 && (
-                <div className="space-y-4">
-                  <div className="space-y-3 max-h-96 overflow-auto">
-                    {products.map((product, index) => (
-                      <div
-                        key={index}
-                        className="flex items-start justify-between gap-3 py-3 border-b border-zinc-200 dark:border-zinc-800 last:border-0"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-lg text-zinc-900 dark:text-white truncate">
-                            {product.name}
-                          </p>
-                          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                            {product.brand} • Cant: {product.quantity}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium text-lg text-zinc-900 dark:text-white">
-                            ${(product.purchase_price * product.quantity).toFixed(2)}
-                          </p>
-                          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                            ${product.purchase_price.toFixed(2)} c/u
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-3">
-                    <div className="flex justify-between text-lg">
-                      <span className="text-zinc-500 dark:text-zinc-400">Productos:</span>
-                      <span className="text-zinc-900 dark:text-white">{products.length}</span>
-                    </div>
-                    <div className="flex justify-between text-lg">
-                      <span className="text-zinc-500 dark:text-zinc-400">Unidades totales:</span>
-                      <span className="text-zinc-900 dark:text-white">{totalProducts}</span>
-                    </div>
-                    <div className="flex justify-between text-2xl font-bold pt-2 border-t border-zinc-200 dark:border-zinc-800">
-                      <span className="text-zinc-500 dark:text-zinc-400">Total:</span>
-                      <span className="text-zinc-900 dark:text-white">${totalInvestment.toFixed(2)}</span>
-                    </div>
-                  </div>
+                <div className="flex justify-between items-center py-3 border-b border-zinc-200 dark:border-zinc-700">
+                  <span className="text-zinc-600 dark:text-zinc-400 font-semibold">Inversión:</span>
+                  <span className="text-xl md:text-2xl font-black text-blue-600 dark:text-blue-400">
+                    ${totalInvestment.toFixed(2)}
+                  </span>
                 </div>
+                <div className="flex justify-between items-center py-3 border-b border-zinc-200 dark:border-zinc-700">
+                  <span className="text-zinc-600 dark:text-zinc-400 font-semibold">Valor venta:</span>
+                  <span className="text-xl md:text-2xl font-black text-green-600 dark:text-green-400">
+                    ${totalSaleValue.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-3 px-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                  <span className="text-zinc-700 dark:text-zinc-300 font-bold">Ganancia:</span>
+                  <span className="text-xl md:text-2xl font-black text-green-700 dark:text-green-400">
+                    ${(totalSaleValue - totalInvestment).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={handleSaveToInventory}
+                disabled={isSaving || products.length === 0}
+                className="w-full min-h-[90px] bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-zinc-300 disabled:to-zinc-400 dark:disabled:from-zinc-700 dark:disabled:to-zinc-800 disabled:cursor-not-allowed text-white font-black text-xl md:text-2xl tracking-wider rounded-2xl shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 disabled:shadow-none flex items-center justify-center gap-3 transition-all duration-150 active:scale-[0.98] px-4"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-7 h-7 animate-spin" />
+                    <span>GUARDANDO...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-7 h-7" strokeWidth={3} />
+                    <span>GUARDAR EN INVENTARIO</span>
+                  </>
+                )}
+              </button>
+
+              {products.length === 0 && (
+                <p className="text-center text-xs text-zinc-500 dark:text-zinc-400 mt-3">
+                  Sube una imagen para empezar
+                </p>
               )}
             </div>
           </div>

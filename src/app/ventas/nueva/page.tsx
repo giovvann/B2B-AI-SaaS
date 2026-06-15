@@ -1,18 +1,22 @@
 'use client';
+
 import { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, Plus, Minus, Trash2, Search, CreditCard, Banknote, Wallet, CheckCircle, Sun, Moon, ArrowLeft } from 'lucide-react';
 import { useTheme } from 'next-themes';
+
 interface Product {
   id: string;
   name: string;
   sale_price: number;
   stock: number;
 }
+
 interface CartItem extends Product {
   quantity: number;
 }
+
 export default function NuevaVentaPage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
@@ -24,20 +28,44 @@ export default function NuevaVentaPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [boutiqueId, setBoutiqueId] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
-    loadProducts();
+    fetchBoutiqueAndProducts();
   }, []);
 
-  const loadProducts = async () => {
+  const fetchBoutiqueAndProducts = async () => {
     try {
       setLoadingProducts(true);
+
+      // 1. Obtener la boutique del usuario autenticado
+      const { data: { user } } = await createClient().auth.getUser();
+      if (!user) {
+        console.error('Usuario no autenticado');
+        return;
+      }
+
+      const { data: boutique, error: boutiqueError } = await createClient()
+        .from('boutiques')
+        .select('id')
+        .eq('owner_id', user.id)
+        .single();
+
+      if (boutiqueError || !boutique) {
+        console.error('No se encontró la boutique:', boutiqueError);
+        return;
+      }
+
+      setBoutiqueId(boutique.id);
+
+      // 2. Cargar SOLO los productos de esta boutique
       const { data, error } = await createClient()
         .from('products')
         .select('id, name, sale_price, stock')
+        .eq('boutique_id', boutique.id) // FILTRO CRÍTICO: solo productos de TU boutique
         .order('name');
-      
+
       if (error) throw error;
       if (data) setProducts(data);
     } catch (error) {
@@ -88,8 +116,8 @@ export default function NuevaVentaPage() {
 
   const completeSale = async () => {
     if (cart.length === 0) return;
-    setLoading(true);
 
+    setLoading(true);
     try {
       const { data: { user } } = await createClient().auth.getUser();
       if (!user) throw new Error('Usuario no autenticado');
@@ -130,13 +158,20 @@ export default function NuevaVentaPage() {
 
       if (itemsError) throw itemsError;
 
+      // Actualizar stock de los productos vendidos
+      for (const item of cart) {
+        await createClient()
+          .from('products')
+          .update({ stock: item.stock - item.quantity })
+          .eq('id', item.id);
+      }
+
       setShowSuccess(true);
       setTimeout(() => {
         setCart([]);
         setShowSuccess(false);
         router.push('/');
       }, 2000);
-
     } catch (error) {
       console.error('Error completando venta:', error);
       alert('Error al completar la venta: ' + (error as Error).message);
@@ -231,7 +266,7 @@ export default function NuevaVentaPage() {
                 <div className="text-center py-16 text-zinc-400 dark:text-zinc-500">
                   <ShoppingCart className="w-20 h-20 mx-auto mb-4 opacity-50" />
                   <p className="text-xl font-semibold">No hay productos</p>
-                  <p className="text-sm mt-1">Agrega productos desde Supabase para empezar a vender</p>
+                  <p className="text-sm mt-1">Agrega productos desde "Nuevo Ingreso" para empezar a vender</p>
                 </div>
               ) : (
                 filteredProducts.map(product => (
@@ -241,9 +276,9 @@ export default function NuevaVentaPage() {
                     disabled={product.stock === 0}
                     className={`
                       p-5 rounded-2xl font-bold text-left transition-all
-                       ${product.stock === 0
+                      ${product.stock === 0
                         ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400 cursor-not-allowed'
-                        : 'bg-white dark:bg-[#1a1a1a] hover:bg-blue-50  dark:hover:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-blue-500 shadow-sm hover:shadow-md'
+                        : 'bg-white dark:bg-[#1a1a1a] hover:bg-blue-50 dark:hover:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-blue-500 shadow-sm hover:shadow-md'
                       }
                     `}
                   >
@@ -287,7 +322,6 @@ export default function NuevaVentaPage() {
                         <div className="font-bold text-lg text-zinc-900 dark:text-white truncate">{item.name}</div>
                         <div className="text-zinc-600 dark:text-zinc-400">${item.sale_price.toFixed(2)} c/u</div>
                       </div>
-                      
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button
                           onClick={() => updateQuantity(item.id, -1)}
@@ -295,11 +329,9 @@ export default function NuevaVentaPage() {
                         >
                           <Minus className="w-4 h-4" />
                         </button>
-                        
                         <span className="text-xl font-black w-8 text-center text-zinc-900 dark:text-white">
                           {item.quantity}
                         </span>
-                        
                         <button
                           onClick={() => updateQuantity(item.id, 1)}
                           disabled={item.quantity >= item.stock}
@@ -307,7 +339,6 @@ export default function NuevaVentaPage() {
                         >
                           <Plus className="w-4 h-4" />
                         </button>
-                        
                         <button
                           onClick={() => removeFromCart(item.id)}
                           className="ml-1 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center transition-colors"
