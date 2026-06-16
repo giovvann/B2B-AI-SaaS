@@ -58,7 +58,7 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
       title: 'MÉTRICAS',
       description: 'Ventas, ganancias y estadísticas del negocio',
       icon: BarChart3,
-      href: '/dashboard',
+      href: '/metricas',
       gradient: 'from-blue-500 to-indigo-600',
       shadowColor: 'shadow-blue-500/30',
     },
