@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import { InventarioClient } from './InventarioClient'
+import { ImportExportButtons } from './ImportExportButtons'
 
 export const metadata = {
   title: 'Ingresos | Mi Boutique',
@@ -57,19 +58,21 @@ export default async function IngresosPage() {
               {boutique.name} · {totalProducts} producto{totalProducts !== 1 ? 's' : ''}
             </p>
           </div>
-          {/* Sin flecha, sin botón cancelar (es página principal de inventario) */}
         </div>
 
         {/* Botón gigante NUEVO INGRESO (IA) */}
         <Link
           href="/ingresos/nuevo"
-          className="block w-full mb-8 group"
+          className="block w-full mb-4 group"
         >
           <div className="min-h-[110px] md:min-h-[130px] bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 hover:from-blue-600 hover:via-blue-700 hover:to-indigo-700 text-white font-black text-xl md:text-2xl tracking-wider rounded-3xl shadow-2xl shadow-blue-500/40 group-hover:shadow-blue-500/60 flex items-center justify-center gap-3 transition-all duration-200 active:scale-[0.99] border-2 border-white/20">
             <Sparkles className="w-7 h-7 md:w-8 md:h-8 group-hover:rotate-12 transition-transform" strokeWidth={2.5} />
             <span>NUEVO INGRESO (IA)</span>
           </div>
         </Link>
+
+        {/* Botones de Importar/Exportar */}
+        <ImportExportButtons />
 
         <InventarioClient
           products={productList}
