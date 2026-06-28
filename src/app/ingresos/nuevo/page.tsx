@@ -9,6 +9,7 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
+  Edit3,
   Trash2,
   ShoppingCart,
   Package,
@@ -18,7 +19,8 @@ import {
   Camera,
   Image as ImageIcon,
   Sparkles,
-  CheckCheck
+  CheckCheck,
+  QrCode
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -28,7 +30,10 @@ interface Product {
   brand: string;
   season: string;
   purchase_price: number;
+  sale_price: number;
   quantity: number;
+  size: string;
+  color: string;
   status: 'new' | 'edited';
   sourceImageId: string;
 }
@@ -54,6 +59,9 @@ export default function NewIncomePage() {
   const [boutiqueId, setBoutiqueId] = useState<string | null>(null);
   const [loadingBoutique, setLoadingBoutique] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [manualProduct, setManualProduct] = useState({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
+  const calcSalePrice = (purchase: number) => Math.round(purchase * 2.5 * 100) / 100;
 
   useEffect(() => {
     const fetchBoutique = async () => {
@@ -159,7 +167,10 @@ export default function NewIncomePage() {
           brand: p.brand || '',
           season: p.season || '',
           purchase_price: p.purchase_price,
+          sale_price: (p.purchase_price * 2.5),
           quantity: p.quantity,
+          size: p.size || 'Unitalla',
+          color: p.color || 'Único',
           status: 'new',
           sourceImageId: img.id,
         }));
@@ -217,6 +228,29 @@ export default function NewIncomePage() {
     setProducts(prev => prev.filter(p => p.id !== id));
   };
 
+  const addManualProduct = () => {
+    if (!manualProduct.name.trim() || manualProduct.purchase_price <= 0) return;
+
+    const newProduct: Product = {
+      id: `manual_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      name: manualProduct.name,
+      brand: manualProduct.brand,
+      season: manualProduct.season,
+      size: manualProduct.size || 'Unitalla',
+      color: manualProduct.color || 'Único',
+      purchase_price: manualProduct.purchase_price,
+      sale_price: manualProduct.sale_price,
+      quantity: manualProduct.quantity,
+      status: 'edited',
+      sourceImageId: 'manual',
+    };
+    setProducts(prev => [...prev, newProduct]);
+    setManualProduct({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
+    setShowManualForm(false);
+    setSuccess('Producto agregado manualmente');
+    setTimeout(() => setSuccess(''), 2000);
+  };
+
   const acceptAll = () => {
     setProducts(prev => prev.map(p => ({ ...p, status: 'edited' })));
     setSuccess(`${products.length} productos aceptados`);
@@ -238,27 +272,32 @@ export default function NewIncomePage() {
     setError('');
     try {
       const supabase = createClient();
-      
-      const productsToInsert = products.map((product) => ({
-        name: product.name,
-        brand: product.brand || null,
-        season: product.season || null,
-        purchase_price: product.purchase_price,
-        sale_price: product.purchase_price * 2.5,
-        stock: product.quantity,
-        boutique_id: boutiqueId,
-        created_at: new Date().toISOString(),
-      }));
 
-      const { error: supabaseError } = await supabase
-        .from('products')
-        .insert(productsToInsert);
+      let totalSaved = 0;
+      for (const p of products) {
+        const { error: productError } = await supabase
+          .from('products')
+          .insert({
+            name: p.name,
+            brand: p.brand || null,
+            season: p.season || null,
+            size: p.size || null,
+            color: p.color || null,
+            purchase_price: p.purchase_price,
+            sale_price: p.sale_price,
+            stock: p.quantity,
+            boutique_id: boutiqueId,
+            created_at: new Date().toISOString(),
+          });
 
-      if (supabaseError) {
-        throw new Error(supabaseError.message);
+        if (productError) {
+          throw new Error(`Error al guardar "${p.name}": ${productError.message}`);
+        }
+
+        totalSaved++;
       }
 
-      setSuccess(`¡${products.length} productos guardados exitosamente!`);
+      setSuccess(`${totalSaved} producto(s) guardado(s) correctamente`);
       setTimeout(() => {
         router.push('/ingresos');
       }, 1500);
@@ -298,7 +337,7 @@ export default function NewIncomePage() {
   );
 
   const totalSaleValue = useMemo(
-    () => products.reduce((sum, p) => sum + (p.purchase_price * 2.5) * p.quantity, 0),
+    () => products.reduce((sum, p) => sum + p.sale_price * p.quantity, 0),
     [products]
   );
 
@@ -328,7 +367,7 @@ export default function NewIncomePage() {
               NUEVO INGRESO
             </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">
-              Sube facturas o toma fotos para agregar productos
+              Sube tu ticket (factura) o ingresa productos manualmente
             </p>
           </div>
 
@@ -365,7 +404,7 @@ export default function NewIncomePage() {
                 Subir imágenes
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                 <button
                   onClick={() => galleryInputRef.current?.click()}
                   className="flex items-center justify-center gap-3 min-h-[80px] bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all active:scale-[0.98]"
@@ -379,6 +418,17 @@ export default function NewIncomePage() {
                 >
                   <Camera className="w-6 h-6" strokeWidth={2.5} />
                   <span>Tomar foto</span>
+                </button>
+                <button
+                  onClick={() => setShowManualForm(!showManualForm)}
+                  className={`flex items-center justify-center gap-3 min-h-[80px] font-bold text-lg rounded-2xl shadow-lg transition-all active:scale-[0.98] ${
+                    showManualForm
+                      ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 shadow-zinc-500/20'
+                      : 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-emerald-500/20 hover:shadow-emerald-500/40'
+                  }`}
+                >
+                  <Edit3 className="w-6 h-6" strokeWidth={2.5} />
+                  <span>Manual</span>
                 </button>
               </div>
 
@@ -406,10 +456,84 @@ export default function NewIncomePage() {
                 className="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-2xl p-6 text-center cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all"
               >
                 <Upload className="w-8 h-8 text-zinc-400 mx-auto mb-2" />
-                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
-                  O arrastra imágenes aquí · JPG, PNG, WebP (máx 10MB c/u)
+                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-1">
+                  Arrastra tu ticket aquí
+                </p>
+                <p className="text-xs text-zinc-400 dark:text-zinc-500">
+                  JPG, PNG, WebP (máx 10MB c/u)
                 </p>
               </div>
+
+              {showManualForm && (
+                <div className="mt-4 p-4 bg-zinc-50 dark:bg-[#0a0a0a] rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-3">Nuevo producto manual</h3>
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div className="col-span-2">
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Nombre *</label>
+                      <input type="text" value={manualProduct.name} onChange={(e) => setManualProduct(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="Ej: Camiseta básica"
+                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Marca</label>
+                      <input type="text" value={manualProduct.brand} onChange={(e) => setManualProduct(prev => ({ ...prev, brand: e.target.value }))}
+                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Temporada</label>
+                      <input type="text" value={manualProduct.season} onChange={(e) => setManualProduct(prev => ({ ...prev, season: e.target.value }))}
+                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Talla</label>
+                      <input type="text" value={manualProduct.size} onChange={(e) => setManualProduct(prev => ({ ...prev, size: e.target.value }))}
+                        placeholder="Ej: M"
+                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Color</label>
+                      <input type="text" value={manualProduct.color} onChange={(e) => setManualProduct(prev => ({ ...prev, color: e.target.value }))}
+                        placeholder="Ej: Rojo"
+                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                    </div>
+                      <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Precio compra *</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs">$</span>
+                        <input type="number" step="0.01" value={manualProduct.purchase_price || ''} onChange={(e) => {
+                          const val = parseFloat(e.target.value) || 0;
+                          setManualProduct(prev => ({ ...prev, purchase_price: val, sale_price: calcSalePrice(val), sale_price_input: calcSalePrice(val) }));
+                        }}
+                          className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-6 pr-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Precio venta</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs">$</span>
+                        <input type="number" step="0.01" value={manualProduct.sale_price_input || ''} onChange={(e) => {
+                          const val = parseFloat(e.target.value) || 0;
+                          setManualProduct(prev => ({ ...prev, sale_price: val, sale_price_input: val }));
+                        }}
+                          className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-6 pr-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Cantidad *</label>
+                      <input type="number" value={manualProduct.quantity} onChange={(e) => setManualProduct(prev => ({ ...prev, quantity: parseInt(e.target.value) || 1 }))}
+                        min="1"
+                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                    </div>
+                  </div>
+                  <button onClick={addManualProduct}
+                    disabled={!manualProduct.name.trim() || manualProduct.purchase_price <= 0}
+                    className="w-full py-3 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-zinc-300 disabled:to-zinc-400 dark:disabled:from-zinc-700 dark:disabled:to-zinc-800 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                  >
+                    <Check className="w-4 h-4" strokeWidth={3} />
+                    Agregar producto
+                  </button>
+                </div>
+              )}
 
               {isProcessing && (
                 <div className="mt-4 flex items-center justify-center gap-3 text-blue-500 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
@@ -471,7 +595,20 @@ export default function NewIncomePage() {
               )}
             </div>
 
-            {/* ====== SECCIÓN 2: PRODUCTOS EXTRAÍDOS ====== */}
+            {/* ====== SECCIÓN 2: CÓDIGO DE BARRAS ====== */}
+            <div className="bg-zinc-50 dark:bg-[#0a0a0a] rounded-3xl p-6 border-2 border-dashed border-zinc-300 dark:border-zinc-700 opacity-60">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-zinc-200 dark:bg-zinc-800 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <QrCode className="w-7 h-7 text-zinc-400 dark:text-zinc-500" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-zinc-500 dark:text-zinc-400">Código de barras</h3>
+                  <p className="text-sm text-zinc-400 dark:text-zinc-500">Próximamente — escanea códigos de barras para agregar productos automáticamente</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ====== SECCIÓN 3: PRODUCTOS EXTRAÍDOS ====== */}
             {products.length > 0 && (
               <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800">
                 <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
@@ -501,13 +638,13 @@ export default function NewIncomePage() {
                 )}
 
                 <div className="space-y-2">
-                  <div className="hidden md:grid md:grid-cols-12 gap-2 px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider border-b border-zinc-200 dark:border-zinc-800">
-                    <div className="col-span-4">Producto</div>
-                    <div className="col-span-2">Marca</div>
-                    <div className="col-span-2">Temporada</div>
+                  <div className="hidden md:grid md:grid-cols-10 gap-2 px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                    <div className="col-span-3">Producto</div>
+                    <div className="col-span-1">Talla</div>
+                    <div className="col-span-1">Color</div>
                     <div className="col-span-1 text-right">Precio</div>
                     <div className="col-span-1 text-right">Stock</div>
-                    <div className="col-span-2 text-right">Acción</div>
+                    <div className="col-span-3 text-right">Acción</div>
                   </div>
 
                   {products.map(product => (
@@ -520,115 +657,79 @@ export default function NewIncomePage() {
                       } ${editingId === product.id ? 'ring-2 ring-blue-500' : ''}`}
                     >
                       {/* Mobile layout */}
-                      <div className="md:hidden p-4">
+                      <div className="md:hidden p-3">
                         <div className="flex items-start justify-between mb-3">
-                          <input
-                            type="text"
-                            value={product.name}
-                            onFocus={() => setEditingId(product.id)}
-                            onBlur={() => setEditingId(null)}
-                            onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
-                            className="flex-1 text-lg font-bold bg-transparent border-2 border-transparent focus:border-blue-500 rounded-lg px-2 py-1 text-zinc-900 dark:text-white focus:outline-none"
-                          />
-                          <div className="flex items-center gap-1 ml-2">
-                            {product.status === 'new' && (
-                              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                            )}
-                            <button
-                              onClick={() => removeProduct(product.id)}
-                              className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition-colors"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          <input
-                            type="text"
-                            value={product.brand}
-                            placeholder="Marca"
-                            onChange={(e) => updateProduct(product.id, 'brand', e.target.value)}
-                            className="bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
-                          />
-                          <input
-                            type="text"
-                            value={product.season}
-                            placeholder="Temporada"
-                            onChange={(e) => updateProduct(product.id, 'season', e.target.value)}
-                            className="bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
-                          />
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
+                          <div className="flex-1">
+                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Nombre del producto</label>
                             <input
-                              type="number"
-                              step="0.01"
-                              value={product.purchase_price}
-                              onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
-                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-7 pr-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
+                              type="text"
+                              value={product.name}
+                              onFocus={() => setEditingId(product.id)}
+                              onBlur={() => setEditingId(null)}
+                              onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                              placeholder="Ej: Camiseta básica"
+                              className="w-full text-base font-bold bg-transparent border-2 border-transparent focus:border-blue-500 rounded-lg px-2 py-1 text-zinc-900 dark:text-white focus:outline-none placeholder:text-zinc-400"
                             />
                           </div>
-                          <input
-                            type="number"
-                            value={product.quantity}
-                            placeholder="Stock"
-                            onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
-                            className="bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
-                          />
+                          <button onClick={() => removeProduct(product.id)}
+                            className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition-colors ml-2 mt-5">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-4 gap-1.5">
+                          <div>
+                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Talla</label>
+                            <input type="text" value={product.size} placeholder="Ej: M" onChange={(e) => updateProduct(product.id, 'size', e.target.value)}
+                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Color</label>
+                            <input type="text" value={product.color} placeholder="Ej: Rojo" onChange={(e) => updateProduct(product.id, 'color', e.target.value)}
+                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5 text-right">Precio</label>
+                            <div className="relative">
+                              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 text-xs">$</span>
+                              <input type="number" step="0.01" value={product.purchase_price} onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
+                                placeholder="0.00"
+                                className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-5 pr-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 text-right" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5 text-right">Stock</label>
+                            <input type="number" value={product.quantity} placeholder="Cant." onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
+                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 text-right" />
+                          </div>
                         </div>
                       </div>
 
                       {/* Desktop layout */}
-                      <div className="hidden md:grid md:grid-cols-12 gap-2 items-center px-3 py-3">
-                        <div className="col-span-4 flex items-center gap-2">
-                          {product.status === 'new' && (
-                            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse flex-shrink-0"></div>
-                          )}
-                          <input
-                            type="text"
-                            value={product.name}
-                            onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
-                            className="flex-1 text-base font-semibold bg-transparent border-2 border-transparent focus:border-blue-500 rounded-lg px-2 py-1.5 text-zinc-900 dark:text-white focus:outline-none min-w-0"
-                          />
-                        </div>
-                        <div className="col-span-2">
-                          <input
-                            type="text"
-                            value={product.brand}
-                            onChange={(e) => updateProduct(product.id, 'brand', e.target.value)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
-                          />
-                        </div>
-                        <div className="col-span-2">
-                          <input
-                            type="text"
-                            value={product.season}
-                            onChange={(e) => updateProduct(product.id, 'season', e.target.value)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
-                          />
-                        </div>
-                        <div className="col-span-1 relative">
-                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
-                          <input
-                            type="number"
-                            step="0.01"
-                            value={product.purchase_price}
-                            onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-6 pr-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right"
-                          />
+                      <div className="hidden md:grid md:grid-cols-10 gap-2 items-center px-3 py-2.5">
+                        <div className="col-span-3">
+                          <input type="text" value={product.name} onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                            className="w-full text-sm font-semibold bg-transparent border-2 border-transparent focus:border-blue-500 rounded-lg px-2 py-1.5 text-zinc-900 dark:text-white focus:outline-none" />
                         </div>
                         <div className="col-span-1">
-                          <input
-                            type="number"
-                            value={product.quantity}
-                            onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right"
-                          />
+                          <input type="text" value={product.size} onChange={(e) => updateProduct(product.id, 'size', e.target.value)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                         </div>
-                        <div className="col-span-2 flex justify-end">
-                          <button
-                            onClick={() => removeProduct(product.id)}
-                            className="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition-colors"
-                          >
+                        <div className="col-span-1">
+                          <input type="text" value={product.color} onChange={(e) => updateProduct(product.id, 'color', e.target.value)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                        </div>
+                        <div className="col-span-1 relative">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 text-xs">$</span>
+                          <input type="number" step="0.01" value={product.purchase_price} onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-5 pr-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                        </div>
+                        <div className="col-span-1">
+                          <input type="number" value={product.quantity} onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                        </div>
+                        <div className="col-span-3 flex justify-end">
+                          <button onClick={() => removeProduct(product.id)}
+                            className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition-colors">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>

@@ -70,13 +70,15 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
     })
   }, [boutiques])
   
+  const SUBSCRIPTION_PRICE = Number(process.env.NEXT_PUBLIC_SUBSCRIPTION_PRICE) || 449
+
   const metrics = useMemo(() => {
     const total = boutiquesWithStatus.length
     const active = boutiquesWithStatus.filter(b => b.status === 'active').length
     const expired = boutiquesWithStatus.filter(b => b.status === 'expired').length
-    const potentialIncome = active * 449
+    const potentialIncome = active * SUBSCRIPTION_PRICE
     return { total, active, expired, potentialIncome }
-  }, [boutiquesWithStatus])
+  }, [boutiquesWithStatus, SUBSCRIPTION_PRICE])
   
   const filteredBoutiques = useMemo(() => {
     let filtered = boutiquesWithStatus
@@ -139,7 +141,6 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
       setDetailsData(data)
     } catch (err) {
       toast.error((err as Error).message)
-      setSelectedBoutique(null)
     } finally {
       setDetailsLoading(false)
     }

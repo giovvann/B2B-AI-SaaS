@@ -33,7 +33,10 @@ export default async function MetricasPage() {
     redirect('/')
   }
 
-  // 4. Cargar TODAS las ventas históricas con sus items y productos
+  // 4. Cargar ventas de los últimos 2 años con sus items y productos
+  const twoYearsAgo = new Date()
+  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2)
+
   const { data: sales, error: salesError } = await supabase
     .from('sales')
     .select(`
@@ -58,6 +61,7 @@ export default async function MetricasPage() {
       )
     `)
     .eq('boutique_id', boutique.id)
+    .gte('created_at', twoYearsAgo.toISOString())
     .order('created_at', { ascending: true })
 
   if (salesError) {
@@ -73,7 +77,7 @@ export default async function MetricasPage() {
   return (
     <MetricasClient
       boutiqueName={boutique.name}
-      sales={sales || []}
+      sales={(sales || []) as any}
       allProducts={allProducts || []}
     />
   )

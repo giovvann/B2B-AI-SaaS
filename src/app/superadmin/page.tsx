@@ -23,7 +23,7 @@ export default async function SuperAdminPage() {
   
   // 1. Verificar que sea el superadmin
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user || user.email !== SUPERADMIN_EMAIL) {
+  if (!user || user.email?.toLowerCase() !== SUPERADMIN_EMAIL.toLowerCase()) {
     redirect('/')
   }
   

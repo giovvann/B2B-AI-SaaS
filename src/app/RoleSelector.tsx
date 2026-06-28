@@ -12,6 +12,7 @@ export function RoleSelector() {
   const [isPending, startTransition] = useTransition()
   const [selectedRole, setSelectedRole] = useState<'owner' | 'employee' | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // ✅ CRÍTICO: Esperar a que el componente se monte
   useEffect(() => {
@@ -20,6 +21,7 @@ export function RoleSelector() {
 
   const handleSelectRole = (role: 'owner' | 'employee') => {
     setSelectedRole(role)
+    setError(null)
     
     startTransition(async () => {
       const supabase = createClient()
@@ -30,12 +32,13 @@ export function RoleSelector() {
         return
       }
 
-      const { error } = await supabase.auth.updateUser({
+      const { error: updateError } = await supabase.auth.updateUser({
         data: { role: role }
       })
 
-      if (error) {
-        console.error('Error guardando rol:', error)
+      if (updateError) {
+        console.error('Error guardando rol:', updateError)
+        setError(updateError.message)
         return
       }
 
@@ -159,7 +162,12 @@ export function RoleSelector() {
           </button>
         </div>
 
-        <p className="text-center text-xs text-zinc-400 dark:text-zinc-600 mt-8">
+        {error && (
+          <div className="mt-6 bg-red-50 dark:bg-red-900/20 border-2 border-red-500 rounded-2xl p-4 text-center">
+            <p className="text-sm font-semibold text-red-700 dark:text-red-400">{error}</p>
+          </div>
+        )}
+        <p className="text-center text-xs text-zinc-400 dark:text-zinc-600 mt-4">
           Tu rol se guarda en tu cuenta. Puedes cambiarlo más tarde desde configuración.
         </p>
       </div>

@@ -18,6 +18,9 @@ const PRODUCT_FIELDS = [
   { key: 'name', label: 'Nombre del producto', required: true },
   { key: 'brand', label: 'Marca', required: false },
   { key: 'season', label: 'Temporada', required: false },
+  { key: 'size', label: 'Talla', required: false },
+  { key: 'color', label: 'Color', required: false },
+  { key: 'sku', label: 'SKU', required: false },
   { key: 'purchase_price', label: 'Precio de compra', required: true },
   { key: 'sale_price', label: 'Precio de venta', required: true },
   { key: 'stock', label: 'Stock', required: true },
@@ -97,6 +100,9 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
           name: String(row[mapping.name] || '').trim(),
           brand: mapping.brand ? String(row[mapping.brand] || '') : undefined,
           season: mapping.season ? String(row[mapping.season] || '') : undefined,
+          size: mapping.size ? String(row[mapping.size] || '') : undefined,
+          color: mapping.color ? String(row[mapping.color] || '') : undefined,
+          sku: mapping.sku ? String(row[mapping.sku] || '') : undefined,
           purchase_price: Number(row[mapping.purchase_price]) || 0,
           sale_price: Number(row[mapping.sale_price]) || 0,
           stock: Number(row[mapping.stock]) || 0,
@@ -232,9 +238,10 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
                     Tu archivo debe tener columnas como:
                   </p>
                   <div className="bg-white dark:bg-zinc-900 rounded-xl p-3 font-mono text-xs text-zinc-700 dark:text-zinc-300 overflow-x-auto">
-                    Nombre, Marca, Temporada, Precio_Compra, Precio_Venta, Stock<br />
-                    Playera Blanca, Nike, Verano, 150, 299, 20<br />
-                    Jeans Slim, Levis, Invierno, 300, 599, 15
+                    Nombre, Marca, Temporada, Talla, Color, Precio_Compra, Precio_Venta, Stock<br />
+                    Playera Básica, Nike, Verano, M, Blanco, 150, 299, 10<br />
+                    Playera Básica, Nike, Verano, L, Blanco, 150, 299, 15<br />
+                    Jeans Slim, Levis, Invierno, 30, Azul, 300, 599, 20
                   </div>
                 </div>
               </div>

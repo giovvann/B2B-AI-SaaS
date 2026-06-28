@@ -7,47 +7,37 @@ export const metadata = {
   description: 'Edita la información de un producto de tu inventario',
 }
 
-interface EditProductPageProps {
+interface Props {
   params: Promise<{ id: string }>
 }
 
-export default async function EditProductPage({ params }: EditProductPageProps) {
+export default async function EditProductPage({ params }: Props) {
   const { id } = await params
   const supabase = await createClient()
 
-  // 1. Verificar que el usuario esté autenticado
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    redirect('/login')
-  }
+  if (!user) redirect('/login')
 
-  // 2. Obtener la boutique del usuario
-  const { data: boutique, error: boutiqueError } = await supabase
+  const { data: boutique } = await supabase
     .from('boutiques')
     .select('id, name')
     .eq('owner_id', user.id)
     .single()
 
-  if (boutiqueError || !boutique) {
-    redirect('/')
-  }
+  if (!boutique) redirect('/')
 
-  // 3. Obtener el producto específico (solo si pertenece a su boutique)
-  const { data: product, error: productError } = await supabase
+  const { data: product } = await supabase
     .from('products')
-    .select('id, name, brand, season, purchase_price, sale_price, stock, created_at, boutique_id')
+    .select('id, name, brand, season, size, color, sku, purchase_price, sale_price, stock')
     .eq('id', id)
     .eq('boutique_id', boutique.id)
     .single()
 
-  if (productError || !product) {
-    // Producto no existe o no pertenece a esta boutique
-    notFound()
-  }
+  if (!product) notFound()
 
   return (
-    <EditarProductoClient 
-      product={product} 
+    <EditarProductoClient
+      product={product}
       boutiqueName={boutique.name}
     />
   )

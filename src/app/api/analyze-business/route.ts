@@ -1,15 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-const MODELS_TO_TRY = [
-  'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
-  'gemini-1.5-flash-8b',
-]
+const MODEL = 'openrouter/owl-alpha'
 
-// Mapa en memoria para trackear requests por usuario (simple rate limiter)
+const CLEANUP_INTERVAL = 5 * 60 * 1000
 const userRequestMap = new Map<string, { count: number; firstRequest: number }>()
+
+setInterval(() => {
+  const cutoff = Date.now() - 120000
+  for (const [key, val] of userRequestMap) {
+    if (val.firstRequest < cutoff) userRequestMap.delete(key)
+  }
+}, CLEANUP_INTERVAL)
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,23 +33,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
-    // Rate limiting personalizado: máximo 1 pregunta cada 60 segundos
     const now = Date.now()
     const userId = user.id
     const userRequests = userRequestMap.get(userId) || { count: 0, firstRequest: now }
-    
-    // Limpiar si pasó más de 1 minuto desde la primera petición
+
     if (now - userRequests.firstRequest > 60000) {
       userRequestMap.set(userId, { count: 1, firstRequest: now })
     } else {
       userRequests.count++
       userRequestMap.set(userId, userRequests)
-      
-      // Si ya hizo 1 pregunta en el último minuto, bloquear
+
       if (userRequests.count > 1) {
         const secondsLeft = Math.ceil((60000 - (now - userRequests.firstRequest)) / 1000)
         return NextResponse.json(
-          { 
+          {
             error: `Has hecho una pregunta recientemente. Espera ${secondsLeft} segundos antes de hacer otra.`,
             retryAfter: secondsLeft,
             type: 'rate_limit'
@@ -80,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     const totalVentas = sales?.reduce((sum, s: any) => sum + (s.total_amount || 0), 0) || 0
     const totalTransacciones = sales?.length || 0
-    
+
     const productMap: Record<string, { name: string; quantity: number; revenue: number; profit: number }> = {}
     sales?.forEach((sale: any) => {
       sale.sale_items?.forEach((item: any) => {
@@ -104,7 +103,7 @@ export async function POST(request: NextRequest) {
       paymentMethods[method] = (paymentMethods[method] || 0) + (sale.total_amount || 0)
     })
 
-    const dataNote = totalTransacciones < 5 
+    const dataNote = totalTransacciones < 5
       ? `\nNOTA: Hay pocas ventas (${totalTransacciones}). Da consejos prácticos con los datos disponibles.`
       : ''
 
@@ -116,12 +115,12 @@ TOP RENTABLES: ${masRentables.map((p, i) => `${i+1}. ${p.name} ($${p.profit.toFi
 MÉTODOS PAGO: ${Object.entries(paymentMethods).map(([m, a]) => `${m}: $${a.toFixed(0)}`).join(' | ')}
 ${dataNote}`.trim()
 
-    const apiKey = process.env.GOOGLE_GEMINI_API_KEY
+    const apiKey = process.env.OPENROUTER_API_KEY
     if (!apiKey) {
-      return NextResponse.json({ error: 'API Key no configurada' }, { status: 500 })
+      return NextResponse.json({ error: 'API Key de OpenRouter no configurada' }, { status: 500 })
     }
 
-    const prompt = `Consultor experto en boutiques de ropa en México. Responde en 2-4 oraciones cortas, español México, texto plano sin markdown, termina con punto final. Consejos prácticos aplicables hoy.
+    const prompt = `Eres un consultor experto y motivacional en boutiques de ropa en México, super amigable y entusiasta. Responde en 3-5 oraciones cálidas, en español mexicano, texto plano sin markdown. Empieza con un saludo corto como "¡Claro!" o "¡Con gusto!" o "¡Qué buena pregunta!". Termina siempre con una frase motivacional corta como "¡Tú puedes!" o "¡Sigue así!" o "¡Vamos con todo!". Da consejos prácticos aplicables hoy.
 
 DATOS: ${dataSummary}
 
@@ -129,68 +128,40 @@ PREGUNTA: ${question}
 
 RESPUESTA:`
 
-    let lastError = ''
-    let lastStatus = 500
-    
-    for (const model of MODELS_TO_TRY) {
-      try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
-        
-        const geminiResponse = await fetch(geminiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
-          }),
-        })
-
-        if (geminiResponse.ok) {
-          const geminiData = await geminiResponse.json()
-          let answer = geminiData.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || ''
-          const finishReason = geminiData.candidates?.[0]?.finishReason
-
-          if (finishReason === 'MAX_TOKENS') {
-            lastError = 'MAX_TOKENS'
-            continue
-          }
-
-          if (answer && !/[.!?]$/.test(answer)) answer = answer + '.'
-          if (!answer) answer = 'Intenta con otra pregunta.'
-
-          console.log(`✅ ${model}: respuesta OK`)
-          return NextResponse.json({ answer, model })
-        }
-
-        const errorText = await geminiResponse.text()
-        lastStatus = geminiResponse.status
-        lastError = errorText
-        
-        if (geminiResponse.status === 429) {
-          console.log(`⏱️ Rate limit de Google con ${model}`)
-          continue
-        }
-        
-        if (geminiResponse.status === 404) continue
-      } catch (fetchError) {
-        lastError = String(fetchError)
-      }
-    }
-
-    let userFriendlyError = 'Error con la IA. Intenta de nuevo en unos segundos.'
     try {
-      const parsed = JSON.parse(lastError)
-      const msg = parsed.error?.message || ''
-      if (msg.includes('quota') || msg.includes('Quota')) {
-        userFriendlyError = 'Límite de la API alcanzado. Habilita billing en Google AI Studio para más requests (te dan $300 USD gratis).'
-      } else if (msg.includes('API key')) {
-        userFriendlyError = 'API key inválida.'
-      } else if (msg.includes('billing')) {
-        userFriendlyError = 'Billing requerido. Ve a Google AI Studio y activa billing (te dan $300 USD gratis).'
-      }
-    } catch {}
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            { role: 'user', content: prompt },
+          ],
+          temperature: 0.7,
+          max_tokens: 500,
+        }),
+      })
 
-    return NextResponse.json({ error: userFriendlyError }, { status: lastStatus })
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error(`OpenRouter error (${response.status}):`, errorText)
+        return NextResponse.json({ error: 'Error con la IA. Intenta de nuevo.' }, { status: 502 })
+      }
+
+      const data = await response.json()
+      let answer = data.choices?.[0]?.message?.content?.trim() || ''
+
+      if (answer && !/[.!?]$/.test(answer)) answer += '.'
+      if (!answer) answer = 'Intenta con otra pregunta.'
+
+      return NextResponse.json({ answer, model: MODEL })
+    } catch (fetchError) {
+      console.error('OpenRouter fetch error:', fetchError)
+      return NextResponse.json({ error: 'Error de conexión con la IA. Intenta de nuevo.' }, { status: 502 })
+    }
   } catch (error) {
     console.error('Error interno:', error)
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })

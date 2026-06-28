@@ -28,7 +28,7 @@ export function parseCSV(content: string): ParsedData {
 // Parsear Excel
 export function parseExcel(buffer: ArrayBuffer): ParsedData {
   const workbook = XLSX.read(buffer, { type: 'array' })
-  const firstSheet = workbook.sheets[workbook.sheetNames[0]]
+  const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
   const jsonData = XLSX.utils.sheet_to_json(firstSheet, { defval: '' }) as Record<string, any>[]
   
   const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : []
@@ -42,10 +42,15 @@ export function parseExcel(buffer: ArrayBuffer): ParsedData {
 
 // Parsear JSON
 export function parseJSON(content: string): ParsedData {
-  const data = JSON.parse(content)
+  let data: any
+  try {
+    data = JSON.parse(content)
+  } catch {
+    throw new Error('El archivo JSON no tiene un formato válido')
+  }
   const rows = Array.isArray(data) ? data : [data]
   const headers = rows.length > 0 ? Object.keys(rows[0]) : []
-  
+
   return {
     headers,
     rows,
@@ -86,6 +91,9 @@ export function autoMapColumns(
     name: ['nombre', 'name', 'producto', 'product', 'descripcion', 'description', 'articulo'],
     brand: ['marca', 'brand'],
     season: ['temporada', 'season'],
+    size: ['talla', 'size', 'medida'],
+    color: ['color', 'colour'],
+    sku: ['sku', 'codigo', 'codigo_producto', 'cod'],
     purchase_price: ['precio_compra', 'purchase_price', 'costo', 'cost', 'precio_costo'],
     sale_price: ['precio_venta', 'sale_price', 'precio', 'price', 'precio_publico'],
     stock: ['stock', 'cantidad', 'quantity', 'existencias', 'inventario'],

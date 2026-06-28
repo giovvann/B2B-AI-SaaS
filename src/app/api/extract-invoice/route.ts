@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createClient } from '@/lib/supabase/server';
 
 // Inicializar Gemini con la API key del entorno
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
+    const supabase = await createClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    }
+
     const formData = await req.formData();
     const imageFile = formData.get('image') as File;
 
@@ -41,7 +48,7 @@ export async function POST(req: NextRequest) {
     // Inicializar modelo Gemini
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const prompt = `Eres un asistente experto en inventario de ropa en México. Analiza esta imagen de una factura o ticket. Extrae los productos y devuélvelos EXCLUSIVAMENTE en un array JSON con esta estructura: [{name: string, brand: string, season: string, purchase_price: number, quantity: number}]. Si no hay datos, devuelve un array vacío. No incluyas texto markdown, solo el JSON puro.`;
+    const prompt = `Eres un asistente experto en inventario de ropa en México. Analiza esta imagen de una factura o ticket. Extrae los productos y devuélvelos EXCLUSIVAMENTE en un array JSON con esta estructura: [{name: string, brand: string, season: string, purchase_price: number, quantity: number, size: string, color: string}]. Incluye marca (brand), temporada (season), talla (size), color si se identifican; si no hay información usa valores vacíos. Si no hay datos, devuelve un array vacío. No incluyas texto markdown, solo el JSON puro.`;
 
     // Generar respuesta de Gemini
     const result = await model.generateContent([
@@ -96,10 +103,12 @@ export async function POST(req: NextRequest) {
     // Validar y normalizar cada producto
     const validatedProducts = products.map((product: any, index: number) => ({
       name: String(product.name || '').trim() || `Producto ${index + 1}`,
-      brand: String(product.brand || '').trim() || 'Genérica',
-      season: String(product.season || '').trim() || 'Actual',
+      brand: String(product.brand || '').trim() || '',
+      season: String(product.season || '').trim() || '',
       purchase_price: parseFloat(product.purchase_price) || 0,
       quantity: parseInt(product.quantity) || 1,
+      size: String(product.size || '').trim() || 'Unitalla',
+      color: String(product.color || '').trim() || 'Único',
     }));
 
     return NextResponse.json({ products: validatedProducts });
