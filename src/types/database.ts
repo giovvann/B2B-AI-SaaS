@@ -4,9 +4,9 @@ export interface Database {
   public: {
     Tables: {
       boutiques: {
-        Row: { id: string; owner_id: string; name: string; created_at: string; subscription_expires_at: string | null; is_active: boolean | null };
-        Insert: { id?: string; owner_id: string; name: string; created_at?: string; subscription_expires_at?: string | null; is_active?: boolean | null };
-        Update: { id?: string; owner_id?: string; name?: string; created_at?: string; subscription_expires_at?: string | null; is_active?: boolean | null };
+        Row: { id: string; owner_id: string; name: string; created_at: string; subscription_expires_at: string | null; is_active: boolean | null; is_trial: boolean | null };
+        Insert: { id?: string; owner_id: string; name: string; created_at?: string; subscription_expires_at?: string | null; is_active?: boolean | null; is_trial?: boolean | null };
+        Update: { id?: string; owner_id?: string; name?: string; created_at?: string; subscription_expires_at?: string | null; is_active?: boolean | null; is_trial?: boolean | null };
       };
       products: {
         Row: {
@@ -65,7 +65,7 @@ export interface Database {
     };
     Views: {
       boutiques_with_emails: {
-        Row: { id: string; owner_id: string; name: string; created_at: string; owner_email: string | null; subscription_expires_at: string | null; is_active: boolean | null };
+        Row: { id: string; owner_id: string; name: string; created_at: string; owner_email: string | null; subscription_expires_at: string | null; is_active: boolean | null; is_trial: boolean | null };
       };
     };
   };

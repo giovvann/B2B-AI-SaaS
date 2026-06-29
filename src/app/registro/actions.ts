@@ -64,6 +64,7 @@ export async function registrarAction(formData: FormData) {
     name: 'Mi Boutique',
     subscription_expires_at: subscriptionExpiresAt,
     is_active: trial ? true : false,
+    is_trial: trial ? true : false,
   })
 
   if (boutiqueError) {

@@ -77,6 +77,36 @@ export async function disableBoutique(boutiqueId: string) {
   return { boutiqueName: boutique.name }
 }
 
+export async function cancelTrial(boutiqueId: string) {
+  const { supabase } = await verifySuperAdmin()
+
+  const { data: boutique, error: fetchError } = await supabase
+    .from('boutiques')
+    .select('name')
+    .eq('id', boutiqueId)
+    .single()
+
+  if (fetchError || !boutique) {
+    throw new Error('Boutique no encontrada')
+  }
+
+  const { error: updateError } = await supabase
+    .from('boutiques')
+    .update({
+      is_trial: false,
+      is_active: false,
+      subscription_expires_at: new Date().toISOString(),
+    })
+    .eq('id', boutiqueId)
+
+  if (updateError) {
+    throw new Error('Error al cancelar el trial')
+  }
+
+  revalidatePath('/superadmin')
+  return { boutiqueName: boutique.name }
+}
+
 export async function enableBoutique(boutiqueId: string) {
   const { supabase } = await verifySuperAdmin()
   

@@ -14,6 +14,7 @@ import {
   disableBoutique,
   enableBoutique,
   getBoutiqueDetails,
+  cancelTrial,
 } from '@/lib/superadmin'
 
 interface Boutique {
@@ -24,13 +25,14 @@ interface Boutique {
   created_at: string
   subscription_expires_at: string | null
   is_active: boolean
+  is_trial: boolean
 }
 
 interface SuperAdminClientProps {
   boutiques: Boutique[]
 }
 
-type Filter = 'all' | 'active' | 'expired' | 'expiring'
+type Filter = 'all' | 'active' | 'expired' | 'expiring' | 'trial'
 
 export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
   const router = useRouter()
@@ -60,12 +62,15 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
       const isExpired = !b.is_active || (expires !== null && expires < now)
       const isExpiring = !isExpired && daysRemaining <= 7 && daysRemaining > 0
       
+      let status: 'active' | 'expired' | 'expiring' | 'trial' = isExpired ? 'expired' : isExpiring ? 'expiring' : 'active'
+      if (b.is_trial && status === 'active') status = 'trial'
+      
       return {
         ...b,
         daysRemaining,
         isExpired,
         isExpiring,
-        status: isExpired ? 'expired' as const : isExpiring ? 'expiring' as const : 'active' as const,
+        status,
       }
     })
   }, [boutiques])
@@ -74,18 +79,21 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
 
   const metrics = useMemo(() => {
     const total = boutiquesWithStatus.length
-    const active = boutiquesWithStatus.filter(b => b.status === 'active').length
+    const active = boutiquesWithStatus.filter(b => b.status === 'active' || b.status === 'trial').length
     const expired = boutiquesWithStatus.filter(b => b.status === 'expired').length
-    const potentialIncome = active * SUBSCRIPTION_PRICE
-    return { total, active, expired, potentialIncome }
+    const trial = boutiquesWithStatus.filter(b => b.status === 'trial').length
+    const paid = boutiquesWithStatus.filter(b => b.status === 'active').length
+    const potentialIncome = paid * SUBSCRIPTION_PRICE
+    return { total, active, expired, trial, paid, potentialIncome }
   }, [boutiquesWithStatus, SUBSCRIPTION_PRICE])
   
   const filteredBoutiques = useMemo(() => {
     let filtered = boutiquesWithStatus
     
-    if (filter === 'active') filtered = filtered.filter(b => b.status === 'active')
+    if (filter === 'active') filtered = filtered.filter(b => b.status === 'active' || b.status === 'trial')
     if (filter === 'expired') filtered = filtered.filter(b => b.status === 'expired')
     if (filter === 'expiring') filtered = filtered.filter(b => b.status === 'expiring')
+    if (filter === 'trial') filtered = filtered.filter(b => b.status === 'trial')
     
     if (search.trim()) {
       const s = search.toLowerCase()
@@ -122,6 +130,18 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
     })
   }
   
+  const handleCancelTrial = (boutique: Boutique) => {
+    if (!confirm(`¿Cancelar trial de ${boutique.name}? El usuario quedará como prueba gratuita expirada.`)) return
+    startTransition(async () => {
+      try {
+        const result = await cancelTrial(boutique.id)
+        toast.success(`Trial cancelado para ${result.boutiqueName}`)
+      } catch (err) {
+        toast.error((err as Error).message)
+      }
+    })
+  }
+
   const handleEnable = (boutique: Boutique) => {
     startTransition(async () => {
       try {
@@ -149,18 +169,21 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
   const filters: { value: Filter; label: string; count: number }[] = [
     { value: 'all', label: 'TODAS', count: metrics.total },
     { value: 'active', label: 'ACTIVAS', count: metrics.active },
+    { value: 'trial', label: 'TRIAL', count: metrics.trial },
     { value: 'expiring', label: 'POR EXPIRAR', count: boutiquesWithStatus.filter(b => b.status === 'expiring').length },
     { value: 'expired', label: 'EXPIRADAS', count: metrics.expired },
   ]
   
-  const getBadgeStyles = (status: 'active' | 'expired' | 'expiring') => {
+  const getBadgeStyles = (status: 'active' | 'expired' | 'expiring' | 'trial') => {
     if (status === 'active') return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-900/50'
+    if (status === 'trial') return 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-900/50'
     if (status === 'expiring') return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/50'
     return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-900/50'
   }
   
-  const getBadgeLabel = (status: 'active' | 'expired' | 'expiring') => {
+  const getBadgeLabel = (status: 'active' | 'expired' | 'expiring' | 'trial') => {
     if (status === 'active') return 'ACTIVA'
+    if (status === 'trial') return 'TRIAL'
     if (status === 'expiring') return 'POR EXPIRAR'
     return 'EXPIRADA'
   }
@@ -257,6 +280,18 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
             </div>
           </div>
           
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/40 dark:to-orange-900/20 rounded-3xl p-6 border border-orange-200 dark:border-orange-900/50">
+            <div className="w-12 h-12 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/30 mb-4">
+              <Clock className="w-6 h-6 text-white" strokeWidth={2.5} />
+            </div>
+            <div className="text-xs font-bold text-orange-700 dark:text-orange-300 uppercase tracking-wider mb-1">
+              En Trial
+            </div>
+            <div className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white">
+              {metrics.trial}
+            </div>
+          </div>
+          
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/40 dark:to-purple-900/20 rounded-3xl p-6 border border-purple-200 dark:border-purple-900/50">
             <div className="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30 mb-4">
               <DollarSign className="w-6 h-6 text-white" strokeWidth={2.5} />
@@ -344,6 +379,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                       <td className="px-6 py-4">
                         <div className={`text-sm font-bold ${
                           boutique.status === 'active' ? 'text-zinc-900 dark:text-white' :
+                          boutique.status === 'trial' ? 'text-orange-600 dark:text-orange-400' :
                           boutique.status === 'expiring' ? 'text-amber-600 dark:text-amber-400' :
                           'text-red-600 dark:text-red-400'
                         }`}>
@@ -375,7 +411,17 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                             <Clock className="w-3.5 h-3.5" strokeWidth={3} />
                             <span>+7d</span>
                           </button>
-                          {boutique.is_active ? (
+                          {boutique.status === 'trial' && (
+                            <button
+                              onClick={() => handleCancelTrial(boutique)}
+                              disabled={isPending}
+                              className="flex items-center gap-1.5 px-3 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white text-xs font-bold rounded-xl transition-colors"
+                              title="Cancelar trial"
+                            >
+                              <Ban className="w-3.5 h-3.5" strokeWidth={3} />
+                            </button>
+                          )}
+                          {boutique.is_active && boutique.status !== 'trial' && (
                             <button
                               onClick={() => handleDisable(boutique)}
                               disabled={isPending}
@@ -384,7 +430,8 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                             >
                               <Ban className="w-3.5 h-3.5" strokeWidth={3} />
                             </button>
-                          ) : (
+                          )}
+                          {!boutique.is_active && (
                             <button
                               onClick={() => handleEnable(boutique)}
                               disabled={isPending}

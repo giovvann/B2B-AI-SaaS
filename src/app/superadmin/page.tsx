@@ -15,6 +15,7 @@ interface BoutiqueWithEmail {
   created_at: string
   subscription_expires_at: string | null
   is_active: boolean
+  is_trial: boolean
 }
 
 export default async function SuperAdminPage() {
@@ -38,12 +39,13 @@ export default async function SuperAdminPage() {
     // Si la vista no existe, intentar con boutiques normal (sin email)
     const { data: fallback } = await supabase
       .from('boutiques')
-      .select('id, name, owner_id, created_at, subscription_expires_at, is_active')
+      .select('id, name, owner_id, created_at, subscription_expires_at, is_active, is_trial')
       .order('created_at', { ascending: false })
-    
+
     const boutiquesWithEmails: BoutiqueWithEmail[] = (fallback || []).map(b => ({
       ...b,
       owner_email: 'Email no disponible',
+      is_trial: b.is_trial ?? false,
     }))
     
     return <SuperAdminClient boutiques={boutiquesWithEmails} />
