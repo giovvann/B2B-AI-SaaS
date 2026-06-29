@@ -313,11 +313,31 @@
             border: 1px solid rgba(37, 99, 235, 0.3);
         }
         
-        .tagline {
-            font-family: 'Cormorant Garamond', serif;
-            font-style: italic;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.6);
+        .step-connector {
+            position: relative;
+        }
+
+        .step-connector::after {
+            content: '';
+            position: absolute;
+            top: 2.5rem;
+            left: 50%;
+            width: 2px;
+            height: calc(100% + 1rem);
+            background: linear-gradient(180deg, #2563EB, transparent);
+            opacity: 0.3;
+        }
+
+        .step-connector:last-child::after { display: none; }
+
+        @media (min-width: 768px) {
+            .step-connector::after {
+                top: 50%;
+                left: 100%;
+                width: calc(100% + 2rem);
+                height: 2px;
+                background: linear-gradient(90deg, #2563EB, transparent);
+            }
         }
     </style>
 </head>
@@ -358,12 +378,9 @@
     <header class="sticky-header fixed top-0 w-full z-50 border-b border-white/10">
         <nav class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
-                <a href="#" class="flex flex-col">
-                    <div class="flex items-baseline space-x-1">
-                        <span class="logo-serif text-3xl md:text-4xl text-white">Veliora</span>
-                        <span class="logo-dot text-xs md:text-sm text-cyan-400">.lat</span>
-                    </div>
-                    <span class="tagline text-xs hidden md:block">La confianza del saber</span>
+                <a href="#" class="flex items-baseline space-x-1">
+                    <span class="logo-serif text-4xl md:text-5xl text-white">Veliora</span>
+                    <span class="logo-dot text-sm md:text-base text-cyan-400">.lat</span>
                 </a>
                 
                 <div class="hidden md:flex items-center space-x-8">
@@ -937,171 +954,252 @@
     </section>
 
     <!-- PRICING -->
-    <section id="precios" class="py-20 bg-gradient-to-b from-blue-900/5 to-transparent">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-10" data-aos="fade-up">
+    <section id="precios" class="py-20 bg-gradient-to-b from-blue-900/5 to-transparent relative overflow-hidden">
+        <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-to-r from-blue-500/5 to-cyan-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center mb-12" data-aos="fade-up">
                 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 mb-4">
                     <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <span class="text-xs font-semibold text-green-400">PRUEBA 7 DÍAS GRATIS — SIN TARJETA</span>
+                    <span class="text-xs font-semibold text-green-400">7 DÍAS GRATIS — SIN TARJETA</span>
                 </div>
                 <h2 class="text-3xl md:text-4xl font-bold mb-3">Menos de lo que pagas por un par de tenis</h2>
                 <p class="text-lg text-gray-400 max-w-2xl mx-auto">
-                    Todo lo que necesitas para controlar tu boutique. Un solo plan, sin límites ocultos, sin sorpresas.
+                    Todo incluido. Sin límites ocultos. Sin sorpresas.
                 </p>
             </div>
 
-            <div class="max-w-3xl mx-auto mb-12" data-aos="fade-up">
-                <div class="pricing-card bg-gradient-to-br from-white/5 to-white/0 rounded-3xl p-6 md:p-10 border border-white/10">
-                    <!-- TOGGLE -->
+            <div class="max-w-lg mx-auto mb-20" data-aos="fade-up" data-aos-delay="100">
+                <div class="relative bg-gradient-to-b from-white/[0.06] to-white/[0.02] rounded-3xl p-8 md:p-10 border border-white/[0.08] shadow-2xl shadow-blue-500/5" style="box-shadow: 0 0 80px rgba(37,99,235,0.08), 0 0 200px rgba(6,182,212,0.04);">
+                    <!-- Toggle inside card -->
                     <div class="flex justify-center mb-8">
-                        <div class="toggle-switch">
-                            <button id="toggleMonthly" class="active" onclick="togglePlan('monthly')">Pago mensual</button>
-                            <button id="toggleYearly" onclick="togglePlan('yearly')">Pago anual</button>
+                        <div class="inline-flex bg-white/[0.04] rounded-full p-1 border border-white/[0.06]">
+                            <button id="toggleMonthly" class="active px-5 py-2 rounded-full text-sm font-semibold transition-all" onclick="togglePlan('monthly')" style="background: linear-gradient(135deg, #2563EB, #06B6D4); color: white; box-shadow: 0 4px 15px rgba(37,99,235,0.3);">Mensual</button>
+                            <button id="toggleYearly" class="px-5 py-2 rounded-full text-sm font-semibold text-gray-400 hover:text-white transition-all" onclick="togglePlan('yearly')">Anual</button>
                         </div>
                     </div>
 
-                    <!-- PRICE DISPLAY -->
+                    <!-- Price -->
                     <div class="text-center mb-6">
-                        <div class="flex items-baseline justify-center gap-2">
-                            <span class="text-5xl md:text-6xl font-bold text-white" id="priceDisplay">$449</span>
-                            <span class="text-gray-400" id="periodDisplay">MXN/mes</span>
+                        <div class="flex items-start justify-center gap-1">
+                            <span class="text-2xl text-gray-400 mt-3">$</span>
+                            <span class="text-7xl md:text-8xl font-bold text-white tracking-tight" id="priceDisplay" style="line-height: 1;">449</span>
                         </div>
-                        <div id="savingsBadge" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/25 mt-3 hidden">
-                            <svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"/>
-                                <path d="M9 13h2v5a1 1 0 11-2 0v-5z"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-cyan-300">Ahorras $889 al año</span>
+                        <div class="flex items-center justify-center gap-3 mt-2">
+                            <span class="text-gray-400" id="periodDisplay">MXN/mes</span>
+                            <span id="savingsBadge" class="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-semibold text-green-400 hidden">Ahorras $889</span>
                         </div>
                     </div>
 
+                    <!-- Trial note -->
                     <p class="text-center text-gray-500 text-sm mb-8">
-                        Cancela cuando quieras. Sin multas, sin preguntas.
+                        Prueba 7 días gratis — cancela cuando quieras
                     </p>
 
-                    <!-- FEATURES GRID -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-8">
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">Escaneo de facturas con IA <strong class="text-cyan-400">ilimitado</strong></span>
+                    <!-- Divider -->
+                    <div class="border-t border-white/[0.06] mb-6"></div>
+
+                    <!-- Features - compact single column -->
+                    <div class="space-y-3 mb-8">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Escaneo de facturas con IA ilimitado</span>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">Productos, ventas e inventario <strong class="text-cyan-400">ilimitados</strong></span>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Productos, ventas e inventario ilimitados</span>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                             <span class="text-sm text-gray-300">Control por tallas, colores y marcas</span>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">Alertas por WhatsApp</span>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Alertas de stock por WhatsApp</span>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">App para empleados</span>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">App para empleados (sin costos extra)</span>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">Métricas y dashboard completo</span>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Métricas, IA de ventas y dashboard</span>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">IA de análisis de ventas y temporadas</span>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Empleados y dispositivos ilimitados</span>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">Funciona sin internet</span>
-                        </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">Empleados y dispositivos <strong class="text-cyan-400">ilimitados</strong></span>
-                        </div>
-                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
-                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm text-gray-300">Soporte prioritario en español</span>
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Funciona sin internet + soporte en español</span>
                         </div>
                     </div>
 
-                    <!-- CTAs -->
-                    <a href="/registro?trial=true" class="btn-primary block w-full py-4 text-center rounded-2xl font-bold text-white text-lg mb-3">
+                    <!-- CTA -->
+                    <a href="/registro?trial=true" class="block w-full py-4 text-center rounded-2xl font-bold text-white text-lg mb-3 transition-all active:scale-[0.98]" style="background: linear-gradient(135deg, #2563EB, #06B6D4); box-shadow: 0 8px 32px rgba(37,99,235,0.3);">
                         Probar 7 días gratis
+                        <span class="block text-xs font-normal opacity-80 mt-0.5">Sin compromiso. Empieza hoy.</span>
                     </a>
-                    <a href="/registro?trial=false" class="btn-secondary block w-full py-3.5 text-center rounded-2xl font-semibold text-white text-sm">
-                        Comprar membresía ahora
-                    </a>
+                    <div class="text-center">
+                        <a href="/registro?trial=false" class="text-sm text-gray-500 hover:text-gray-300 transition-colors font-medium">Comprar membresía ahora →</a>
+                    </div>
                 </div>
             </div>
 
             <!-- VALUE COMPARISON -->
-            <div class="max-w-4xl mx-auto" data-aos="fade-up">
-                <div class="text-center mb-8">
-                    <p class="text-sm font-semibold text-gray-500 uppercase tracking-widest">¿Vale la pena?</p>
-                    <h3 class="text-2xl md:text-3xl font-bold mt-2">Si vendes 2 prendas más al mes, Veliora se paga solo</h3>
-                    <p class="text-gray-400 mt-2 text-sm">Una talla agotada = venta perdida de $500-$1,200. Con Veliora, nunca más.</p>
+            <div class="max-w-5xl mx-auto" data-aos="fade-up">
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 mb-4">
+                        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-xs font-semibold text-amber-400">¿VALE LA PENA?</span>
+                    </div>
+                    <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">Aumenta al menos 5 ventas al mes. Garantizado.</h3>
+                    <p class="text-lg text-gray-400">Veliora se paga sola en <strong class="text-cyan-400">2 ventas</strong>. De hecho, deja de perder dinero cada día que no lo usas.</p>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-6">
+                <div class="grid md:grid-cols-2 gap-0 md:gap-0 md:divide-x md:divide-white/[0.06] bg-white/[0.03] rounded-3xl border border-white/[0.06] overflow-hidden">
                     <!-- SIN VELIORA -->
-                    <div class="bg-gradient-to-br from-red-500/5 to-red-500/0 rounded-2xl p-6 border border-red-500/10">
-                        <div class="flex items-center gap-2 mb-4">
-                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            <span class="text-sm font-bold text-red-400 uppercase tracking-wider">Sin Veliora</span>
+                    <div class="p-8 md:p-10">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </div>
+                            <div>
+                                <span class="text-sm font-bold text-red-400 uppercase tracking-wider">Sin Veliora</span>
+                                <p class="text-xs text-red-400/60">Así estás ahorita</p>
+                            </div>
                         </div>
                         <div class="space-y-3">
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">Empleado para inventario</span>
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-red-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span class="text-sm text-gray-400">Empleado para inventario</span>
+                                </div>
                                 <span class="text-sm font-bold text-red-400">$2,000/mes</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">Horas capturando prendas</span>
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-red-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span class="text-sm text-gray-400">Horas capturando prendas</span>
+                                </div>
                                 <span class="text-sm font-bold text-red-400">5+ hrs/sem</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">Pérdida por tallas agotadas</span>
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-red-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span class="text-sm text-gray-400">Pérdida por tallas agotadas</span>
+                                </div>
                                 <span class="text-sm font-bold text-red-400">$500-$1,200 c/u</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">App para empleados separada</span>
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-red-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span class="text-sm text-gray-400">App para empleados separada</span>
+                                </div>
                                 <span class="text-sm font-bold text-red-400">$1,500/mes</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-red-500/10 rounded-xl mt-2">
-                                <span class="text-sm font-bold text-red-300">Total sin Veliora</span>
+                            <div class="flex items-center justify-between p-4 bg-red-500/10 rounded-xl border border-red-500/20 mt-4">
+                                <span class="text-sm font-bold text-gray-300">Total SIN Veliora</span>
                                 <span class="text-lg font-bold text-red-400">$3,500+/mes</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- CON VELIORA -->
-                    <div class="bg-gradient-to-br from-green-500/5 to-green-500/0 rounded-2xl p-6 border border-green-500/10">
-                        <div class="flex items-center gap-2 mb-4">
-                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-sm font-bold text-green-400 uppercase tracking-wider">Con Veliora</span>
+                    <div class="p-8 md:p-10 relative">
+                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-green-500/[0.02] to-transparent pointer-events-none"></div>
+                        <div class="flex items-center gap-3 mb-6 relative">
+                            <div class="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                            <div>
+                                <span class="text-sm font-bold text-green-400 uppercase tracking-wider">Con Veliora</span>
+                                <p class="text-xs text-green-400/60">Todo resuelto por $449/mes</p>
+                            </div>
                         </div>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">Control de inventario</span>
+                        <div class="space-y-3 relative">
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-green-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    <span class="text-sm text-gray-400">Control de inventario</span>
+                                </div>
                                 <span class="text-sm font-bold text-green-400">Incluido</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">Carga de productos</span>
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-green-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    <span class="text-sm text-gray-400">Carga de productos</span>
+                                </div>
                                 <span class="text-sm font-bold text-green-400">Segundos con IA</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">Alertas de stock bajo</span>
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-green-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    <span class="text-sm text-gray-400">Alertas de stock bajo</span>
+                                </div>
                                 <span class="text-sm font-bold text-green-400">Automáticas</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
-                                <span class="text-sm text-gray-400">App para empleados</span>
+                            <div class="flex items-center justify-between p-4 bg-white/[0.03] rounded-xl border border-white/[0.04]">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-4 h-4 text-green-400/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    <span class="text-sm text-gray-400">App para empleados</span>
+                                </div>
                                 <span class="text-sm font-bold text-green-400">Incluida</span>
                             </div>
-                            <div class="flex justify-between items-center p-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl mt-2 border border-blue-500/20">
+                            <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl border border-blue-500/20 mt-4">
                                 <span class="text-sm font-bold text-white">Veliora</span>
                                 <span class="text-lg font-bold text-cyan-400" id="comparisonPrice">$449/mes</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-8">
+                    <p class="text-gray-500 text-sm">Datos estimados basados en el promedio de boutiques en México. Tu resultado puede variar, pero la cuenta es simple: <strong class="text-white">a $449, recuperas tu inversión en menos de una semana.</strong></p>
+                </div>
+            </div>
+
+            <!-- HOW PAYMENT WORKS -->
+            <div class="max-w-4xl mx-auto mt-24" data-aos="fade-up">
+                <div class="text-center mb-12">
+                    <h3 class="text-2xl md:text-3xl font-bold text-white mb-2">Cómo funciona el pago</h3>
+                    <p class="text-gray-400">Simple, sin complicaciones. No necesitas tarjeta de crédito.</p>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-6 md:gap-0 relative">
+                    <div class="step-connector text-center px-4">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(37,99,235,0.3);">
+                            <span class="text-2xl font-bold text-cyan-400">1</span>
+                        </div>
+                        <h4 class="font-bold text-white mb-1">Crea tu cuenta</h4>
+                        <p class="text-sm text-gray-400">Tu correo y contraseña. Toma <strong class="text-gray-300">1 minuto</strong>.</p>
+                    </div>
+
+                    <div class="step-connector text-center px-4">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(37,99,235,0.3);">
+                            <span class="text-2xl font-bold text-cyan-400">2</span>
+                        </div>
+                        <h4 class="font-bold text-white mb-1">Te contactamos</h4>
+                        <p class="text-sm text-gray-400">Te enviamos un WhatsApp automático para empezar.</p>
+                    </div>
+
+                    <div class="step-connector text-center px-4">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(37,99,235,0.3);">
+                            <span class="text-2xl font-bold text-cyan-400">3</span>
+                        </div>
+                        <h4 class="font-bold text-white mb-1">Pagas seguro</h4>
+                        <p class="text-sm text-gray-400">Transferencia o depósito. Sin compartir datos bancarios.</p>
+                    </div>
+
+                    <div class="step-connector text-center px-4">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(37,99,235,0.3);">
+                            <span class="text-2xl font-bold text-cyan-400">4</span>
+                        </div>
+                        <h4 class="font-bold text-white mb-1">Activación al instante</h4>
+                        <p class="text-sm text-gray-400">Confirmamos tu pago y activas tu membresía al momento. Empiezas a vender.</p>
                     </div>
                 </div>
             </div>
@@ -1180,9 +1278,8 @@
         <div class="container mx-auto px-6">
             <div class="max-w-4xl mx-auto text-center" data-aos="fade-up">
                 <div class="inline-block mb-6">
-                    <span class="logo-serif text-5xl md:text-6xl text-white">Veliora</span>
-                    <span class="logo-dot text-sm md:text-base text-cyan-400 ml-2">.lat</span>
-                    <div class="tagline text-base mt-2">La confianza del saber</div>
+                    <span class="logo-serif text-6xl md:text-7xl text-white">Veliora</span>
+                    <span class="logo-dot text-base md:text-lg text-cyan-400 ml-2">.lat</span>
                 </div>
                 
                 <h2 class="text-3xl md:text-5xl font-bold mb-6">
@@ -1236,12 +1333,9 @@
         <div class="container mx-auto px-6">
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div>
-                    <a href="#" class="flex flex-col mb-4">
-                        <div class="flex items-baseline space-x-1">
-                            <span class="logo-serif text-3xl text-white">Veliora</span>
-                            <span class="logo-dot text-xs text-cyan-400">.lat</span>
-                        </div>
-                        <span class="tagline text-xs">La confianza del saber</span>
+                    <a href="#" class="flex items-baseline space-x-1 mb-4">
+                        <span class="logo-serif text-4xl text-white">Veliora</span>
+                        <span class="logo-dot text-sm text-cyan-400">.lat</span>
                     </a>
                     <p class="text-gray-400 text-sm">El sistema inteligente para boutiques de ropa en México y LatAm.</p>
                 </div>
@@ -1258,9 +1352,9 @@
                 <div>
                     <h4 class="font-semibold mb-4">Legal</h4>
                     <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="#" class="hover:text-white transition">Privacidad</a></li>
-                        <li><a href="#" class="hover:text-white transition">Términos</a></li>
-                        <li><a href="#" class="hover:text-white transition">Seguridad</a></li>
+                        <li><a href="/privacidad" class="hover:text-white transition">Privacidad</a></li>
+                        <li><a href="/terminos" class="hover:text-white transition">Términos</a></li>
+                        <li><a href="/seguridad" class="hover:text-white transition">Seguridad</a></li>
                     </ul>
                 </div>
                 
@@ -1280,7 +1374,7 @@
             </div>
             
             <div class="border-t border-white/10 pt-8 text-center text-gray-500 text-sm">
-                <p>© 2026 Veliora.lat — Hecho en Tamaulipas, México</p>
+                <p>© 2026 Veliora.lat — Hecho con <span style="color: #ef4444;">&#9829;</span> en Tamaulipas, México</p>
             </div>
         </div>
     </footer>

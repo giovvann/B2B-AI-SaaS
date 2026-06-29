@@ -73,7 +73,7 @@ export async function middleware(request: NextRequest) {
   // ============================================
   // REGLA 4: Otras rutas públicas
   // ============================================
-  const publicRoutes = ['/login', '/registro', '/auth']
+  const publicRoutes = ['/login', '/registro', '/auth', '/privacidad', '/terminos', '/seguridad']
   if (publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))) {
     return response
   }
