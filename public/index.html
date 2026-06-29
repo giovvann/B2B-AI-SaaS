@@ -195,6 +195,118 @@
             z-index: 9999;
             transition: width 0.1s;
         }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            background: rgba(255,255,255,0.05);
+            border-radius: 9999px;
+            padding: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .toggle-switch button {
+            position: relative;
+            z-index: 1;
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: transparent;
+            color: #9ca3af;
+            border: none;
+        }
+
+        .toggle-switch button.active {
+            background: linear-gradient(135deg, #2563EB, #06B6D4);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .pricing-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 60px rgba(37, 99, 235, 0.15);
+        }
+
+        .value-tag {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .value-tag::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(6, 182, 212, 0.08));
+            border-radius: 0.75rem;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-nav.open { right: 0; }
+
+        .mobile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 99;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .whatsapp-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
+            z-index: 50;
+            transition: all 0.3s ease;
+            animation: pulse-whatsapp 2s infinite;
+        }
+
+        .whatsapp-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 35px rgba(37, 211, 102, 0.6);
+        }
+
+        @keyframes pulse-whatsapp {
+            0%, 100% { box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 6px 35px rgba(37, 211, 102, 0.7); }
+        }
         
         .boutique-badge {
             background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.15));
@@ -211,6 +323,36 @@
 </head>
 <body>
     <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- WHATSAPP FAB -->
+    <a href="https://wa.me/528342177709?text=Hola%20Veliora%2C%20tengo%20una%20duda" target="_blank" rel="noopener noreferrer" class="whatsapp-fab" aria-label="WhatsApp">
+        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+    </a>
+
+    <!-- MOBILE MENU OVERLAY -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <!-- MOBILE NAV -->
+    <nav class="mobile-nav" id="mobileNav">
+        <button onclick="closeMobileMenu()" class="self-end text-gray-400 hover:text-white transition-colors" aria-label="Cerrar menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <a href="#funciones" onclick="closeMobileMenu()" class="text-lg font-semibold text-gray-300 hover:text-white transition-colors">Funciones</a>
+        <a href="#boutique" onclick="closeMobileMenu()" class="text-lg font-semibold text-gray-300 hover:text-white transition-colors">Para Boutiques</a>
+        <a href="#precios" onclick="closeMobileMenu()" class="text-lg font-semibold text-gray-300 hover:text-white transition-colors">Precios</a>
+        <a href="#faq" onclick="closeMobileMenu()" class="text-lg font-semibold text-gray-300 hover:text-white transition-colors">FAQ</a>
+        <hr class="border-white/10">
+        <a href="/registro?trial=true" onclick="closeMobileMenu()" class="btn-primary px-5 py-3 rounded-lg font-semibold text-white text-center">
+            Prueba 7 días gratis
+        </a>
+        <a href="/registro?trial=false" onclick="closeMobileMenu()" class="btn-secondary px-5 py-3 rounded-lg font-semibold text-white text-center">
+            Comprar membresía ahora
+        </a>
+    </nav>
 
     <!-- HEADER -->
     <header class="sticky-header fixed top-0 w-full z-50 border-b border-white/10">
@@ -797,179 +939,172 @@
     <!-- PRICING -->
     <section id="precios" class="py-20 bg-gradient-to-b from-blue-900/5 to-transparent">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Planes simples, sin sorpresas</h2>
-                <p class="text-xl text-gray-400">Todas las funciones incluidas. Solo cambia el número de dispositivos.</p>
+            <div class="text-center mb-10" data-aos="fade-up">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 mb-4">
+                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="text-xs font-semibold text-green-400">PRUEBA 7 DÍAS GRATIS — SIN TARJETA</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold mb-3">Menos de lo que pagas por un par de tenis</h2>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Todo lo que necesitas para controlar tu boutique. Un solo plan, sin límites ocultos, sin sorpresas.
+                </p>
             </div>
-            
-            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                <!-- PRO -->
-                <div class="card-hover bg-gradient-to-br from-white/5 to-white/0 rounded-2xl p-8 border border-white/10" data-aos="fade-up" data-aos-delay="100">
-                    <div class="mb-4">
-                        <div class="inline-block px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 mb-4">
-                            <span class="text-xs font-semibold text-green-400">PRUEBA GRATIS 7 DÍAS</span>
+
+            <div class="max-w-3xl mx-auto mb-12" data-aos="fade-up">
+                <div class="pricing-card bg-gradient-to-br from-white/5 to-white/0 rounded-3xl p-6 md:p-10 border border-white/10">
+                    <!-- TOGGLE -->
+                    <div class="flex justify-center mb-8">
+                        <div class="toggle-switch">
+                            <button id="toggleMonthly" class="active" onclick="togglePlan('monthly')">Pago mensual</button>
+                            <button id="toggleYearly" onclick="togglePlan('yearly')">Pago anual</button>
                         </div>
                     </div>
-                    
-                    <h3 class="text-2xl font-bold mb-2">Plan PRO</h3>
-                    <p class="text-gray-400 mb-6">Para boutiques con hasta 5 empleados o dispositivos</p>
-                    
-                    <div class="mb-8">
-                        <div class="flex items-baseline">
-                            <span class="text-5xl font-bold">$449</span>
-                            <span class="text-gray-400 ml-2">MXN/mes</span>
+
+                    <!-- PRICE DISPLAY -->
+                    <div class="text-center mb-6">
+                        <div class="flex items-baseline justify-center gap-2">
+                            <span class="text-5xl md:text-6xl font-bold text-white" id="priceDisplay">$449</span>
+                            <span class="text-gray-400" id="periodDisplay">MXN/mes</span>
+                        </div>
+                        <div id="savingsBadge" class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/25 mt-3 hidden">
+                            <svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"/>
+                                <path d="M9 13h2v5a1 1 0 11-2 0v-5z"/>
+                            </svg>
+                            <span class="text-sm font-semibold text-cyan-300">Ahorras $889 al año</span>
                         </div>
                     </div>
-                    
-                    <div class="mb-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg flex items-center space-x-2">
-                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                        <span class="text-sm text-blue-300 font-medium">Hasta 5 dispositivos o usuarios</span>
+
+                    <p class="text-center text-gray-500 text-sm mb-8">
+                        Cancela cuando quieras. Sin multas, sin preguntas.
+                    </p>
+
+                    <!-- FEATURES GRID -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-8">
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Escaneo de facturas con IA <strong class="text-cyan-400">ilimitado</strong></span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Productos, ventas e inventario <strong class="text-cyan-400">ilimitados</strong></span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Control por tallas, colores y marcas</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Alertas por WhatsApp</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">App para empleados</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Métricas y dashboard completo</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">IA de análisis de ventas y temporadas</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Funciona sin internet</span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Empleados y dispositivos <strong class="text-cyan-400">ilimitados</strong></span>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-cyan-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm text-gray-300">Soporte prioritario en español</span>
+                        </div>
                     </div>
-                    
-                    <div class="mb-6">
-                        <p class="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Todo incluido:</p>
-                        <ul class="space-y-3">
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Escaneo de facturas con IA <strong class="text-cyan-400">ilimitado</strong></span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Productos, ventas e inventario <strong class="text-cyan-400">ilimitados</strong></span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Control por tallas, colores y marcas</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Alertas por WhatsApp</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Funciona sin internet</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>IA de análisis de ventas y temporadas</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Dashboard completo + App del dueño y empleado</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Soporte en español</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Prueba gratis 7 días</span>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <a href="/registro?trial=true" class="btn-primary block w-full py-4 text-center rounded-lg font-semibold text-white mb-3">
+
+                    <!-- CTAs -->
+                    <a href="/registro?trial=true" class="btn-primary block w-full py-4 text-center rounded-2xl font-bold text-white text-lg mb-3">
                         Probar 7 días gratis
                     </a>
-                    <a href="/registro?trial=false" class="btn-secondary block w-full py-3 text-center rounded-lg font-semibold text-white text-sm">
+                    <a href="/registro?trial=false" class="btn-secondary block w-full py-3.5 text-center rounded-2xl font-semibold text-white text-sm">
                         Comprar membresía ahora
-                    </a>
-                </div>
-                
-                <!-- MAX -->
-                <div class="pricing-popular card-hover rounded-2xl p-8 relative" data-aos="fade-up" data-aos-delay="200">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2">
-                        <div class="gradient-bg px-6 py-2 rounded-full text-white font-bold text-sm flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            <span>RECOMENDADO</span>
-                        </div>
-                    </div>
-                    
-                    <h3 class="text-2xl font-bold mb-2">Plan MAX</h3>
-                    <p class="text-gray-400 mb-6">Para boutiques en crecimiento o con varias sucursales</p>
-                    
-                    <div class="mb-8">
-                        <div class="flex items-baseline">
-                            <span class="text-5xl font-bold">$749</span>
-                            <span class="text-gray-400 ml-2">MXN/mes</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6 p-3 bg-cyan-500/10 border border-cyan-500/20 rounded-lg flex items-center space-x-2">
-                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                        </svg>
-                        <span class="text-sm text-cyan-300 font-medium">Dispositivos y usuarios ilimitados</span>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <p class="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Todo del Plan PRO más:</p>
-                        <ul class="space-y-3">
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span><strong>Empleados ilimitados</strong> en la misma cuenta</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span><strong>Múltiples sucursales</strong> sincronizadas</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Soporte prioritario 24/7</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Onboarding personalizado para tu equipo</span>
-                            </li>
-                            <li class="flex items-start space-x-3 text-sm">
-                                <svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>Reportes avanzados por sucursal</span>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <a href="/registro?trial=false" class="btn-primary block w-full py-4 text-center rounded-lg font-semibold text-white mb-3">
-                        Comprar membresía ahora
-                    </a>
-                    <a href="https://wa.me/528342177709?text=Hola%20Veliora%2C%20quiero%20informes%20sobre%20el%20plan%20MAX" target="_blank" rel="noopener noreferrer" class="btn-secondary block w-full py-3 text-center rounded-lg font-semibold text-white text-sm">
-                        Contactar ventas
                     </a>
                 </div>
             </div>
-            
-            <p class="text-center text-gray-400 mt-8 text-sm">El plan PRO incluye 7 días de prueba gratis. Sin tarjeta de crédito. Cancela cuando quieras.</p>
+
+            <!-- VALUE COMPARISON -->
+            <div class="max-w-4xl mx-auto" data-aos="fade-up">
+                <div class="text-center mb-8">
+                    <p class="text-sm font-semibold text-gray-500 uppercase tracking-widest">¿Vale la pena?</p>
+                    <h3 class="text-2xl md:text-3xl font-bold mt-2">Si vendes 2 prendas más al mes, Veliora se paga solo</h3>
+                    <p class="text-gray-400 mt-2 text-sm">Una talla agotada = venta perdida de $500-$1,200. Con Veliora, nunca más.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- SIN VELIORA -->
+                    <div class="bg-gradient-to-br from-red-500/5 to-red-500/0 rounded-2xl p-6 border border-red-500/10">
+                        <div class="flex items-center gap-2 mb-4">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            <span class="text-sm font-bold text-red-400 uppercase tracking-wider">Sin Veliora</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">Empleado para inventario</span>
+                                <span class="text-sm font-bold text-red-400">$2,000/mes</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">Horas capturando prendas</span>
+                                <span class="text-sm font-bold text-red-400">5+ hrs/sem</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">Pérdida por tallas agotadas</span>
+                                <span class="text-sm font-bold text-red-400">$500-$1,200 c/u</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">App para empleados separada</span>
+                                <span class="text-sm font-bold text-red-400">$1,500/mes</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-red-500/10 rounded-xl mt-2">
+                                <span class="text-sm font-bold text-red-300">Total sin Veliora</span>
+                                <span class="text-lg font-bold text-red-400">$3,500+/mes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CON VELIORA -->
+                    <div class="bg-gradient-to-br from-green-500/5 to-green-500/0 rounded-2xl p-6 border border-green-500/10">
+                        <div class="flex items-center gap-2 mb-4">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span class="text-sm font-bold text-green-400 uppercase tracking-wider">Con Veliora</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">Control de inventario</span>
+                                <span class="text-sm font-bold text-green-400">Incluido</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">Carga de productos</span>
+                                <span class="text-sm font-bold text-green-400">Segundos con IA</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">Alertas de stock bajo</span>
+                                <span class="text-sm font-bold text-green-400">Automáticas</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-black/30 rounded-xl">
+                                <span class="text-sm text-gray-400">App para empleados</span>
+                                <span class="text-sm font-bold text-green-400">Incluida</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl mt-2 border border-blue-500/20">
+                                <span class="text-sm font-bold text-white">Veliora</span>
+                                <span class="text-lg font-bold text-cyan-400" id="comparisonPrice">$449/mes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1151,14 +1286,64 @@
     </footer>
 
     <script>
+        // Mobile Menu
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        mobileMenuBtn?.addEventListener('click', () => {
-            alert('Menú móvil - Próximamente');
-        });
-        
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+
+        function openMobileMenu() {
+            mobileNav.classList.add('open');
+            mobileOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            mobileNav.classList.remove('open');
+            mobileOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        mobileMenuBtn?.addEventListener('click', openMobileMenu);
+        mobileOverlay?.addEventListener('click', closeMobileMenu);
+
+        // Pricing Toggle
+        let currentPlan = 'monthly';
+
+        function togglePlan(type) {
+            currentPlan = type;
+            const monthlyBtn = document.getElementById('toggleMonthly');
+            const yearlyBtn = document.getElementById('toggleYearly');
+            const priceDisplay = document.getElementById('priceDisplay');
+            const periodDisplay = document.getElementById('periodDisplay');
+            const savingsBadge = document.getElementById('savingsBadge');
+            const comparisonPrice = document.getElementById('comparisonPrice');
+
+            if (type === 'monthly') {
+                monthlyBtn.classList.add('active');
+                yearlyBtn.classList.remove('active');
+                priceDisplay.textContent = '$449';
+                periodDisplay.textContent = 'MXN/mes';
+                savingsBadge.classList.add('hidden');
+                if (comparisonPrice) comparisonPrice.textContent = '$449/mes';
+            } else {
+                yearlyBtn.classList.add('active');
+                monthlyBtn.classList.remove('active');
+                priceDisplay.textContent = '$4,499';
+                periodDisplay.textContent = 'MXN/año';
+                savingsBadge.classList.remove('hidden');
+                if (comparisonPrice) comparisonPrice.textContent = '$4,499/año';
+            }
+        }
+
+        // Scroll Progress
         window.addEventListener('scroll', () => {
             const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
             document.getElementById('scrollProgress').style.width = scrolled + '%';
+        });
+
+        // Close mobile menu on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) closeMobileMenu();
         });
     </script>
     
