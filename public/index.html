@@ -676,9 +676,9 @@
                 <div data-aos="fade-left" class="relative flex justify-center">
                     <div class="floating">
                         <div class="phone-frame overflow-hidden">
-                            <div class="phone-screen" style="padding: 36px 14px 14px;">
+                            <div class="phone-screen" style="padding: 36px 14px 14px; display: flex; flex-direction: column; gap: 0;">
                                 <!-- Status bar -->
-                                <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center justify-between mb-2.5 flex-shrink-0">
                                     <span class="text-[10px] font-bold text-gray-400">9:41</span>
                                     <div class="flex items-center gap-1">
                                         <span class="text-[8px] text-gray-500">5G</span>
@@ -691,108 +691,84 @@
                                     </div>
                                 </div>
 
-                                <!-- Header nav with period selector -->
-                                <div class="flex items-center justify-between mb-2">
-                                    <div>
-                                        <div class="text-[8px] font-bold text-gray-500 uppercase tracking-[0.15em]">Métricas</div>
-                                        <div class="text-sm font-black text-white">Mi Boutique</div>
-                                    </div>
-                                    <div class="flex gap-1">
-                                        <span class="px-1.5 py-0.5 text-[7px] font-bold rounded-full bg-white/5 text-gray-500 border border-white/10">Semana</span>
-                                        <span class="px-1.5 py-0.5 text-[7px] font-bold rounded-full text-white" style="background: linear-gradient(135deg, #2563EB, #06B6D4);">Mes</span>
-                                    </div>
+                                <!-- Header: boutique name + MI NEGOCIO -->
+                                <div class="flex-shrink-0 mb-2.5">
+                                    <div class="text-[8px] font-bold text-zinc-400 uppercase tracking-[0.2em] mb-1">Mi Boutique</div>
+                                    <div class="text-xl font-black tracking-tight text-white">MI NEGOCIO</div>
                                 </div>
 
-                                <!-- 4 KPI Cards filling the width -->
-                                <div class="grid grid-cols-2 gap-1.5 mb-2">
-                                    <div class="rounded-lg px-2 py-1.5 bg-white/[0.04] border border-white/[0.06]">
-                                        <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider">Ventas</div>
-                                        <div class="text-sm font-black text-white">$12,430</div>
-                                        <div class="text-[7px] text-green-400 font-semibold">+23% vs mes ant.</div>
-                                    </div>
-                                    <div class="rounded-lg px-2 py-1.5 bg-white/[0.04] border border-white/[0.06]">
-                                        <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider">Ganancia neta</div>
-                                        <div class="text-sm font-black text-white">$8,200</div>
-                                        <div class="text-[7px] text-green-400 font-semibold">65% margen</div>
-                                    </div>
-                                    <div class="rounded-lg px-2 py-1.5 bg-white/[0.04] border border-white/[0.06]">
-                                        <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider">Ticket promedio</div>
-                                        <div class="text-sm font-black text-white">$847</div>
-                                        <div class="text-[7px] text-blue-400 font-semibold">+8% vs mes ant.</div>
-                                    </div>
-                                    <div class="rounded-lg px-2 py-1.5 bg-white/[0.04] border border-white/[0.06]">
-                                        <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider">Unidades vend.</div>
-                                        <div class="text-sm font-black text-white">1,240</div>
-                                        <div class="text-[7px] text-gray-400 font-semibold">45 en inventario</div>
-                                    </div>
+                                <!-- Period selector pills (exact match: active bg-white text-zinc-900, inactive bg-zinc-900 border-zinc-800) -->
+                                <div class="flex gap-1.5 mb-3 flex-shrink-0">
+                                    <span class="px-2.5 py-1.5 rounded-2xl font-bold text-[8px] tracking-wider bg-white text-zinc-900 shadow-sm">HOY</span>
+                                    <span class="px-2.5 py-1.5 rounded-2xl font-bold text-[8px] tracking-wider text-zinc-400 bg-zinc-900 border border-zinc-800">SEMANA</span>
+                                    <span class="px-2.5 py-1.5 rounded-2xl font-bold text-[8px] tracking-wider text-zinc-400 bg-zinc-900 border border-zinc-800">MES</span>
+                                    <span class="px-2.5 py-1.5 rounded-2xl font-bold text-[8px] tracking-wider text-zinc-400 bg-zinc-900 border border-zinc-800">AÑO</span>
                                 </div>
 
-                                <!-- Mini area chart (Ventas del mes) -->
-                                <div class="rounded-lg p-2 bg-white/[0.03] border border-white/[0.06] mb-2">
-                                    <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider mb-1">Ventas del mes</div>
-                                    <svg class="w-full" style="height: 36px;" viewBox="0 0 240 36" preserveAspectRatio="none">
-                                        <path d="M0 30 Q10 28 20 25 T40 22 T60 18 T80 20 T100 14 T120 10 T140 8 T160 12 T180 6 T200 4 T220 6 T240 3" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-                                        <path d="M0 30 Q10 28 20 25 T40 22 T60 18 T80 20 T100 14 T120 10 T140 8 T160 12 T180 6 T200 4 T220 6 T240 3 L240 36 L0 36 Z" fill="url(#areaGrad)" opacity="0.3"/>
-                                        <defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/></linearGradient></defs>
-                                    </svg>
-                                </div>
-
-                                <!-- Insurance + Best day row -->
-                                <div class="grid grid-cols-2 gap-1.5 mb-2">
-                                    <div class="rounded-lg px-2 py-1.5 bg-white/[0.03] border border-white/[0.06]">
-                                        <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider">Producto estrella</div>
-                                        <div class="text-[9px] font-bold text-white truncate">Vestido Floral Primavera</div>
-                                        <div class="text-[7px] text-blue-400 font-semibold">32 vendidos</div>
-                                    </div>
-                                    <div class="rounded-lg px-2 py-1.5 bg-white/[0.03] border border-white/[0.06]">
-                                        <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider">Mejor día</div>
-                                        <div class="text-[9px] font-bold text-white">Viernes</div>
-                                        <div class="text-[7px] text-blue-400 font-semibold">$3,420 en ventas</div>
-                                    </div>
-                                </div>
-
-                                <!-- Payment method mini bar -->
-                                <div class="rounded-lg px-2 py-1.5 bg-white/[0.03] border border-white/[0.06] mb-2">
-                                    <div class="text-[7px] font-bold text-gray-500 uppercase tracking-wider mb-1">Método de pago</div>
-                                    <div class="flex items-center gap-3">
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between text-[7px] mb-0.5">
-                                                <span class="text-gray-400">Efectivo</span>
-                                                <span class="text-white font-bold">62%</span>
+                                <!-- 3 Metric cards (exact match: bg-zinc-900 rounded-2xl, icon + label + amount + sub) -->
+                                <div class="flex-shrink-0 space-y-2 mb-3">
+                                    <!-- Ventas totales -->
+                                    <div class="rounded-2xl p-3 border border-zinc-800 shadow-sm" style="background: #18181b;">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0" style="background: #3b82f6; box-shadow: 0 2px 8px rgba(59,130,246,0.3);">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                             </div>
-                                            <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                <div class="h-full rounded-full" style="width: 62%; background: linear-gradient(90deg, #3b82f6, #06b6d4);"></div>
+                                            <div class="min-w-0">
+                                                <div class="text-[7px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Ventas totales</div>
+                                                <div class="text-base font-black text-white">$12,430</div>
+                                                <div class="text-[7px] font-semibold text-blue-400">18 transacciones</div>
                                             </div>
                                         </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between text-[7px] mb-0.5">
-                                                <span class="text-gray-400">Tarjeta</span>
-                                                <span class="text-white font-bold">28%</span>
+                                    </div>
+                                    <!-- Ganancia neta -->
+                                    <div class="rounded-2xl p-3 border border-zinc-800 shadow-sm" style="background: #18181b;">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0" style="background: #10b981; box-shadow: 0 2px 8px rgba(16,185,129,0.3);">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                             </div>
-                                            <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                <div class="h-full rounded-full" style="width: 28%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div>
+                                            <div class="min-w-0">
+                                                <div class="text-[7px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Ganancia neta</div>
+                                                <div class="text-base font-black text-white">$8,200</div>
+                                                <div class="text-[7px] font-semibold text-emerald-400">Margen 65%</div>
                                             </div>
                                         </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between text-[7px] mb-0.5">
-                                                <span class="text-gray-400">Transf.</span>
-                                                <span class="text-white font-bold">10%</span>
+                                    </div>
+                                    <!-- Productos vendidos -->
+                                    <div class="rounded-2xl p-3 border border-zinc-800 shadow-sm" style="background: #18181b;">
+                                        <div class="flex items-start gap-3">
+                                            <div class="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0" style="background: #8b5cf6; box-shadow: 0 2px 8px rgba(139,92,246,0.3);">
+                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                                             </div>
-                                            <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                <div class="h-full rounded-full" style="width: 10%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+                                            <div class="min-w-0">
+                                                <div class="text-[7px] font-bold text-zinc-400 uppercase tracking-wider mb-0.5">Productos vendidos</div>
+                                                <div class="text-base font-black text-white">1,240</div>
+                                                <div class="text-[7px] font-semibold text-violet-400">45 en inventario</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Stock alert -->
-                                <div class="rounded-lg px-2 py-1.5 bg-red-500/5 border border-red-500/20 flex items-center gap-2">
-                                    <div class="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse flex-shrink-0"></div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="text-[7px] font-bold text-red-300 uppercase tracking-wider">Stock crítico</div>
-                                        <div class="text-[8px] font-semibold text-white truncate">3 productos por agotarse</div>
+                                <!-- Area chart (exact: Activity icon + VENTAS POR DÍA + area chart SVG) -->
+                                <div class="rounded-2xl p-3 border border-zinc-800 shadow-sm flex-shrink-0" style="background: #18181b;">
+                                    <div class="flex items-center gap-1.5 mb-2">
+                                        <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                                        <span class="text-[7px] font-black text-white tracking-tight">VENTAS POR DÍA</span>
                                     </div>
-                                    <div class="text-[7px] font-bold text-red-400 flex-shrink-0">Ver →</div>
+                                    <div style="position: relative; height: 50px;">
+                                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 220 50" preserveAspectRatio="none">
+                                            <line x1="0" y1="37" x2="220" y2="37" stroke="#27272a" stroke-width="0.5" stroke-dasharray="2,2"/>
+                                            <line x1="0" y1="25" x2="220" y2="25" stroke="#27272a" stroke-width="0.5" stroke-dasharray="2,2"/>
+                                            <line x1="0" y1="13" x2="220" y2="13" stroke="#27272a" stroke-width="0.5" stroke-dasharray="2,2"/>
+                                            <defs>
+                                                <linearGradient id="areaGradPhone" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stop-color="#3b82f6" stop-opacity="0.4"/>
+                                                    <stop offset="95%" stop-color="#3b82f6" stop-opacity="0"/>
+                                                </linearGradient>
+                                            </defs>
+                                            <path d="M0 40 L15 38 L30 35 L45 32 L60 28 L75 30 L90 22 L105 18 L120 15 L135 12 L150 10 L165 14 L180 8 L195 4 L210 6 L220 3 L220 50 L0 50 Z" fill="url(#areaGradPhone)" opacity="1"/>
+                                            <path d="M0 40 L15 38 L30 35 L45 32 L60 28 L75 30 L90 22 L105 18 L120 15 L135 12 L150 10 L165 14 L180 8 L195 4 L210 6 L220 3" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                    </div>
                                 </div>
 
                                 <!-- Home bar -->
