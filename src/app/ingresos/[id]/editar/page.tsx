@@ -22,7 +22,7 @@ export default async function EditProductPage({ params }: Props) {
     .from('boutiques')
     .select('id, name')
     .eq('owner_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!boutique) redirect('/dashboard')
 
@@ -31,7 +31,7 @@ export default async function EditProductPage({ params }: Props) {
     .select('id, name, brand, season, size, color, sku, purchase_price, sale_price, stock')
     .eq('id', id)
     .eq('boutique_id', boutique.id)
-    .single()
+    .maybeSingle()
 
   if (!product) notFound()
 

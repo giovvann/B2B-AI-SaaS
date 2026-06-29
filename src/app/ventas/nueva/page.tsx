@@ -54,7 +54,7 @@ export default function NuevaVentaPage() {
         .from('boutiques')
         .select('id')
         .eq('owner_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (!boutique) return;
       setBoutiqueId(boutique.id);
@@ -132,7 +132,7 @@ export default function NuevaVentaPage() {
           .from('boutiques')
           .select('id')
           .eq('owner_id', user.id)
-          .single();
+          .maybeSingle();
         if (!boutique) throw new Error('No se encontro la boutique');
         bid = boutique.id;
       }
@@ -141,7 +141,7 @@ export default function NuevaVentaPage() {
         .from('sales')
         .insert({ boutique_id: bid, total_amount: total, payment_method: paymentMethod })
         .select()
-        .single();
+        .maybeSingle();
 
       if (saleError || !sale) throw saleError || new Error('Error creando venta');
 

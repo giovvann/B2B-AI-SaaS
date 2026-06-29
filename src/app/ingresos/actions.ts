@@ -16,7 +16,7 @@ export async function deleteProduct(formData: FormData) {
     .from('boutiques')
     .select('id')
     .eq('owner_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!boutique) throw new Error('No se encontró tu boutique')
 

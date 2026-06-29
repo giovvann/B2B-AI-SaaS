@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
-
-// Inicializar Gemini con la API key del entorno
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +8,17 @@ export async function POST(req: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
+
+    const apiKey = process.env.GOOGLE_GEMINI_API_KEY
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'Error de configuración: API key no configurada' },
+        { status: 500 }
+      )
+    }
+
+    const { GoogleGenerativeAI } = await import('@google/generative-ai')
+    const genAI = new GoogleGenerativeAI(apiKey)
 
     const formData = await req.formData();
     const imageFile = formData.get('image') as File;
@@ -23,7 +30,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validar tipo de archivo
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(imageFile.type)) {
       return NextResponse.json(
@@ -32,7 +38,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validar tamaño (máximo 10MB)
     const maxSize = 10 * 1024 * 1024;
     if (imageFile.size > maxSize) {
       return NextResponse.json(
@@ -41,11 +46,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Convertir imagen a base64
     const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
     const base64Image = imageBuffer.toString('base64');
 
-    // Inicializar modelo Gemini
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `Eres un asistente experto en inventario de ropa en México. Analiza esta imagen de una factura o ticket. Extrae los productos y devuélvelos EXCLUSIVAMENTE en un array JSON con esta estructura: [{name: string, brand: string, season: string, purchase_price: number, quantity: number, size: string, color: string}]. Incluye marca (brand), temporada (season), talla (size), color si se identifican; si no hay información usa valores vacíos. Si no hay datos, devuelve un array vacío. No incluyas texto markdown, solo el JSON puro.`;
@@ -64,23 +67,13 @@ export async function POST(req: NextRequest) {
     const response = await result.response;
     let text = response.text();
 
-    // Limpiar posibles markdown o texto extra
     text = text.trim();
     
-    // Intentar extraer JSON si hay texto adicional
-    if (text.includes('```json')) {
-      const match = text.match(/```json\n([\s\S]*?)\n```/);
-      if (match) {
-        text = match[1];
-      }
-    } else if (text.includes('```')) {
-      const match = text.match(/```\n([\s\S]*?)\n```/);
-      if (match) {
-        text = match[1];
-      }
+    const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || text.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      text = jsonMatch[1] || jsonMatch[0];
     }
 
-    // Parsear JSON
     let products;
     try {
       products = JSON.parse(text);

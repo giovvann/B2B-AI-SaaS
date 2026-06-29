@@ -20,7 +20,7 @@ export default async function IngresosPage() {
     .from('boutiques')
     .select('id, name')
     .eq('owner_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!boutique) redirect('/dashboard')
 

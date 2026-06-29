@@ -78,7 +78,7 @@ export default function NewIncomePage() {
           .from('boutiques')
           .select('id')
           .eq('owner_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (boutiqueError || !boutique) {
           setError('No se encontró tu boutique. Contacta soporte.');
@@ -520,8 +520,12 @@ export default function NewIncomePage() {
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Cantidad *</label>
-                      <input type="number" value={manualProduct.quantity} onChange={(e) => setManualProduct(prev => ({ ...prev, quantity: parseInt(e.target.value) || 1 }))}
-                        min="1"
+                      <input type="number" value={manualProduct.quantity || ''} onChange={(e) => {
+                        const raw = e.target.value;
+                        if (raw === '') { setManualProduct(prev => ({ ...prev, quantity: 0 })); return; }
+                        const num = parseInt(raw);
+                        if (!isNaN(num) && num >= 0) setManualProduct(prev => ({ ...prev, quantity: num }));
+                      }} min="0"
                         className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
                     </div>
                   </div>

@@ -27,7 +27,7 @@ export default async function MetricasPage() {
     .from('boutiques')
     .select('id, name')
     .eq('owner_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (boutiqueError || !boutique) {
     redirect('/dashboard')

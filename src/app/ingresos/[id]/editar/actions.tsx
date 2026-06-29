@@ -23,7 +23,7 @@ export async function updateProduct(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('No estás autenticado')
 
-  const { data: boutique } = await supabase.from('boutiques').select('id').eq('owner_id', user.id).single()
+  const { data: boutique } = await supabase.from('boutiques').select('id').eq('owner_id', user.id).maybeSingle()
   if (!boutique) throw new Error('Boutique no encontrada')
 
   const { error } = await supabase.from('products').update({

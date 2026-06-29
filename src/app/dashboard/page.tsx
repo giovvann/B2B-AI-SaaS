@@ -29,7 +29,7 @@ export default async function DashboardPage() {
     .from('boutiques')
     .select('name')
     .eq('owner_id', user.id)
-    .single()
+    .maybeSingle()
 
   return (
     <HomePageContent 
