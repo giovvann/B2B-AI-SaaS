@@ -24,7 +24,7 @@ export default async function SuperAdminPage() {
   // 1. Verificar que sea el superadmin
   const { data: { user } } = await supabase.auth.getUser()
   if (!user || user.email?.toLowerCase() !== SUPERADMIN_EMAIL.toLowerCase()) {
-    redirect('/')
+    redirect('/dashboard')
   }
   
   // 2. Obtener todas las boutiques con email del dueño usando la vista

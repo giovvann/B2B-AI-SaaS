@@ -24,7 +24,7 @@ export default async function EditProductPage({ params }: Props) {
     .eq('owner_id', user.id)
     .single()
 
-  if (!boutique) redirect('/')
+  if (!boutique) redirect('/dashboard')
 
   const { data: product } = await supabase
     .from('products')

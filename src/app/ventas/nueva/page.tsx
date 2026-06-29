@@ -181,7 +181,7 @@ export default function NuevaVentaPage() {
       setTimeout(() => {
         setCart([]);
         setShowSuccess(false);
-        router.push('/');
+        router.push('/dashboard');
       }, 2000);
     } catch (error) {
       console.error('Error completando venta:', error);
@@ -233,7 +233,7 @@ export default function NuevaVentaPage() {
               className="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
               {theme === 'dark' ? <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" /> : <Moon className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />}
             </button>
-            <button onClick={() => router.push('/')}
+            <button onClick={() => router.push('/dashboard')}
               className="px-8 py-4 text-xl font-bold bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
               CANCELAR
             </button>

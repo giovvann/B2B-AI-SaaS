@@ -200,7 +200,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
             )}
           </button>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push('/dashboard')}
             className="flex items-center gap-2 px-5 py-4 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 font-bold rounded-2xl transition-colors border border-red-200 dark:border-red-900/50 shadow-sm"
           >
             <X className="w-4 h-4" strokeWidth={3} />

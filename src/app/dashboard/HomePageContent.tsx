@@ -28,7 +28,6 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
   const [showSettings, setShowSettings] = useState(false)
   const [mounted, setMounted] = useState(false)
 
-  // ✅ CRÍTICO: Esperar a que el componente se monte en el cliente
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -108,7 +107,6 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
       <div className="max-w-5xl mx-auto pb-8">
-        {/* Header */}
         <div className="mb-10 md:mb-12 flex items-center justify-between flex-wrap gap-4">
           <div>
             <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-2">
@@ -123,7 +121,6 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
-            {/* ✅ Botón de tema con protección contra hydration mismatch */}
             <button
               onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
@@ -131,7 +128,7 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
               disabled={!mounted}
             >
               {!mounted ? (
-                <div className="w-5 h-5" /> // Placeholder del mismo tamaño
+                <div className="w-5 h-5" />
               ) : theme === 'dark' ? (
                 <Sun className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
               ) : (
@@ -174,7 +171,6 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
           </div>
         </div>
 
-        {/* Acciones principales */}
         <div className={`grid gap-5 ${
           role === 'owner' 
             ? 'grid-cols-1 md:grid-cols-3' 

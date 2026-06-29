@@ -312,10 +312,10 @@ export default function NewIncomePage() {
   const handleCancel = () => {
     if (products.length > 0) {
       if (confirm('¿Estás seguro de que quieres cancelar? Se perderán todos los productos extraídos.')) {
-        router.push('/');
+        router.push('/dashboard');
       }
     } else {
-      router.push('/');
+      router.push('/dashboard');
     }
   };
 

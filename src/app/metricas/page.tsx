@@ -19,7 +19,7 @@ export default async function MetricasPage() {
   // 2. Verificar que sea dueño (solo dueños ven métricas)
   const role = user.user_metadata?.role
   if (role !== 'owner') {
-    redirect('/')
+    redirect('/dashboard')
   }
 
   // 3. Obtener boutique
@@ -30,7 +30,7 @@ export default async function MetricasPage() {
     .single()
 
   if (boutiqueError || !boutique) {
-    redirect('/')
+    redirect('/dashboard')
   }
 
   // 4. Cargar ventas de los últimos 2 años con sus items y productos

@@ -29,11 +29,8 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
-  
-  // Email del superadmin (case-insensitive)
+
   const SUPERADMIN_EMAIL = (process.env.SUPERADMIN_EMAIL || 'Giovva729@hotmail.com').toLowerCase()
-  
-  // Verificar si el usuario actual es superadmin
   const isSuperAdmin = user?.email?.toLowerCase() === SUPERADMIN_EMAIL
 
   // ============================================
@@ -46,12 +43,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url)
     }
     if (!isSuperAdmin) {
-      // Si no es superadmin, redirigir a home
       const url = request.nextUrl.clone()
-      url.pathname = '/'
+      url.pathname = '/dashboard'
       return NextResponse.redirect(url)
     }
-    // Superadmin tiene acceso total
     return response
   }
 
@@ -63,15 +58,28 @@ export async function middleware(request: NextRequest) {
   }
 
   // ============================================
-  // REGLA 3: Rutas públicas (no requieren auth)
+  // REGLA 3: / - Landing page pública
+  // Si el usuario ya inició sesión, redirigir al dashboard
   // ============================================
-  const publicRoutes = ['/', '/login', '/auth']
+  if (pathname === '/') {
+    if (user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+    return response
+  }
+
+  // ============================================
+  // REGLA 4: Otras rutas públicas
+  // ============================================
+  const publicRoutes = ['/login', '/registro', '/auth']
   if (publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))) {
     return response
   }
 
   // ============================================
-  // REGLA 4: Rutas API públicas
+  // REGLA 5: Rutas API públicas
   // ============================================
   if (pathname.startsWith('/api/extract-invoice') || 
       pathname.startsWith('/api/analyze-business')) {
@@ -79,7 +87,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // ============================================
-  // REGLA 5: Rutas protegidas (requieren auth)
+  // REGLA 6: Rutas protegidas (requieren auth)
   // ============================================
   if (!user) {
     const url = request.nextUrl.clone()
@@ -88,7 +96,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // ============================================
-  // REGLA 6: Verificar suscripción (excepto superadmin)
+  // REGLA 7: Verificar suscripción (excepto superadmin)
   // ============================================
   if (!isSuperAdmin) {
     const { data: boutique } = await supabase
@@ -102,7 +110,7 @@ export async function middleware(request: NextRequest) {
       const expiresAt = boutique.subscription_expires_at ? new Date(boutique.subscription_expires_at) : null
       const isExpired = !boutique.is_active || (expiresAt && expiresAt < now)
 
-      const protectedRoutes = ['/ingresos', '/ventas', '/metricas']
+      const protectedRoutes = ['/dashboard', '/ingresos', '/ventas', '/metricas']
       const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
 
       if (isExpired && isProtectedRoute && pathname !== '/suscripcion-expirada') {

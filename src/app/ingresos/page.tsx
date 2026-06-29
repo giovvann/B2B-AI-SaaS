@@ -22,7 +22,7 @@ export default async function IngresosPage() {
     .eq('owner_id', user.id)
     .single()
 
-  if (!boutique) redirect('/')
+  if (!boutique) redirect('/dashboard')
 
   const { data: products } = await supabase
     .from('products')

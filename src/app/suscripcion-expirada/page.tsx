@@ -1,71 +1,100 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { AlertCircle, LogOut, MessageCircle } from 'lucide-react'
+import { MessageCircle, LogOut, ArrowRight } from 'lucide-react'
 import { logoutAction } from './actions'
 
 export const metadata = {
-  title: 'Suscripción Expirada | Mi Boutique',
-  description: 'Tu acceso ha expirado. Contacta al administrador.',
+  title: 'Membresía | Veliora',
+  description: 'Activa tu membresía para seguir usando Veliora.',
 }
 
 export default async function SuscripcionExpiradaPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (!user) {
     redirect('/login')
   }
-  
-  const WHATSAPP_NUMBER = process.env.SUPERADMIN_WHATSAPP || '521234567890'
-  const SUPERADMIN_EMAIL = process.env.SUPERADMIN_EMAIL || 'Giovva729@hotmail.com'
-  
+
+  const WHATSAPP_NUMBER = '528342177709'
+  const SUBSCRIPTION_PRICE = process.env.NEXT_PUBLIC_SUBSCRIPTION_PRICE || '449'
+
   const whatsappMessage = encodeURIComponent(
-    `Hola, soy ${user.email} y mi suscripción ha expirado. Me gustaría renovarla.`
+    `Hola, soy ${user.email} y quiero activar mi membresía en Veliora.`
   )
   const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`
-  
+
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-4 transition-colors">
-      <div className="flex items-center justify-center min-h-[calc(100vh-2rem)]">
-        <div className="max-w-lg w-full">
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl p-8 md:p-12 border border-zinc-200 dark:border-zinc-800 text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-amber-100 dark:bg-amber-900/30 rounded-full mb-6">
-              <AlertCircle className="w-10 h-10 text-amber-600 dark:text-amber-400" strokeWidth={2} />
-            </div>
-            
-            <h1 className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white mb-4 tracking-tight">
-              Tu acceso ha expirado
-            </h1>
-            
-            <p className="text-base md:text-lg text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed">
-              Tu suscripción ya no está activa. Para seguir usando la plataforma, 
-              contacta al administrador para renovarla.
-            </p>
-            
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full min-h-[70px] bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-black text-lg tracking-wider rounded-2xl shadow-xl shadow-green-500/30 hover:shadow-green-500/50 flex items-center justify-center gap-3 transition-all active:scale-[0.98] mb-4"
-            >
-              <MessageCircle className="w-6 h-6" strokeWidth={2.5} />
-              <span>CONTACTAR PARA RENOVAR</span>
-            </a>
-            
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 font-semibold text-sm transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                Cerrar sesión
-              </button>
-            </form>
+    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
+      <div className="w-full max-w-lg">
+        <div className="bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-3xl p-8 md:p-10 border border-white/[0.06] text-center">
+          <div className="flex items-baseline justify-center space-x-1 mb-8">
+            <span className="text-4xl font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, letterSpacing: '0.02em' }}>Veliora</span>
+            <span className="text-sm text-cyan-400" style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300, letterSpacing: '0.1em' }}>.lat</span>
           </div>
-          
-          <p className="text-center text-xs text-zinc-400 dark:text-zinc-600 mt-6">
-            Email de soporte: {SUPERADMIN_EMAIL}
+
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-3">
+            Membresía requerida
+          </h1>
+
+          <p className="text-gray-400 mb-6 leading-relaxed">
+            Para usar Veliora necesitas una membresía activa de <strong className="text-white">${SUBSCRIPTION_PRICE} MXN/mes</strong>.
+            Paga una vez y accede a todas las funciones sin límites.
           </p>
+
+          <div className="bg-gradient-to-br from-blue-500/[0.08] to-cyan-500/[0.08] rounded-2xl p-5 mb-6 border border-blue-500/20 text-left">
+            <p className="text-sm text-gray-300 font-semibold mb-2 text-center">Incluye:</p>
+            <div className="grid grid-cols-2 gap-2 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>Inventario ilimitado</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>Ventas ilimitadas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>Asistente IA</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>Métricas avanzadas</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>App para empleados</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>Soporte prioritario</span>
+              </div>
+            </div>
+          </div>
+
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full min-h-[64px] bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg tracking-wide rounded-2xl shadow-xl shadow-green-500/30 hover:shadow-green-500/50 flex items-center justify-center gap-3 transition-all active:scale-[0.98] mb-3"
+          >
+            <MessageCircle className="w-6 h-6" strokeWidth={2.5} />
+            <span>PAGAR POR WHATSAPP</span>
+          </a>
+
+          <p className="text-xs text-gray-500 mb-6">
+            Pago único de ${SUBSCRIPTION_PRICE} MXN. Te contactamos por WhatsApp para procesar tu pago y activar tu membresía al instante.
+          </p>
+
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 text-gray-500 hover:text-gray-300 font-semibold text-sm transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Cerrar sesión
+            </button>
+          </form>
         </div>
       </div>
     </div>

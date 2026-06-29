@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { RoleSelector } from './RoleSelector'
+import { RoleSelector } from '@/app/RoleSelector'
 import { HomePageContent } from './HomePageContent'
 
 export const metadata = {
@@ -8,7 +8,7 @@ export const metadata = {
   description: 'Gestiona tu boutique de forma inteligente',
 }
 
-export default async function HomePage() {
+export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

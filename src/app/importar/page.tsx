@@ -22,7 +22,7 @@ export default async function ImportarPage() {
     .single()
   
   if (!boutique) {
-    redirect('/')
+    redirect('/dashboard')
   }
   
   return <ImportarClient boutiqueName={boutique.name} />
