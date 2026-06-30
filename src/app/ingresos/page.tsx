@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { Sparkles, Upload, Download } from 'lucide-react'
 import Link from 'next/link'
@@ -16,13 +17,28 @@ export default async function IngresosPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: boutique } = await supabase
+  let { data: boutique } = await supabase
     .from('boutiques')
     .select('id, name')
     .eq('owner_id', user.id)
     .maybeSingle()
 
-  if (!boutique) redirect('/dashboard')
+  if (!boutique) {
+    const admin = createAdminClient()
+    const { data: newBoutique, error: insertError } = await admin
+      .from('boutiques')
+      .insert({ owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: true })
+      .select('id, name')
+      .single()
+
+    if (insertError || !newBoutique) redirect('/dashboard')
+
+    await admin.auth.admin.updateUserById(user.id, {
+      user_metadata: { ...user.user_metadata, role: 'owner' },
+    })
+
+    boutique = newBoutique
+  }
 
   const { data: products } = await supabase
     .from('products')
