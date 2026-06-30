@@ -35,24 +35,17 @@ export async function registrarAction(formData: FormData) {
 
   const { error: confirmError } = await admin.auth.admin.updateUserById(
     signUpData.user.id,
-    { email_confirm: true }
-  )
-
-  if (confirmError) {
-    return { error: confirmError.message }
-  }
-
-  const { error: metadataError } = await admin.auth.admin.updateUserById(
-    signUpData.user.id,
     {
+      email_confirm: true,
       user_metadata: {
         full_name: email.split('@')[0],
+        role: 'owner',
       },
     }
   )
 
-  if (metadataError) {
-    return { error: metadataError.message }
+  if (confirmError) {
+    return { error: confirmError.message }
   }
 
   const subscriptionExpiresAt = trial
