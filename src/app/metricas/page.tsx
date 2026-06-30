@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { MetricasClient } from './MetricasClient'
 
@@ -23,14 +24,29 @@ export default async function MetricasPage() {
   }
 
   // 3. Obtener boutique
-  const { data: boutique, error: boutiqueError } = await supabase
+  let { data: boutique, error: boutiqueError } = await supabase
     .from('boutiques')
     .select('id, name')
     .eq('owner_id', user.id)
     .maybeSingle()
 
   if (boutiqueError || !boutique) {
-    redirect('/dashboard')
+    const admin = createAdminClient()
+    const { data: newBoutique, error: insertError } = await admin
+      .from('boutiques')
+      .insert({ owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: true })
+      .select('id, name')
+      .single()
+
+    if (insertError || !newBoutique) {
+      redirect('/dashboard')
+    }
+
+    await admin.auth.admin.updateUserById(user.id, {
+      user_metadata: { ...user.user_metadata, role: 'owner' },
+    })
+
+    boutique = newBoutique
   }
 
   // 4. Cargar ventas de los últimos 2 años con sus items y productos

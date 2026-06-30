@@ -21,7 +21,6 @@ import {
   Sparkles,
   CheckCheck,
   QrCode,
-  RefreshCw
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { syncBoutiqueAction } from '@/app/acciones/sync-boutique';
@@ -60,7 +59,6 @@ export default function NewIncomePage() {
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [boutiqueId, setBoutiqueId] = useState<string | null>(null);
   const [loadingBoutique, setLoadingBoutique] = useState(true);
-  const [syncingBoutique, setSyncingBoutique] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showManualForm, setShowManualForm] = useState(false);
   const [manualProduct, setManualProduct] = useState({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
@@ -84,6 +82,12 @@ export default function NewIncomePage() {
           .maybeSingle();
 
         if (boutiqueError || !boutique) {
+          const res = await syncBoutiqueAction();
+          if ('boutiqueId' in res) {
+            setBoutiqueId(res.boutiqueId);
+            setLoadingBoutique(false);
+            return;
+          }
           setError('No se encontró tu boutique. Contacta soporte.');
           setLoadingBoutique(false);
           return;
@@ -349,56 +353,12 @@ export default function NewIncomePage() {
     [products]
   );
 
-  const handleSyncBoutique = async () => {
-    setSyncingBoutique(true);
-    setError('');
-    try {
-      const res = await syncBoutiqueAction();
-      if ('error' in res) {
-        setError(res.error);
-        setSyncingBoutique(false);
-        return;
-      }
-      if ('boutiqueId' in res) {
-        setBoutiqueId(res.boutiqueId);
-        setSyncingBoutique(false);
-        router.refresh();
-        return;
-      }
-    } catch {
-      setError('Error al sincronizar boutique');
-      setSyncingBoutique(false);
-    }
-  };
-
-  if (loadingBoutique || (!boutiqueId && error && error.includes('No se encontró'))) {
+  if (loadingBoutique) {
     return (
       <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 flex items-center justify-center">
-        <div className="text-center max-w-sm">
-          {loadingBoutique ? (
-            <>
-              <Loader2 className="w-16 h-16 animate-spin text-blue-500 mx-auto mb-4" />
-              <p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">Cargando tu boutique...</p>
-            </>
-          ) : (
-            <>
-              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Boutique no encontrada</p>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">{error}</p>
-              <button
-                onClick={handleSyncBoutique}
-                disabled={syncingBoutique}
-                className="inline-flex items-center gap-2 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-6 py-3 rounded-xl transition-all active:scale-95 disabled:opacity-50"
-              >
-                {syncingBoutique ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <RefreshCw className="w-5 h-5" />
-                )}
-                {syncingBoutique ? 'Sincronizando...' : 'Crear mi boutique'}
-              </button>
-            </>
-          )}
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 animate-spin text-blue-500 mx-auto mb-4" />
+          <p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">Cargando tu boutique...</p>
         </div>
       </div>
     );
