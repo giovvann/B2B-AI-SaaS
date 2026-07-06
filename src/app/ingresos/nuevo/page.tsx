@@ -237,30 +237,23 @@ export default function NewIncomePage() {
 
   const addManualProduct = async () => {
     if (!manualProduct.name.trim() || manualProduct.purchase_price <= 0) return;
-    if (!boutiqueId) {
-      setError('No se encontró tu boutique. Recarga la página.');
-      return;
-    }
 
     setIsSaving(true);
     setError('');
     try {
-      const supabase = createClient();
-      const { error: insertError } = await supabase
-        .from('products')
-        .insert({
-          name: manualProduct.name,
-          brand: manualProduct.brand || null,
-          season: manualProduct.season || null,
-          size: manualProduct.size || 'Unitalla',
-          color: manualProduct.color || 'Único',
-          purchase_price: manualProduct.purchase_price,
-          sale_price: manualProduct.sale_price,
-          stock: manualProduct.quantity,
-          boutique_id: boutiqueId,
-        });
+      const { saveManualProductAction } = await import('@/app/acciones/save-manual-product');
+      const res = await saveManualProductAction({
+        name: manualProduct.name,
+        brand: manualProduct.brand,
+        season: manualProduct.season,
+        size: manualProduct.size || 'Unitalla',
+        color: manualProduct.color || 'Único',
+        purchase_price: manualProduct.purchase_price,
+        sale_price: manualProduct.sale_price,
+        quantity: manualProduct.quantity,
+      });
 
-      if (insertError) throw new Error(insertError.message);
+      if ('error' in res) throw new Error(res.error);
 
       setManualProduct({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
       setShowManualForm(false);
@@ -281,52 +274,37 @@ export default function NewIncomePage() {
 
   const handleSaveToInventory = async () => {
     if (products.length === 0) {
-      setError('No hay productos para guardar');
-      return;
+      setError('No hay productos para guardar')
+      return
     }
 
-    if (!boutiqueId) {
-      setError('No se encontró tu boutique. Recarga la página.');
-      return;
-    }
-
-    setIsSaving(true);
-    setError('');
+    setIsSaving(true)
+    setError('')
     try {
-      const supabase = createClient();
+      const { saveProductsAction } = await import('@/app/acciones/save-products')
+      const res = await saveProductsAction(
+        products.map(p => ({
+          name: p.name,
+          brand: p.brand,
+          season: p.season,
+          size: p.size,
+          color: p.color,
+          purchase_price: p.purchase_price,
+          sale_price: p.sale_price,
+          quantity: p.quantity,
+        }))
+      )
 
-      let totalSaved = 0;
-      for (const p of products) {
-        const { error: productError } = await supabase
-          .from('products')
-          .insert({
-            name: p.name,
-            brand: p.brand || null,
-            season: p.season || null,
-            size: p.size || null,
-            color: p.color || null,
-            purchase_price: p.purchase_price,
-            sale_price: p.sale_price,
-            stock: p.quantity,
-            boutique_id: boutiqueId,
-            created_at: new Date().toISOString(),
-          });
+      if ('error' in res) throw new Error(res.error)
 
-        if (productError) {
-          throw new Error(`Error al guardar "${p.name}": ${productError.message}`);
-        }
-
-        totalSaved++;
-      }
-
-      setSuccess(`${totalSaved} producto(s) guardado(s) correctamente`);
+      setSuccess(`${res.count} producto(s) guardado(s) correctamente`)
       setTimeout(() => {
-        router.push('/ingresos');
-      }, 1500);
+        router.push('/ingresos')
+      }, 1500)
     } catch (err: any) {
-      setError(`Error al guardar: ${err.message}`);
+      setError(`Error al guardar: ${err.message}`)
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
   };
 
