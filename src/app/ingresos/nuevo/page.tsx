@@ -235,27 +235,42 @@ export default function NewIncomePage() {
     setProducts(prev => prev.filter(p => p.id !== id));
   };
 
-  const addManualProduct = () => {
+  const addManualProduct = async () => {
     if (!manualProduct.name.trim() || manualProduct.purchase_price <= 0) return;
+    if (!boutiqueId) {
+      setError('No se encontró tu boutique. Recarga la página.');
+      return;
+    }
 
-    const newProduct: Product = {
-      id: `manual_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-      name: manualProduct.name,
-      brand: manualProduct.brand,
-      season: manualProduct.season,
-      size: manualProduct.size || 'Unitalla',
-      color: manualProduct.color || 'Único',
-      purchase_price: manualProduct.purchase_price,
-      sale_price: manualProduct.sale_price,
-      quantity: manualProduct.quantity,
-      status: 'edited',
-      sourceImageId: 'manual',
-    };
-    setProducts(prev => [...prev, newProduct]);
-    setManualProduct({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
-    setShowManualForm(false);
-    setSuccess('Producto agregado manualmente');
-    setTimeout(() => setSuccess(''), 2000);
+    setIsSaving(true);
+    setError('');
+    try {
+      const supabase = createClient();
+      const { error: insertError } = await supabase
+        .from('products')
+        .insert({
+          name: manualProduct.name,
+          brand: manualProduct.brand || null,
+          season: manualProduct.season || null,
+          size: manualProduct.size || 'Unitalla',
+          color: manualProduct.color || 'Único',
+          purchase_price: manualProduct.purchase_price,
+          sale_price: manualProduct.sale_price,
+          stock: manualProduct.quantity,
+          boutique_id: boutiqueId,
+        });
+
+      if (insertError) throw new Error(insertError.message);
+
+      setManualProduct({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
+      setShowManualForm(false);
+      setSuccess('Producto guardado en inventario');
+      setTimeout(() => setSuccess(''), 2000);
+    } catch (err: any) {
+      setError(`Error al guardar: ${err.message}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const acceptAll = () => {
@@ -537,11 +552,15 @@ export default function NewIncomePage() {
                     </div>
                   </div>
                   <button onClick={addManualProduct}
-                    disabled={!manualProduct.name.trim() || manualProduct.purchase_price <= 0}
+                    disabled={!manualProduct.name.trim() || manualProduct.purchase_price <= 0 || isSaving}
                     className="w-full py-3 bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 disabled:from-zinc-300 disabled:to-zinc-400 dark:disabled:from-zinc-700 dark:disabled:to-zinc-800 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                   >
-                    <Check className="w-4 h-4" strokeWidth={3} />
-                    Agregar producto
+                    {isSaving ? (
+                      <Loader2 className="w-4 h-4 animate-spin" strokeWidth={3} />
+                    ) : (
+                      <Check className="w-4 h-4" strokeWidth={3} />
+                    )}
+                    {isSaving ? 'Guardando...' : 'Agregar producto'}
                   </button>
                 </div>
               )}
