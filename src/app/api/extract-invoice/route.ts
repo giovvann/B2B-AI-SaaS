@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     const imageBuffer = Buffer.from(await imageFile.arrayBuffer());
     const base64Image = imageBuffer.toString('base64');
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const prompt = `Eres un asistente experto en inventario de ropa en México. Analiza esta imagen de una factura o ticket. Extrae los productos y devuélvelos EXCLUSIVAMENTE en un array JSON con esta estructura: [{name: string, brand: string, season: string, purchase_price: number, quantity: number, size: string, color: string}]. Incluye marca (brand), temporada (season), talla (size), color si se identifican; si no hay información usa valores vacíos. Si no hay datos, devuelve un array vacío. No incluyas texto markdown, solo el JSON puro.`;
 

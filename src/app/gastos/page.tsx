@@ -20,6 +20,20 @@ interface Expense {
 
 const CATEGORIES = ['Renta', 'Nómina', 'Proveedor', 'Servicios', 'Marketing', 'Transporte', 'Impuestos', 'Otro']
 
+// Devuelve la fecha local del usuario en formato YYYY-MM-DD (sin desfase UTC)
+function localDateISO(d: Date = new Date()): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+// Parsea YYYY-MM-DD como fecha LOCAL (no UTC) para evitar el desfase de 1 día
+function parseLocalDate(iso: string): Date {
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y, (m || 1) - 1, d || 1)
+}
+
 export default function GastosPage() {
   const router = useRouter()
   const { theme, setTheme } = useTheme()
@@ -37,7 +51,7 @@ export default function GastosPage() {
     concept: '',
     category: 'Otro',
     amount: '',
-    expense_date: new Date().toISOString().slice(0, 10),
+    expense_date: localDateISO(),
     note: '',
   })
 
@@ -93,7 +107,7 @@ export default function GastosPage() {
         .select()
       if (insErr) throw insErr
       if (data) setExpenses(prev => [data[0] as Expense, ...prev])
-      setForm({ concept: '', category: 'Otro', amount: '', expense_date: new Date().toISOString().slice(0, 10), note: '' })
+      setForm({ concept: '', category: 'Otro', amount: '', expense_date: localDateISO(), note: '' })
       setShowForm(false)
       setSuccess('Gasto registrado')
       setTimeout(() => setSuccess(''), 2000)
@@ -250,7 +264,7 @@ export default function GastosPage() {
                   <span className="text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full">{e.category}</span>
                   <span className="text-xs text-zinc-400 flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    {new Date(e.expense_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
+                    {parseLocalDate(e.expense_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
               </div>
