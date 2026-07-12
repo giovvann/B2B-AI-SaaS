@@ -52,10 +52,12 @@ export function ReminderDock() {
         .eq('boutique_id', bId)
         .order('due', { ascending: true })
       if (rem && alive) setItems(rem as Reminder[])
+      console.log('[REMINDER-DOCK] loadAll user=', userId, 'boutique=', bId, 'reminders=', rem?.length)
       setLoaded(true)
     }
     // sesión puede estar lista ya (persistida) o llegar después
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('[REMINDER-DOCK] getSession user=', session?.user?.id ?? 'NULL')
       if (session?.user && alive) loadAll(session.user.id)
     })
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
