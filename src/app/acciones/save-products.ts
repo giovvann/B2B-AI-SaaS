@@ -1,7 +1,7 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { getOrCreateBoutique } from '@/lib/boutique'
 import { revalidatePath } from 'next/cache'
 
 interface ProductInput {
@@ -20,37 +20,9 @@ export async function saveProductsAction(products: ProductInput[]) {
     return { error: 'No hay productos para guardar' }
   }
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { error: 'No hay sesión activa' }
-  }
-
-  // Obtener o crear boutique
-  let { data: boutique } = await supabase
-    .from('boutiques')
-    .select('id')
-    .eq('owner_id', user.id)
-    .maybeSingle()
-
-  if (!boutique) {
-    const admin = createAdminClient()
-    const { data: newBoutique, error: insertError } = await admin
-      .from('boutiques')
-      .insert({ owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: true })
-      .select('id')
-      .single()
-
-    if (insertError || !newBoutique) {
-      return { error: 'Error creando boutique' }
-    }
-
-    await admin.auth.admin.updateUserById(user.id, {
-      user_metadata: { ...user.user_metadata, role: 'owner' },
-    })
-
-    boutique = newBoutique
+  const boutique = await getOrCreateBoutique()
+  if ('error' in boutique) {
+    return { error: boutique.error }
   }
 
   // Insertar productos con admin client
@@ -59,12 +31,12 @@ export async function saveProductsAction(products: ProductInput[]) {
     name: p.name,
     brand: p.brand || null,
     season: p.season || null,
-    size: p.size || 'Unitalla',
-    color: p.color || 'Único',
+    size: p.size || '',
+    color: p.color || '',
     purchase_price: p.purchase_price,
     sale_price: p.sale_price,
     stock: p.quantity,
-    boutique_id: boutique.id,
+    boutique_id: boutique.boutiqueId,
   }))
 
   const { error: insertError } = await admin

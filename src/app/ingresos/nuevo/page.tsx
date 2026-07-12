@@ -176,8 +176,8 @@ export default function NewIncomePage() {
           purchase_price: p.purchase_price,
           sale_price: (p.purchase_price * 2.5),
           quantity: p.quantity,
-          size: p.size || 'Unitalla',
-          color: p.color || 'Único',
+          size: p.size || '',
+          color: p.color || '',
           status: 'new',
           sourceImageId: img.id,
         }));

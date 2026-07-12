@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Search, Edit3, Trash2, Package, Sun, Moon, X, Ruler, Palette, Tag, Plus } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { deleteProduct } from './actions'
+import { displaySize, displayColor } from '@/lib/product-utils'
 
 interface Product {
   id: string
@@ -142,8 +143,8 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
             const stock = product.stock ?? 0
             const stockInfo = getStockIndicator(stock)
             const salePrice = product.sale_price ?? 0
-            const hasSize = !!product.size
-            const hasColor = !!product.color
+            const sizeLabel = displaySize(product.size)
+            const colorLabel = displayColor(product.color)
 
             return (
               <div key={product.id} className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors overflow-hidden">
@@ -161,16 +162,16 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
                     </div>
                   </div>
 
-                  {(hasSize || hasColor || product.sku) && (
+                  {(sizeLabel || colorLabel || product.sku) && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
-                      {hasSize && (
+                      {sizeLabel && (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-lg border border-blue-200 dark:border-blue-900/50">
-                          <Ruler className="w-3 h-3" /> {product.size}
+                          <Ruler className="w-3 h-3" /> {sizeLabel}
                         </span>
                       )}
-                      {hasColor && (
+                      {colorLabel && (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-pink-50 dark:bg-pink-950/30 text-pink-700 dark:text-pink-300 text-xs font-bold rounded-lg border border-pink-200 dark:border-pink-900/50">
-                          <Palette className="w-3 h-3" /> {product.color}
+                          <Palette className="w-3 h-3" /> {colorLabel}
                         </span>
                       )}
                       {product.sku && (

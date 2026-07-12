@@ -5,10 +5,13 @@ import { createClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, Plus, Minus, Trash2, Search, CreditCard, Banknote, Wallet, CheckCircle, Sun, Moon, X, Ruler, Palette } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { displaySize, displayColor } from '@/lib/product-utils';
 
 interface Product {
   id: string;
   name: string;
+  brand: string | null;
+  season: string | null;
   size: string | null;
   color: string | null;
   purchase_price: number;
@@ -61,7 +64,7 @@ export default function NuevaVentaPage() {
 
       const { data } = await createClient()
         .from('products')
-        .select('id, name, size, color, purchase_price, sale_price, stock')
+        .select('id, name, brand, season, size, color, purchase_price, sale_price, stock')
         .eq('boutique_id', boutique.id)
         .order('name');
 
@@ -87,8 +90,8 @@ export default function NuevaVentaPage() {
       return [...prevCart, {
         id: `cart_${Date.now()}_${Math.random().toString(36).slice(2)}`,
         productId: product.id,
-        name: product.size || product.color
-          ? `${product.name}${product.size ? ' (' + product.size : ''}${product.color ? ' ' + product.color : ''}${product.size || product.color ? ')' : ''}`
+        name: displaySize(product.size) || displayColor(product.color)
+          ? `${product.name}${displaySize(product.size) ? ' (' + displaySize(product.size) : ''}${displayColor(product.color) ? ' ' + displayColor(product.color) : ''}${displaySize(product.size) || displayColor(product.color) ? ')' : ''}`
           : product.name,
         purchase_price: product.purchase_price,
         sale_price: product.sale_price,
@@ -193,7 +196,11 @@ export default function NuevaVentaPage() {
 
   const filteredProducts = useMemo(() =>
     products.filter(p =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.brand || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.size || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.color || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.season || '').toLowerCase().includes(searchTerm.toLowerCase())
     ),
     [products, searchTerm]
   );
@@ -233,9 +240,10 @@ export default function NuevaVentaPage() {
               className="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
               {theme === 'dark' ? <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" /> : <Moon className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />}
             </button>
-            <button onClick={() => router.push('/dashboard')}
-              className="px-8 py-4 text-xl font-bold bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
-              CANCELAR
+            <button onClick={() => router.push('/ingresos')}
+              className="flex items-center gap-2 px-5 md:px-6 py-4 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-bold rounded-2xl transition-colors border border-blue-200 dark:border-blue-900/50">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="text-base md:text-lg">IR AL INVENTARIO</span>
             </button>
           </div>
         </div>
@@ -244,7 +252,7 @@ export default function NuevaVentaPage() {
           <div className="space-y-4">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-zinc-400" />
-              <input type="text" placeholder="Buscar producto..." value={searchTerm}
+              <input type="text" placeholder="Buscar por nombre, marca, talla, color..." value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-14 pr-6 py-5 text-lg border-2 rounded-2xl focus:border-blue-500 focus:outline-none bg-white dark:bg-[#1a1a1a] border-zinc-300 dark:border-zinc-700" />
             </div>
@@ -273,16 +281,16 @@ export default function NuevaVentaPage() {
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="text-xl text-zinc-900 dark:text-white truncate">{product.name}</div>
-                        {(product.size || product.color) && (
+                        {(displaySize(product.size) || displayColor(product.color)) && (
                           <div className="flex flex-wrap gap-1 mt-2">
-                            {product.size && (
+                            {displaySize(product.size) && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 text-[10px] font-bold rounded">
-                                <Ruler className="w-2.5 h-2.5" /> {product.size}
+                                <Ruler className="w-2.5 h-2.5" /> {displaySize(product.size)}
                               </span>
                             )}
-                            {product.color && (
+                            {displayColor(product.color) && (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-pink-50 dark:bg-pink-950/30 text-pink-700 dark:text-pink-300 text-[10px] font-bold rounded">
-                                <Palette className="w-2.5 h-2.5" /> {product.color}
+                                <Palette className="w-2.5 h-2.5" /> {displayColor(product.color)}
                               </span>
                             )}
                           </div>

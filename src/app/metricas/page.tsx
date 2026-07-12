@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { getOrCreateBoutique } from '@/lib/boutique'
 import { redirect } from 'next/navigation'
 import { MetricasClient } from './MetricasClient'
 
@@ -23,31 +23,12 @@ export default async function MetricasPage() {
     redirect('/dashboard')
   }
 
-  // 3. Obtener boutique
-  let { data: boutique, error: boutiqueError } = await supabase
-    .from('boutiques')
-    .select('id, name')
-    .eq('owner_id', user.id)
-    .maybeSingle()
-
-  if (boutiqueError || !boutique) {
-    const admin = createAdminClient()
-    const { data: newBoutique, error: insertError } = await admin
-      .from('boutiques')
-      .insert({ owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: true })
-      .select('id, name')
-      .single()
-
-    if (insertError || !newBoutique) {
-      redirect('/dashboard')
-    }
-
-    await admin.auth.admin.updateUserById(user.id, {
-      user_metadata: { ...user.user_metadata, role: 'owner' },
-    })
-
-    boutique = newBoutique
+  // 3. Obtener o crear boutique (atómico, sin race condition)
+  const result = await getOrCreateBoutique()
+  if ('error' in result) {
+    redirect('/dashboard')
   }
+  const boutique = { id: result.boutiqueId, name: result.name }
 
   // 4. Cargar ventas de los últimos 2 años con sus items y productos
   const twoYearsAgo = new Date()
@@ -71,6 +52,8 @@ export default async function MetricasPage() {
           name,
           brand,
           season,
+          size,
+          color,
           purchase_price,
           sale_price
         )
@@ -87,7 +70,7 @@ export default async function MetricasPage() {
   // 5. Cargar todos los productos del inventario (para producto estrella histórico)
   const { data: allProducts } = await supabase
     .from('products')
-    .select('id, name, brand, season, sale_price, purchase_price, stock')
+    .select('id, name, brand, season, size, color, sku, sale_price, purchase_price, stock')
     .eq('boutique_id', boutique.id)
 
   return (

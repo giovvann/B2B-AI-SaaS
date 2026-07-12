@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { displaySize, displayColor } from '@/lib/product-utils'
 
-const MODEL = 'openrouter/owl-alpha'
+const MODEL = 'gemini-2.5-flash'
 
 const CLEANUP_INTERVAL = 5 * 60 * 1000
 const userRequestMap = new Map<string, { count: number; firstRequest: number }>()
@@ -81,6 +82,9 @@ export async function POST(request: NextRequest) {
     const totalTransacciones = sales?.length || 0
 
     const productMap: Record<string, { name: string; quantity: number; revenue: number; profit: number }> = {}
+    const brandMap: Record<string, { name: string; revenue: number; profit: number }> = {}
+    const sizeMap: Record<string, number> = {}
+    const colorMap: Record<string, number> = {}
     sales?.forEach((sale: any) => {
       sale.sale_items?.forEach((item: any) => {
         const product = item.products
@@ -91,17 +95,59 @@ export async function POST(request: NextRequest) {
         productMap[product.name].quantity += item.quantity || 0
         productMap[product.name].revenue += (item.price_at_sale || 0) * (item.quantity || 0)
         productMap[product.name].profit += ((item.price_at_sale || 0) - (item.cost_at_sale || 0)) * (item.quantity || 0)
+
+        const brand = product.brand || 'Sin marca'
+        if (!brandMap[brand]) brandMap[brand] = { name: brand, revenue: 0, profit: 0 }
+        brandMap[brand].revenue += (item.price_at_sale || 0) * (item.quantity || 0)
+        brandMap[brand].profit += ((item.price_at_sale || 0) - (item.cost_at_sale || 0)) * (item.quantity || 0)
+
+        const size = displaySize(product.size) || 'N/A'
+        sizeMap[size] = (sizeMap[size] || 0) + (item.quantity || 0)
+        const color = displayColor(product.color) || 'N/A'
+        colorMap[color] = (colorMap[color] || 0) + (item.quantity || 0)
       })
     })
 
     const topProducts = Object.values(productMap).sort((a, b) => b.quantity - a.quantity).slice(0, 10)
     const masRentables = Object.values(productMap).sort((a, b) => b.profit - a.profit).slice(0, 5)
+    const topBrands = Object.entries(brandMap).sort((a, b) => b[1].revenue - a[1].revenue).slice(0, 5)
+    const topSizes = Object.entries(sizeMap).sort((a, b) => b[1] - a[1]).slice(0, 5)
+    const topColors = Object.entries(colorMap).sort((a, b) => b[1] - a[1]).slice(0, 5)
 
     const paymentMethods: Record<string, number> = {}
     sales?.forEach((sale: any) => {
       const method = sale.payment_method || 'Desconocido'
       paymentMethods[method] = (paymentMethods[method] || 0) + (sale.total_amount || 0)
     })
+
+    // Cargar inventario para alertas de riesgo
+    const { data: inventory } = await supabase
+      .from('products')
+      .select('id, name, stock, sale_price, size, color, brand')
+      .eq('boutique_id', boutique.id)
+
+    const nowMs = Date.now()
+    const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
+    const lastSold: Record<string, number> = {}
+    sales?.forEach((sale: any) => {
+      const t = new Date(sale.created_at).getTime()
+      sale.sale_items?.forEach((item: any) => {
+        if (!lastSold[item.product_id] || t > lastSold[item.product_id]) {
+          lastSold[item.product_id] = t
+        }
+      })
+    })
+
+    const criticalStock = (inventory || []).filter((p: any) => (p.stock || 0) <= 3).map((p: any) => `${p.name} (${p.stock || 0})`)
+    const deadStock = (inventory || []).filter((p: any) => {
+      const last = lastSold[p.id]
+      if (!last) return (p.stock || 0) > 0
+      return (nowMs - last) > THIRTY_DAYS && (p.stock || 0) > 0
+    }).map((p: any) => `${p.name} (${p.stock || 0}, $${((p.sale_price || 0) * (p.stock || 0)).toFixed(0)} congelados)`)
+    const deadValue = deadStock.reduce((sum: number, s: string) => {
+      const match = s.match(/\$([0-9.]+) congelados/)
+      return sum + (match ? parseFloat(match[1]) : 0)
+    }, 0)
 
     const dataNote = totalTransacciones < 5
       ? `\nNOTA: Hay pocas ventas (${totalTransacciones}). Da consejos prácticos con los datos disponibles.`
@@ -112,54 +158,46 @@ PERÍODO: Últimos 90 días
 MÉTRICAS: ${totalTransacciones} transacciones, $${totalVentas.toFixed(2)} MXN total, ticket promedio $${totalTransacciones > 0 ? (totalVentas / totalTransacciones).toFixed(2) : '0'}
 TOP VENDIDOS: ${topProducts.map((p, i) => `${i+1}. ${p.name} (${p.quantity}uds, $${p.revenue.toFixed(0)} ing, $${p.profit.toFixed(0)} gan)`).join(' | ')}
 TOP RENTABLES: ${masRentables.map((p, i) => `${i+1}. ${p.name} ($${p.profit.toFixed(0)} gan)`).join(' | ')}
+TOP MARCAS: ${topBrands.map(([n, b]) => `${n} ($${b.revenue.toFixed(0)} ing)`).join(' | ')}
+TOP TALLAS: ${topSizes.map(([n, q]) => `${n}: ${q}uds`).join(', ')}
+TOP COLORES: ${topColors.map(([n, q]) => `${n}: ${q}uds`).join(', ')}
 MÉTODOS PAGO: ${Object.entries(paymentMethods).map(([m, a]) => `${m}: $${a.toFixed(0)}`).join(' | ')}
+ALERTAS INVENTARIO:
+  - Stock crítico (≤3 uds): ${criticalStock.length > 0 ? criticalStock.slice(0, 8).join(', ') : 'Ninguno'}
+  - Productos sin vender 30+ días: ${deadStock.length > 0 ? deadStock.slice(0, 8).join(', ') : 'Ninguno'}
+  - Capital congelado en inventario muerto: $${deadValue.toFixed(0)}
 ${dataNote}`.trim()
 
-    const apiKey = process.env.OPENROUTER_API_KEY
+    const apiKey = process.env.GOOGLE_GEMINI_API_KEY
     if (!apiKey) {
-      return NextResponse.json({ error: 'API Key de OpenRouter no configurada' }, { status: 500 })
+      return NextResponse.json({ error: 'API Key de Gemini no configurada' }, { status: 500 })
     }
 
-    const prompt = `Eres un consultor experto y motivacional en boutiques de ropa en México, super amigable y entusiasta. Responde en 3-5 oraciones cálidas, en español mexicano, texto plano sin markdown. Empieza con un saludo corto como "¡Claro!" o "¡Con gusto!" o "¡Qué buena pregunta!". Termina siempre con una frase motivacional corta como "¡Tú puedes!" o "¡Sigue así!" o "¡Vamos con todo!". Da consejos prácticos aplicables hoy.
-
-DATOS: ${dataSummary}
-
-PREGUNTA: ${question}
-
-RESPUESTA:`
-
     try {
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: MODEL,
-          messages: [
-            { role: 'user', content: prompt },
-          ],
-          temperature: 0.7,
-          max_tokens: 500,
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 500 },
         }),
       })
 
       if (!response.ok) {
         const errorText = await response.text()
-        console.error(`OpenRouter error (${response.status}):`, errorText)
+        console.error(`Gemini error (${response.status}):`, errorText)
         return NextResponse.json({ error: 'Error con la IA. Intenta de nuevo.' }, { status: 502 })
       }
 
       const data = await response.json()
-      let answer = data.choices?.[0]?.message?.content?.trim() || ''
+      let answer = data.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join('')?.trim() || ''
 
       if (answer && !/[.!?]$/.test(answer)) answer += '.'
       if (!answer) answer = 'Intenta con otra pregunta.'
 
       return NextResponse.json({ answer, model: MODEL })
     } catch (fetchError) {
-      console.error('OpenRouter fetch error:', fetchError)
+      console.error('Gemini fetch error:', fetchError)
       return NextResponse.json({ error: 'Error de conexión con la IA. Intenta de nuevo.' }, { status: 502 })
     }
   } catch (error) {

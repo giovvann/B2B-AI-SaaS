@@ -1,7 +1,7 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { createClient } from '@/lib/supabase/server'
+import { getOrCreateBoutique } from '@/lib/boutique'
 import { revalidatePath } from 'next/cache'
 
 interface ManualProductInput {
@@ -16,37 +16,9 @@ interface ManualProductInput {
 }
 
 export async function saveManualProductAction(input: ManualProductInput) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return { error: 'No hay sesión activa' }
-  }
-
-  // Obtener o crear boutique
-  let { data: boutique } = await supabase
-    .from('boutiques')
-    .select('id')
-    .eq('owner_id', user.id)
-    .maybeSingle()
-
-  if (!boutique) {
-    const admin = createAdminClient()
-    const { data: newBoutique, error: insertError } = await admin
-      .from('boutiques')
-      .insert({ owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: true })
-      .select('id')
-      .single()
-
-    if (insertError || !newBoutique) {
-      return { error: 'Error creando boutique' }
-    }
-
-    await admin.auth.admin.updateUserById(user.id, {
-      user_metadata: { ...user.user_metadata, role: 'owner' },
-    })
-
-    boutique = newBoutique
+  const boutique = await getOrCreateBoutique()
+  if ('error' in boutique) {
+    return { error: boutique.error }
   }
 
   // Insertar producto con admin client (bypassa RLS)
@@ -57,12 +29,12 @@ export async function saveManualProductAction(input: ManualProductInput) {
       name: input.name,
       brand: input.brand || null,
       season: input.season || null,
-      size: input.size || 'Unitalla',
-      color: input.color || 'Único',
+      size: input.size || '',
+      color: input.color || '',
       purchase_price: input.purchase_price,
       sale_price: input.sale_price,
       stock: input.quantity,
-      boutique_id: boutique.id,
+      boutique_id: boutique.boutiqueId,
     })
 
   if (insertError) {

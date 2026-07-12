@@ -52,13 +52,13 @@ export async function registrarAction(formData: FormData) {
     ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     : null
 
-  const { error: boutiqueError } = await admin.from('boutiques').insert({
+  const { error: boutiqueError } = await admin.from('boutiques').upsert({
     owner_id: signUpData.user.id,
     name: 'Mi Boutique',
     subscription_expires_at: subscriptionExpiresAt,
     is_active: trial ? true : false,
     is_trial: trial ? true : false,
-  })
+  }, { onConflict: 'owner_id', ignoreDuplicates: true })
 
   if (boutiqueError) {
     return { error: boutiqueError.message }

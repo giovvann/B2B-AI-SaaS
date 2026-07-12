@@ -12,6 +12,7 @@ import {
   LogOut,
   RotateCcw,
   MoreVertical,
+  History,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
@@ -207,6 +208,13 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
             )
           })}
         </div>
+
+        <button onClick={() => router.push('/ventas')}
+          className="mt-5 w-full md:w-auto md:min-w-[260px] flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-[#1a1a1a] hover:bg-zinc-100 dark:hover:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-800 hover:border-indigo-300 dark:hover:border-indigo-700 rounded-2xl transition-colors group"
+        >
+          <History className="w-6 h-6 text-indigo-500" strokeWidth={2.5} />
+          <span className="text-lg font-black tracking-tight text-zinc-900 dark:text-white">VER HISTORIAL DE VENTAS</span>
+        </button>
 
         <div className="mt-16 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1a1a1a] rounded-full border border-zinc-200 dark:border-zinc-800">

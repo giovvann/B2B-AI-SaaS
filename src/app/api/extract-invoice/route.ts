@@ -100,8 +100,8 @@ export async function POST(req: NextRequest) {
       season: String(product.season || '').trim() || '',
       purchase_price: parseFloat(product.purchase_price) || 0,
       quantity: parseInt(product.quantity) || 1,
-      size: String(product.size || '').trim() || 'Unitalla',
-      color: String(product.color || '').trim() || 'Único',
+      size: String(product.size || '').trim(),
+      color: String(product.color || '').trim(),
     }));
 
     return NextResponse.json({ products: validatedProducts });
