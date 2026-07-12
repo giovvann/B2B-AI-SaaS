@@ -81,7 +81,7 @@ function ChartContainer({ children, height }: { children: React.ReactNode; heigh
 
   return (
     <div className="w-full" style={{ height, minHeight: height }}>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={height}>
         {children}
       </ResponsiveContainer>
     </div>
