@@ -22,20 +22,39 @@ export function ReminderDock() {
   const [boutiqueId, setBoutiqueId] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
 
-  // resolver boutique del dueño
+  // resolver boutique del dueño y cargar recordatorios en cadena
   useEffect(() => {
     let alive = true
     ;(async () => {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user || !alive) return
+      let bId: string | null = null
       const { data: b } = await supabase
         .from('boutiques')
         .select('id')
         .eq('owner_id', user.id)
         .limit(1)
         .maybeSingle()
-      if (b && alive) setBoutiqueId(b.id)
+      bId = b?.id ?? null
+      if (!bId && alive) {
+        // fallback: crear si no existe
+        const { data: nb } = await supabase
+          .from('boutiques')
+          .insert({ owner_id: user.id, name: 'Mi Boutique', currency: 'MXN' })
+          .select('id')
+          .single()
+        bId = nb?.id ?? null
+      }
+      if (!bId || !alive) return
+      setBoutiqueId(bId)
+      const { data: rem } = await supabase
+        .from('reminders')
+        .select('*')
+        .eq('boutique_id', bId)
+        .order('due', { ascending: true })
+      if (rem && alive) setItems(rem as Reminder[])
+      setLoaded(true)
     })()
     return () => { alive = false }
   }, [])
@@ -49,10 +68,7 @@ export function ReminderDock() {
       .eq('boutique_id', boutiqueId)
       .order('due', { ascending: true })
     if (data) setItems(data as Reminder[])
-    setLoaded(true)
   }, [boutiqueId])
-
-  useEffect(() => { load() }, [load])
 
   const add = async () => {
     if (!title.trim() || !boutiqueId) return
