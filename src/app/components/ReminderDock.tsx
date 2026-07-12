@@ -83,7 +83,18 @@ export function ReminderDock() {
   }
 
   const pending = items.filter(i => !i.done)
-  if (loaded && pending.length === 0 && !open) return null
+  // Siempre visible el botón (para poder crear el primero); solo oculta tras cargar y si el usuario lo cerró
+  if (loaded && pending.length === 0 && !open && items.length === 0) {
+    return (
+      <div className="fixed bottom-4 left-4 z-40">
+        <button onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl hover:border-indigo-300 transition-colors">
+          <Bell className="w-5 h-5 text-indigo-500" />
+          <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">Recordatorios</span>
+        </button>
+      </div>
+    )
+  }
 
   const fmt = (iso: string) =>
     new Date(iso).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
