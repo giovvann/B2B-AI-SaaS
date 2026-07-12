@@ -14,6 +14,7 @@ import {
   MoreVertical,
   History,
   Calculator,
+  Wallet,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
@@ -82,6 +83,15 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
       href: '/ingresos',
       gradient: 'from-emerald-500 to-teal-600',
       shadowColor: 'shadow-emerald-500/30',
+    },
+    {
+      id: 'gastos',
+      title: 'GASTOS',
+      description: 'Registra gastos y ve la salud real del negocio',
+      icon: Wallet,
+      href: '/gastos',
+      gradient: 'from-rose-500 to-red-600',
+      shadowColor: 'shadow-rose-500/30',
     },
   ]
 

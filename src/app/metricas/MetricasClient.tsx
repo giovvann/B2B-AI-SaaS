@@ -10,6 +10,7 @@ import {
   Gauge, Lightbulb, TrendingDown
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { createClient } from '@/lib/supabase'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -123,12 +124,29 @@ export function MetricasClient({ boutiqueName, sales, allProducts }: MetricasCli
   const [cooldownSeconds, setCooldownSeconds] = useState(0)
   const [showQuestions, setShowQuestions] = useState(true)
   const cooldownRef = useRef<NodeJS.Timeout | null>(null)
+  const [expenses, setExpenses] = useState<Array<{ id: string; concept: string; category: string; amount: number; expense_date: string }>>([])
 
   useEffect(() => {
     setMounted(true)
     return () => {
       if (cooldownRef.current) clearInterval(cooldownRef.current)
     }
+  }, [])
+
+  // Cargar gastos para calcular la salud real del negocio
+  useEffect(() => {
+    const loadExpenses = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+        const { data: b } = await supabase.from('boutiques').select('id').eq('owner_id', user.id).maybeSingle()
+        if (!b) return
+        const { data } = await supabase.from('expenses').select('id, concept, category, amount, expense_date').eq('boutique_id', b.id)
+        if (data) setExpenses(data as any)
+      } catch { /* no bloquea métricas */ }
+    }
+    loadExpenses()
   }, [])
 
   const { startDate, endDate } = useMemo(() => {
@@ -252,6 +270,14 @@ export function MetricasClient({ boutiqueName, sales, allProducts }: MetricasCli
       totalCostos, productSales, brandSales, sizeSales, colorSales, dayTotals
     }
   }, [filteredSales, prevPeriodSales, allProducts])
+
+  // Salud real: ganancia de ventas MENOS gastos operativos
+  const totalGastos = useMemo(
+    () => expenses.reduce((s, e) => s + Number(e.amount || 0), 0),
+    [expenses]
+  )
+  const profitReal = metrics.gananciaNeta - totalGastos
+  const margenReal = metrics.totalVentas > 0 ? (profitReal / metrics.totalVentas) * 100 : 0
 
   // ============ COMPARACIÓN VS PERÍODO ANTERIOR ============
   const comparison = useMemo(() => {
@@ -726,6 +752,61 @@ export function MetricasClient({ boutiqueName, sales, allProducts }: MetricasCli
                   {metrics.totalInventoryStock} en inventario
                 </div>
               </div>
+            </div>
+
+            {/* ============ SALUD DE LA EMPRESA (revenue − expenses = profit real) ============ */}
+            <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-[#111] dark:to-[#0a0a0a] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800 shadow-xl mb-8">
+              <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
+                <div className="flex items-center gap-2">
+                  <Gauge className="w-6 h-6 text-emerald-400" />
+                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                    SALUD DE LA EMPRESA
+                  </h2>
+                </div>
+                <button
+                  onClick={() => handleAskAI(`Analiza la salud financiera real de mi boutique con estos números del período actual: Ventas totales ${fmt(metrics.totalVentas)}, Ganancia bruta (ventas - costo de productos) ${fmt(metrics.gananciaNeta)}, Gastos operativos registrados ${fmt(totalGastos)}, Utilidad real (profit) ${fmt(profitReal)}, Margen real ${margenReal.toFixed(1)}%. ¿Estoy realmente ganando dinero, qué gastos debo recortar y cómo mejorar la utilidad?`)}
+                  disabled={aiLoading}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Análisis IA
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Ventas</div>
+                  <div className="text-2xl md:text-3xl font-black text-blue-400">{fmt(metrics.totalVentas)}</div>
+                </div>
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Costos productos</div>
+                  <div className="text-2xl md:text-3xl font-black text-orange-400">{fmt(metrics.totalCostos)}</div>
+                </div>
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Gastos</div>
+                  <div className="text-2xl md:text-3xl font-black text-rose-400">{fmt(totalGastos)}</div>
+                </div>
+                <div className="bg-white/5 rounded-2xl p-4">
+                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Utilidad real</div>
+                  <div className={`text-2xl md:text-3xl font-black ${profitReal >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {fmt(profitReal)}
+                  </div>
+                  <div className={`text-xs font-semibold mt-0.5 ${profitReal >= 0 ? 'text-emerald-400/80' : 'text-red-400/80'}`}>
+                    Margen {margenReal.toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+
+              {expenses.length === 0 && (
+                <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-zinc-400 bg-white/5 rounded-xl px-4 py-3">
+                  <Wallet className="w-4 h-4" />
+                  Aún no tienes gastos registrados.{' '}
+                  <button onClick={() => router.push('/gastos')} className="text-emerald-400 hover:underline font-bold">
+                    Agrégalos aquí
+                  </button>{' '}
+                  para ver tu profit real.
+                </div>
+              )}
             </div>
 
             {/* ============ GRÁFICA DE ÁREA: VENTAS ============ */}
