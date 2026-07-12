@@ -25,23 +25,21 @@ export function ReminderDock() {
   // resolver boutique del dueño y cargar recordatorios en cadena
   useEffect(() => {
     let alive = true
-    ;(async () => {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user || !alive) return
+    const supabase = createClient()
+    const loadAll = async (userId: string) => {
+      if (!alive) return
       let bId: string | null = null
       const { data: b } = await supabase
         .from('boutiques')
         .select('id')
-        .eq('owner_id', user.id)
+        .eq('owner_id', userId)
         .limit(1)
         .maybeSingle()
       bId = b?.id ?? null
       if (!bId && alive) {
-        // fallback: crear si no existe
         const { data: nb } = await supabase
           .from('boutiques')
-          .insert({ owner_id: user.id, name: 'Mi Boutique', currency: 'MXN' })
+          .insert({ owner_id: userId, name: 'Mi Boutique', currency: 'MXN' })
           .select('id')
           .single()
         bId = nb?.id ?? null
@@ -55,8 +53,15 @@ export function ReminderDock() {
         .order('due', { ascending: true })
       if (rem && alive) setItems(rem as Reminder[])
       setLoaded(true)
-    })()
-    return () => { alive = false }
+    }
+    // sesión puede estar lista ya (persistida) o llegar después
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user && alive) loadAll(session.user.id)
+    })
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (session?.user && alive) loadAll(session.user.id)
+    })
+    return () => { alive = false; sub.subscription.unsubscribe() }
   }, [])
 
   const load = useCallback(async () => {
