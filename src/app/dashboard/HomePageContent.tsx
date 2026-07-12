@@ -13,9 +13,11 @@ import {
   RotateCcw,
   MoreVertical,
   History,
+  Calculator,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
+import { CalculatorModal } from '../components/CalculatorModal'
 
 interface HomePageContentProps {
   role: 'owner' | 'employee'
@@ -27,6 +29,7 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
   const router = useRouter()
   const { theme, setTheme } = useTheme()
   const [showSettings, setShowSettings] = useState(false)
+  const [calcOpen, setCalcOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -122,6 +125,13 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
+            <button
+              onClick={() => setCalcOpen(true)}
+              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
+              aria-label="Calculadora"
+            >
+              <Calculator className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
+            </button>
             <button
               onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
@@ -225,6 +235,8 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
           </div>
         </div>
       </div>
+
+      <CalculatorModal open={calcOpen} onClose={() => setCalcOpen(false)} />
     </div>
   )
 }

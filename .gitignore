@@ -36,3 +36,6 @@ tsconfig.tsbuildinfo
 
 # scripts temporales
 /scripts/
+
+# local backups (data)
+/backups/
