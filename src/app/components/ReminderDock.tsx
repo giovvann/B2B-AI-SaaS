@@ -1,40 +1,92 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Bell, X, Check, Plus, Clock } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Bell, X, Check, Plus, Clock, AlertTriangle } from 'lucide-react'
+import { createClient } from '@/lib/supabase'
 
 interface Reminder {
   id: string
   title: string
-  note?: string
-  due: string // ISO
+  note?: string | null
+  due: string
   done: boolean
+  priority: 'low' | 'normal' | 'high'
 }
-
-const KEY = 'veliora_reminders_v1'
 
 export function ReminderDock() {
   const [items, setItems] = useState<Reminder[]>([])
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [due, setDue] = useState('')
+  const [priority, setPriority] = useState<'low' | 'normal' | 'high'>('normal')
+  const [boutiqueId, setBoutiqueId] = useState<string | null>(null)
+  const [loaded, setLoaded] = useState(false)
 
+  // resolver boutique del dueño
   useEffect(() => {
-    try { setItems(JSON.parse(localStorage.getItem(KEY) || '[]')) } catch { setItems([]) }
+    let alive = true
+    ;(async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user || !alive) return
+      const { data: b } = await supabase
+        .from('boutiques')
+        .select('id')
+        .eq('owner_id', user.id)
+        .limit(1)
+        .maybeSingle()
+      if (b && alive) setBoutiqueId(b.id)
+    })()
+    return () => { alive = false }
   }, [])
 
-  const save = (next: Reminder[]) => { setItems(next); localStorage.setItem(KEY, JSON.stringify(next)) }
+  const load = useCallback(async () => {
+    if (!boutiqueId) return
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('reminders')
+      .select('*')
+      .eq('boutique_id', boutiqueId)
+      .order('due', { ascending: true })
+    if (data) setItems(data as Reminder[])
+    setLoaded(true)
+  }, [boutiqueId])
 
-  const add = () => {
-    if (!title.trim()) return
-    const r: Reminder = { id: crypto.randomUUID(), title: title.trim(), note: '', due: due || new Date().toISOString(), done: false }
-    save([...items, r]); setTitle(''); setDue('')
+  useEffect(() => { load() }, [load])
+
+  const add = async () => {
+    if (!title.trim() || !boutiqueId) return
+    const supabase = createClient()
+    const row = {
+      boutique_id: boutiqueId,
+      title: title.trim(),
+      due: due ? new Date(due).toISOString() : new Date().toISOString(),
+      priority,
+      done: false,
+    }
+    const { data } = await supabase.from('reminders').insert(row).select().single()
+    if (data) setItems(prev => [...prev, data as Reminder])
+    setTitle(''); setDue(''); setPriority('normal')
   }
-  const toggle = (id: string) => save(items.map(i => i.id === id ? { ...i, done: !i.done } : i))
-  const remove = (id: string) => save(items.filter(i => i.id !== id))
+
+  const toggle = async (r: Reminder) => {
+    const supabase = createClient()
+    const next = !r.done
+    await supabase.from('reminders').update({ done: next }).eq('id', r.id)
+    setItems(prev => prev.map(i => i.id === r.id ? { ...i, done: next } : i))
+  }
+
+  const remove = async (id: string) => {
+    const supabase = createClient()
+    await supabase.from('reminders').delete().eq('id', id)
+    setItems(prev => prev.filter(i => i.id !== id))
+  }
 
   const pending = items.filter(i => !i.done)
-  if (pending.length === 0 && !open) return null
+  if (loaded && pending.length === 0 && !open) return null
+
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
 
   return (
     <div className="fixed bottom-4 left-4 z-40 max-w-sm">
@@ -49,12 +101,15 @@ export function ReminderDock() {
           <div className="space-y-2 max-h-60 overflow-auto">
             {items.map(r => (
               <div key={r.id} className={`flex items-center gap-2 p-2 rounded-xl border ${r.done ? 'border-zinc-200 dark:border-zinc-800 opacity-50' : 'border-zinc-200 dark:border-zinc-700'}`}>
-                <button onClick={() => toggle(r.id)} className={`shrink-0 w-6 h-6 rounded-lg border flex items-center justify-center ${r.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-zinc-300 dark:border-zinc-600'}`}>
+                <button onClick={() => toggle(r)} className={`shrink-0 w-6 h-6 rounded-lg border flex items-center justify-center ${r.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-zinc-300 dark:border-zinc-600'}`}>
                   {r.done && <Check className="w-4 h-4" />}
                 </button>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate">{r.title}</div>
-                  <div className="text-xs text-zinc-400 flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(r.due).toLocaleString('es-MX', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+                  <div className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate flex items-center gap-1">
+                    {r.priority === 'high' && <AlertTriangle className="w-3 h-3 text-amber-500" />}
+                    {r.title}
+                  </div>
+                  <div className="text-xs text-zinc-400 flex items-center gap-1"><Clock className="w-3 h-3" />{fmt(r.due)}</div>
                 </div>
                 <button onClick={() => remove(r.id)} className="p-1 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg"><X className="w-4 h-4 text-red-400" /></button>
               </div>
@@ -62,8 +117,15 @@ export function ReminderDock() {
             {items.length === 0 && <p className="text-sm text-zinc-400 text-center py-3">Sin recordatorios</p>}
           </div>
           <div className="mt-3 flex gap-2">
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="¿Qué recordar?" className="flex-1 px-3 py-2 text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-indigo-500" />
-            <input type="datetime-local" value={due} onChange={e => setDue(e.target.value)} className="px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none" />
+            <input value={title} onChange={e => setTitle(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} placeholder="¿Qué recordar?" className="flex-1 px-3 py-2 text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-indigo-500" />
+            <select value={priority} onChange={e => setPriority(e.target.value as any)} className="px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none">
+              <option value="low">Baja</option>
+              <option value="normal">Normal</option>
+              <option value="high">Alta</option>
+            </select>
+          </div>
+          <div className="mt-2 flex gap-2">
+            <input type="datetime-local" value={due} onChange={e => setDue(e.target.value)} className="flex-1 px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none" />
             <button onClick={add} className="px-3 py-2 bg-indigo-500 text-white rounded-xl active:scale-95"><Plus className="w-4 h-4" /></button>
           </div>
         </div>
