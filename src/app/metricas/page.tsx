@@ -1,83 +1,61 @@
-import { createClient } from '@/lib/supabase/server'
-import { getOrCreateBoutique } from '@/lib/boutique'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase'
+import { data } from '@/lib/data'
 import { MetricasClient } from './MetricasClient'
 
-export const metadata = {
-  title: 'Métricas | Mi Boutique',
-  description: 'Análisis visual del rendimiento de tu negocio',
-}
+export default function MetricasPage() {
+  const [ready, setReady] = useState(false)
+  const [err, setErr] = useState<string | null>(null)
+  const [boutiqueName, setBoutiqueName] = useState('')
+  const [sales, setSales] = useState<any[]>([])
+  const [products, setProducts] = useState<any[]>([])
 
-export default async function MetricasPage() {
-  const supabase = await createClient()
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { window.location.href = '/login'; return }
 
-  // 1. Verificar autenticación
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    redirect('/login')
+        const b = await data.getBoutique()
+        if (!b) { setErr('No se encontró la boutique'); return }
+        setBoutiqueName(b.name || 'Mi Boutique')
+
+        const [p, s] = await Promise.all([
+          data.getProducts(b.id),
+          data.getSales(b.id),
+        ])
+        setProducts(p as any)
+        setSales(s as any)
+      } catch (e: any) {
+        setErr(e?.message || 'Error cargando métricas')
+      } finally {
+        setReady(true)
+      }
+    }
+    init()
+  }, [])
+
+  if (!ready) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] text-zinc-500">
+        Cargando métricas…
+      </div>
+    )
   }
 
-  // 2. Verificar que sea dueño (solo dueños ven métricas)
-  const role = user.user_metadata?.role
-  if (role !== 'owner') {
-    redirect('/dashboard')
+  if (err) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-zinc-500">
+        <p className="text-red-500">{err}</p>
+        <button onClick={() => window.location.reload()} className="text-sm underline">
+          Reintentar
+        </button>
+      </div>
+    )
   }
 
-  // 3. Obtener o crear boutique (atómico, sin race condition)
-  const result = await getOrCreateBoutique()
-  if ('error' in result) {
-    redirect('/dashboard')
-  }
-  const boutique = { id: result.boutiqueId, name: result.name }
-
-  // 4. Cargar ventas de los últimos 2 años con sus items y productos
-  const twoYearsAgo = new Date()
-  twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2)
-
-  const { data: sales, error: salesError } = await supabase
-    .from('sales')
-    .select(`
-      id,
-      total_amount,
-      payment_method,
-      created_at,
-      sale_items (
-        id,
-        quantity,
-        price_at_sale,
-        cost_at_sale,
-        product_id,
-        products (
-          id,
-          name,
-          brand,
-          season,
-          size,
-          color,
-          purchase_price,
-          sale_price
-        )
-      )
-    `)
-    .eq('boutique_id', boutique.id)
-    .gte('created_at', twoYearsAgo.toISOString())
-    .order('created_at', { ascending: true })
-
-  if (salesError) {
-    console.error('Error cargando ventas:', salesError)
-  }
-
-  // 5. Cargar todos los productos del inventario (para producto estrella histórico)
-  const { data: allProducts } = await supabase
-    .from('products')
-    .select('id, name, brand, season, size, color, sku, sale_price, purchase_price, stock')
-    .eq('boutique_id', boutique.id)
-
-  return (
-    <MetricasClient
-      boutiqueName={boutique.name}
-      sales={(sales || []) as any}
-      allProducts={allProducts || []}
-    />
-  )
+  return <MetricasClient boutiqueName={boutiqueName} sales={sales} allProducts={products} />
 }

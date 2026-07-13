@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReminderDock } from "@/app/components/ReminderDock";
+import { SyncProvider } from "@/components/SyncProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <SyncProvider>{children}</SyncProvider>
           <ReminderDock />
         </ThemeProvider>
       </body>

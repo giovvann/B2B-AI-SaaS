@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
+import { data } from '@/lib/data'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -56,9 +57,9 @@ interface Product {
 }
 
 interface MetricasClientProps {
-  boutiqueName: string
-  sales: Sale[]
-  allProducts: Product[]
+  boutiqueName?: string
+  sales?: Sale[]
+  allProducts?: Product[]
 }
 
 interface ChatMessage {
@@ -112,7 +113,7 @@ function PctBadge({ value, suffix = '%' }: { value: number; suffix?: string }) {
   )
 }
 
-export function MetricasClient({ boutiqueName, sales, allProducts }: MetricasClientProps) {
+export function MetricasClient({ boutiqueName = '', sales = [], allProducts = [] }: MetricasClientProps) {
   const router = useRouter()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -133,17 +134,14 @@ export function MetricasClient({ boutiqueName, sales, allProducts }: MetricasCli
     }
   }, [])
 
-  // Cargar gastos para calcular la salud real del negocio
+  // Cargar gastos para calcular la salud real del negocio (offline con cache)
   useEffect(() => {
     const loadExpenses = async () => {
       try {
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return
-        const { data: b } = await supabase.from('boutiques').select('id').eq('owner_id', user.id).maybeSingle()
+        const b = await data.getBoutique()
         if (!b) return
-        const { data } = await supabase.from('expenses').select('id, concept, category, amount, expense_date').eq('boutique_id', b.id)
-        if (data) setExpenses(data as any)
+        const exps = await data.getExpenses(b.id)
+        if (exps) setExpenses(exps as any)
       } catch { /* no bloquea métricas */ }
     }
     loadExpenses()

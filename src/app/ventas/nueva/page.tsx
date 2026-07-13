@@ -3,6 +3,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
+import { db, uuid } from '@/lib/db';
+import { writeLocal } from '@/lib/sync';
+import { data } from '@/lib/data';
 import { ShoppingCart, Plus, Minus, Trash2, Search, CreditCard, Banknote, Wallet, CheckCircle, Sun, Moon, X, Ruler, Palette } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { displaySize, displayColor } from '@/lib/product-utils';
@@ -53,22 +56,12 @@ export default function NuevaVentaPage() {
       const { data: { user } } = await createClient().auth.getUser();
       if (!user) return;
 
-      const { data: boutique } = await createClient()
-        .from('boutiques')
-        .select('id')
-        .eq('owner_id', user.id)
-        .maybeSingle();
-
+      const boutique = await data.getBoutique();
       if (!boutique) return;
       setBoutiqueId(boutique.id);
 
-      const { data } = await createClient()
-        .from('products')
-        .select('id, name, brand, season, size, color, purchase_price, sale_price, stock')
-        .eq('boutique_id', boutique.id)
-        .order('name');
-
-      setProducts(data || []);
+      const products = await data.getProducts(boutique.id);
+      setProducts(products as any);
     } catch (error) {
       console.error('Error cargando productos:', error);
     } finally {
@@ -140,43 +133,40 @@ export default function NuevaVentaPage() {
         bid = boutique.id;
       }
 
-      const { data: sale, error: saleError } = await createClient()
-        .from('sales')
-        .insert({ boutique_id: bid, total_amount: total, payment_method: paymentMethod })
-        .select()
-        .maybeSingle();
+      const saleId = uuid();
+      const now = new Date().toISOString();
 
-      if (saleError || !sale) throw saleError || new Error('Error creando venta');
+      // Escribir venta localmente
+      await writeLocal('sales', 'insert', {
+        id: saleId,
+        boutique_id: bid,
+        total_amount: total,
+        payment_method: paymentMethod,
+        created_at: now,
+        updated_at: now,
+      });
 
-      const saleItems = cart.map(item => ({
-        sale_id: sale.id,
+      // Escribir items localmente
+      const itemRows = cart.map(item => ({
+        id: uuid(),
+        sale_id: saleId,
         product_id: item.productId,
         quantity: item.quantity,
         price_at_sale: item.sale_price,
         cost_at_sale: item.purchase_price,
       }));
+      for (const it of itemRows) {
+        await writeLocal('sale_items', 'insert', it);
+      }
 
-      const { error: itemsError } = await createClient()
-        .from('sale_items')
-        .insert(saleItems);
-
-      if (itemsError) throw itemsError;
-
-      const productIds = cart.map(item => item.productId)
-      const { data: productsData } = await createClient()
-        .from('products')
-        .select('id, stock')
-        .in('id', productIds);
-
-      if (productsData) {
-        for (const item of cart) {
-          const p = productsData.find(p => p.id === item.productId)
-          if (p) {
-            await createClient()
-              .from('products')
-              .update({ stock: Math.max(0, p.stock - item.quantity) })
-              .eq('id', item.productId);
-          }
+      // Ajustar stock localmente (lee stock actual de Dexie)
+      for (const item of cart) {
+        const p = await db.products.get(item.productId);
+        if (p) {
+          await writeLocal('products', 'update', {
+            id: item.productId,
+            stock: Math.max(0, (p.stock ?? 0) - item.quantity),
+          });
         }
       }
 

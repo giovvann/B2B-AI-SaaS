@@ -3,6 +3,8 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { writeLocal, uuid } from '@/lib/sync'
+import { data } from '@/lib/data'
 import { useTheme } from 'next-themes'
 import {
   Sun, Moon, X, Plus, Wallet, Trash2, Loader2, TrendingDown,
@@ -58,13 +60,8 @@ export default function GastosPage() {
   useEffect(() => { setMounted(true) }, [])
 
   const load = async (bid: string) => {
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('expenses')
-      .select('*')
-      .eq('boutique_id', bid)
-      .order('expense_date', { ascending: false })
-    if (data) setExpenses(data as Expense[])
+    const expenses = await data.getExpenses(bid)
+    setExpenses(expenses as Expense[])
     setLoading(false)
   }
 
@@ -93,20 +90,18 @@ export default function GastosPage() {
     }
     setSaving(true); setError('')
     try {
-      const supabase = createClient()
-      const { data, error: insErr } = await supabase
-        .from('expenses')
-        .insert({
-          boutique_id: boutiqueId,
-          concept: form.concept.trim(),
-          category: form.category,
-          amount,
-          expense_date: form.expense_date,
-          note: form.note.trim() || null,
-        })
-        .select()
-      if (insErr) throw insErr
-      if (data) setExpenses(prev => [data[0] as Expense, ...prev])
+      const id = uuid()
+      const row = {
+        id,
+        boutique_id: boutiqueId,
+        concept: form.concept.trim(),
+        category: form.category,
+        amount,
+        expense_date: form.expense_date,
+        note: form.note.trim() || null,
+      }
+      await writeLocal('expenses', 'insert', row)
+      setExpenses(prev => [{ ...row, amount: Number(amount) } as Expense, ...prev])
       setForm({ concept: '', category: 'Otro', amount: '', expense_date: localDateISO(), note: '' })
       setShowForm(false)
       setSuccess('Gasto registrado')
@@ -121,7 +116,7 @@ export default function GastosPage() {
 
   const handleDelete = async (id: string) => {
     const supabase = createClient()
-    await supabase.from('expenses').delete().eq('id', id)
+    await writeLocal('expenses', 'delete', { id, boutique_id: boutiqueId } as any)
     setExpenses(prev => prev.filter(e => e.id !== id))
   }
 
