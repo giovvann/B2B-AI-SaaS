@@ -22,20 +22,33 @@ export async function POST(req: NextRequest) {
       .eq('owner_id', user.id)
       .maybeSingle()
 
-    if (!boutique) return NextResponse.json({ error: 'Boutique no encontrada' }, { status: 404 })
+    if (!boutique) return NextResponse.json({
+      error: 'No se encontró la boutique. Si eres empleado, usa el correo y contraseña del dueño para iniciar sesión.'
+    }, { status: 404 })
 
-    // Verificar límite de 6 dispositivos aprobados
-    const { count } = await admin
+    // Verificar límite de 6 dispositivos aprobados (solo para dispositivos NUEVOS)
+    const { data: existingDevice } = await admin
       .from('dispositivos')
-      .select('*', { count: 'exact', head: true })
+      .select('id, status')
       .eq('boutique_id', boutique.id)
-      .eq('status', 'approved')
+      .eq('device_id', device_id)
+      .maybeSingle()
 
-    const maxDevices = 6
-    if (count !== null && count >= maxDevices) {
-      return NextResponse.json({
-        error: `Límite de ${maxDevices} dispositivos alcanzado. Revoca alguno desde el panel del dueño.`
-      }, { status: 403 })
+    // Si el dispositivo ya existe y está aprobado, permitir actualización sin contar límite
+    const isExistingAndApproved = existingDevice?.status === 'approved'
+    if (!isExistingAndApproved) {
+      const { count } = await admin
+        .from('dispositivos')
+        .select('*', { count: 'exact', head: true })
+        .eq('boutique_id', boutique.id)
+        .eq('status', 'approved')
+
+      const maxDevices = 6
+      if (count !== null && count >= maxDevices) {
+        return NextResponse.json({
+          error: `Límite de ${maxDevices} dispositivos alcanzado. Revoca alguno desde el panel del dueño.`
+        }, { status: 403 })
+      }
     }
 
     // Upsert: si el dispositivo ya existe, actualiza; si no, crea

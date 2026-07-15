@@ -318,7 +318,7 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId }: Dashboard
       role={view as 'owner' | 'employee'}
       userName={userName}
       boutiqueName={boutiqueName}
-      showAdmin={true}
+      showAdmin={view === 'owner'}
     />
   )
 }

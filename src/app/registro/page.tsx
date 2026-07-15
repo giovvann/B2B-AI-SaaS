@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { registrarAction } from './actions'
 import { Mail, Lock, UserPlus, Sparkles, MessageCircle, ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
+import { getDeviceId, getDeviceName } from '@/lib/device'
 
 function RegistroForm() {
   const [email, setEmail] = useState('')
@@ -72,7 +73,6 @@ function RegistroForm() {
       if (!res.ok) throw new Error(data.error)
 
       // Registrar este dispositivo como dueño
-      const { getDeviceId, getDeviceName } = await import('@/lib/device')
       const devRes = await fetch('/api/register-device', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -84,6 +84,9 @@ function RegistroForm() {
       })
       const devData = await devRes.json()
       if (!devRes.ok) throw new Error(devData.error)
+
+      // Marcar PIN como verificado para esta sesión
+      sessionStorage.setItem('veliora_pin_verified', 'true')
 
       setStep('ready')
       setTimeout(() => {
