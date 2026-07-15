@@ -44,7 +44,9 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
   const handleLogout = async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
+    sessionStorage.removeItem('veliora_pin_verified')
     router.push('/login')
+    router.refresh()
   }
 
   const handleChangeRole = async () => {
