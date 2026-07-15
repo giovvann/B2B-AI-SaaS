@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { RoleSelector } from '@/app/RoleSelector'
-import { HomePageContent } from './HomePageContent'
+import { DashboardShell } from '@/components/DashboardShell'
 
 export const metadata = {
   title: 'Inicio | Mi Boutique',
@@ -16,26 +16,30 @@ export default async function DashboardPage() {
     redirect('/login')
   }
 
-  // Obtener el rol de la metadata del usuario
+  // Obtener el rol de la metadata (para compatibilidad con cuentas antiguas)
   const role = user.user_metadata?.role as 'owner' | 'employee' | undefined
 
-  // Si no tiene rol, mostrar selector
+  // Si no tiene rol, mostrar selector (cuentas antiguas / migración)
   if (!role) {
     return <RoleSelector />
   }
 
-  // Obtener nombre de la boutique para mostrarlo
+  // Obtener boutique
   const { data: boutique } = await supabase
     .from('boutiques')
-    .select('name')
+    .select('id, name')
     .eq('owner_id', user.id)
     .maybeSingle()
 
+  if (!boutique) {
+    redirect('/login')
+  }
+
   return (
-    <HomePageContent 
-      role={role} 
+    <DashboardShell
       userName={user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario'}
-      boutiqueName={boutique?.name || 'Mi Boutique'}
+      boutiqueName={boutique.name}
+      boutiqueId={boutique.id}
     />
   )
 }

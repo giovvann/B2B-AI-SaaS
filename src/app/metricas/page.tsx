@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { data } from '@/lib/data'
 import { MetricasClient } from './MetricasClient'
+import { OwnerOnly } from '@/components/OwnerOnly'
 
 export default function MetricasPage() {
   const [ready, setReady] = useState(false)
@@ -57,5 +58,9 @@ export default function MetricasPage() {
     )
   }
 
-  return <MetricasClient boutiqueName={boutiqueName} sales={sales} allProducts={products} />
+  return (
+    <OwnerOnly>
+      <MetricasClient boutiqueName={boutiqueName} sales={sales} allProducts={products} />
+    </OwnerOnly>
+  )
 }

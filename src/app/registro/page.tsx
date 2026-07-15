@@ -4,14 +4,17 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { registrarAction } from './actions'
-import { Mail, Lock, UserPlus, Sparkles, MessageCircle, ArrowRight, CheckCircle } from 'lucide-react'
+import { Mail, Lock, UserPlus, Sparkles, MessageCircle, ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
 
 function RegistroForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
+  const [step, setStep] = useState<'form' | 'pin' | 'ready'>('form')
+  const [pin, setPin] = useState('')
+  const [pinError, setPinError] = useState('')
+  const [pinLoading, setPinLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -47,13 +50,51 @@ function RegistroForm() {
       return
     }
 
-    setSuccess(true)
+    // Ir al paso de creación de PIN
+    setStep('pin')
     setLoading(false)
+  }
 
-    setTimeout(() => {
-      router.push('/dashboard')
-      router.refresh()
-    }, 3000)
+  const handleSetPin = async () => {
+    setPinError('')
+    if (pin.length < 4 || pin.length > 6) {
+      setPinError('El PIN debe tener entre 4 y 6 dígitos')
+      return
+    }
+    setPinLoading(true)
+    try {
+      const res = await fetch('/api/set-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      // Registrar este dispositivo como dueño
+      const { getDeviceId, getDeviceName } = await import('@/lib/device')
+      const devRes = await fetch('/api/register-device', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          device_id: getDeviceId(),
+          device_name: getDeviceName(),
+          role: 'owner',
+        }),
+      })
+      const devData = await devRes.json()
+      if (!devRes.ok) throw new Error(devData.error)
+
+      setStep('ready')
+      setTimeout(() => {
+        router.push('/dashboard')
+        router.refresh()
+      }, 2000)
+    } catch (err: any) {
+      setPinError(err.message || 'Error al guardar el PIN')
+    } finally {
+      setPinLoading(false)
+    }
   }
 
   const whatsappLink = `https://wa.me/528342177709?text=${encodeURIComponent(
@@ -62,7 +103,55 @@ function RegistroForm() {
     }`
   )}`
 
-  if (success) {
+  if (step === 'pin') {
+    return (
+      <main className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
+        <div className="w-full max-w-sm text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mb-6">
+            <Lock className="w-10 h-10 text-white" strokeWidth={2.5} />
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-3">CREA TU PIN</h1>
+          <p className="text-gray-400 mb-6 text-sm leading-relaxed">
+            Este PIN protegerá el acceso a métricas, gastos y configuración.<br />
+            Compartirás tu correo y contraseña con tus empleados, pero solo tú tendrás este PIN.
+          </p>
+
+          <div className="space-y-4">
+            <input
+              type="password"
+              inputMode="numeric"
+              maxLength={6}
+              value={pin}
+              onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
+              placeholder="Ingresa 4-6 dígitos"
+              className="w-full text-center text-2xl tracking-[0.5em] bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+              autoFocus
+              disabled={pinLoading}
+            />
+            {pinError && (
+              <p className="text-red-400 text-sm">{pinError}</p>
+            )}
+            <button
+              onClick={handleSetPin}
+              disabled={pinLoading || pin.length < 4}
+              className="w-full bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-4 rounded-2xl text-lg transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {pinLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Guardando...
+                </span>
+              ) : (
+                'CONTINUAR'
+              )}
+            </button>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  if (step === 'ready') {
     return (
       <main className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
         <div className="w-full max-w-md text-center">
@@ -70,12 +159,10 @@ function RegistroForm() {
             <CheckCircle className="w-10 h-10 text-white" strokeWidth={2.5} />
           </div>
           <h1 className="text-3xl font-bold text-white mb-3">
-            {trial ? 'Bienvenida a tu prueba gratis' : 'Cuenta creada exitosamente'}
+            {trial ? '¡Todo listo!' : 'Cuenta creada'}
           </h1>
           <p className="text-gray-400 mb-6">
-            {trial
-              ? 'Disfruta de 7 días gratis con todas las funciones de Veliora.'
-              : 'Tu cuenta está lista. Actívala para empezar a usar Veliora.'}
+            Tu PIN ha sido guardado. Serás redirigido a tu panel.
           </p>
           {!trial && (
             <a
@@ -89,7 +176,7 @@ function RegistroForm() {
             </a>
           )}
           <p className="text-sm text-gray-500">
-            Te redirigimos a la app en unos segundos...
+            Abriendo tu panel...
           </p>
         </div>
       </main>

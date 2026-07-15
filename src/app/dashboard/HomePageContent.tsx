@@ -15,22 +15,26 @@ import {
   History,
   Calculator,
   Wallet,
+  Smartphone,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
 import { CalculatorModal } from '../components/CalculatorModal'
+import { AdminPanel } from '@/components/AdminPanel'
 
 interface HomePageContentProps {
   role: 'owner' | 'employee'
   userName: string
   boutiqueName: string
+  showAdmin?: boolean
 }
 
-export function HomePageContent({ role, userName, boutiqueName }: HomePageContentProps) {
+export function HomePageContent({ role, userName, boutiqueName, showAdmin }: HomePageContentProps) {
   const router = useRouter()
   const { theme, setTheme } = useTheme()
   const [showSettings, setShowSettings] = useState(false)
   const [calcOpen, setCalcOpen] = useState(false)
+  const [adminOpen, setAdminOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -171,13 +175,24 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
                     onClick={() => setShowSettings(false)}
                   />
                   <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 p-2 z-20">
-                    <button
-                      onClick={handleChangeRole}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      Cambiar rol
-                    </button>
+                    {showAdmin && (
+                      <button
+                        onClick={() => { setShowSettings(false); setAdminOpen(true) }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                      >
+                        <Smartphone className="w-4 h-4" />
+                        Gestionar empleados
+                      </button>
+                    )}
+                    {!showAdmin && (
+                      <button
+                        onClick={handleChangeRole}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                        Cambiar rol
+                      </button>
+                    )}
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
@@ -247,6 +262,7 @@ export function HomePageContent({ role, userName, boutiqueName }: HomePageConten
       </div>
 
       <CalculatorModal open={calcOpen} onClose={() => setCalcOpen(false)} />
+      <AdminPanel open={adminOpen} onClose={() => setAdminOpen(false)} />
     </div>
   )
 }

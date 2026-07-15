@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { writeLocal, uuid } from '@/lib/sync'
 import { data } from '@/lib/data'
+import { OwnerOnly } from '@/components/OwnerOnly'
 import { useTheme } from 'next-themes'
 import {
   Sun, Moon, X, Plus, Wallet, Trash2, Loader2, TrendingDown,
@@ -132,10 +133,11 @@ export default function GastosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
-      <div className="max-w-5xl mx-auto pb-8">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
+    <OwnerOnly>
+      <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
+        <div className="max-w-5xl mx-auto pb-8">
+          {/* Header */}
+          <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
               GASTOS
@@ -272,6 +274,7 @@ export default function GastosPage() {
           ))}
         </div>
       </div>
-    </div>
+      </div>
+      </OwnerOnly>
   )
 }
