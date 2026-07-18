@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { MessageCircle, LogOut, ArrowRight } from 'lucide-react'
-import { logoutAction } from './actions'
+import { MessageCircle, LogOut, ArrowRight, Sparkles } from 'lucide-react'
+import { logoutAction, switchToFreePlanAction } from './actions'
 
 export const metadata = {
   title: 'Membresía | Veliora',
@@ -43,15 +43,11 @@ export default async function SuscripcionExpiradaPage() {
           </p>
 
           <div className="bg-gradient-to-br from-blue-500/[0.08] to-cyan-500/[0.08] rounded-2xl p-5 mb-6 border border-blue-500/20 text-left">
-            <p className="text-sm text-gray-300 font-semibold mb-2 text-center">Incluye:</p>
+            <p className="text-sm text-gray-300 font-semibold mb-2 text-center">Todo incluido en Premium:</p>
             <div className="grid grid-cols-2 gap-2 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Inventario ilimitado</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Ventas ilimitadas</span>
+                <span>Escaneo IA de facturas</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
@@ -59,15 +55,19 @@ export default async function SuscripcionExpiradaPage() {
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                <span>Alertas WhatsApp</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                 <span>Métricas avanzadas</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>App para empleados</span>
+                <span>Dashboard de Salud</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                <span>Soporte prioritario</span>
+                <span>Código de barras</span>
               </div>
             </div>
           </div>
@@ -79,11 +79,32 @@ export default async function SuscripcionExpiradaPage() {
             className="w-full min-h-[64px] bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold text-lg tracking-wide rounded-2xl shadow-xl shadow-green-500/30 hover:shadow-green-500/50 flex items-center justify-center gap-3 transition-all active:scale-[0.98] mb-3"
           >
             <MessageCircle className="w-6 h-6" strokeWidth={2.5} />
-            <span>PAGAR POR WHATSAPP</span>
+            <span>PAGAR POR WHATSAPP — ${SUBSCRIPTION_PRICE} MXN/mes</span>
           </a>
 
           <p className="text-xs text-gray-500 mb-6">
-            Pago único de ${SUBSCRIPTION_PRICE} MXN. Te contactamos por WhatsApp para procesar tu pago y activar tu membresía al instante.
+            Pago único mensual. Te contactamos por WhatsApp para procesar tu pago y activar tu membresía al instante.
+          </p>
+
+          {/* Separador */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-white/[0.08]" />
+            <span className="text-xs text-gray-500 font-semibold uppercase tracking-widest">O continúa gratis</span>
+            <div className="flex-1 h-px bg-white/[0.08]" />
+          </div>
+
+          <form action={switchToFreePlanAction}>
+            <button
+              type="submit"
+              className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-white/[0.05] hover:bg-white/[0.08] border border-white/[0.08] text-gray-300 hover:text-white font-semibold rounded-2xl transition-all active:scale-[0.98]"
+            >
+              <Sparkles className="w-5 h-5" />
+              CONTINUAR CON PLAN GRATUITO
+            </button>
+          </form>
+
+          <p className="text-xs text-gray-600 mt-3">
+            Plan gratuito: inventario manual, ventas, gastos, 1 dispositivo. Sin funciones IA.
           </p>
 
           <form action={logoutAction}>

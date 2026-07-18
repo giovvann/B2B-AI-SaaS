@@ -58,6 +58,7 @@ export async function registrarAction(formData: FormData) {
     subscription_expires_at: subscriptionExpiresAt,
     is_active: trial ? true : false,
     is_trial: trial ? true : false,
+    plan_type: trial ? 'trial' : 'free',
   }, { onConflict: 'owner_id', ignoreDuplicates: true })
 
   if (boutiqueError) {

@@ -18,6 +18,7 @@ import {
   Smartphone,
   Settings,
   Activity,
+  Download,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
@@ -203,6 +204,13 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                         >
                           <Settings className="w-4 h-4" />
                           Configuración
+                        </button>
+                        <button
+                          onClick={() => { setShowSettings(false); router.push('/exportar-todo') }}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                        >
+                          <Download className="w-4 h-4" />
+                          Exportar todos mis datos
                         </button>
                       </>
                     )}

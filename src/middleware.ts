@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const PREMIUM_ROUTES = ['/ingresos/nuevo', '/metricas', '/salud', '/configuracion']
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers },
@@ -11,17 +13,11 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
+        getAll() { return request.cookies.getAll() },
         setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           response = NextResponse.next({ request })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          )
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
         },
       },
     }
@@ -34,60 +30,33 @@ export async function middleware(request: NextRequest) {
   const isSuperAdmin = user?.email?.toLowerCase() === SUPERADMIN_EMAIL
 
   // ============================================
-  // REGLA 1: /superadmin - Solo el superadmin
+  // REGLA: Superadmin — acceso completo
   // ============================================
-  if (pathname.startsWith('/superadmin')) {
+  if (pathname.startsWith('/superadmin') && !isSuperAdmin) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/login'
       return NextResponse.redirect(url)
     }
-    if (!isSuperAdmin) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/dashboard'
-      return NextResponse.redirect(url)
-    }
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
+  }
+
+  // ============================================
+  // REGLA: Rutas públicas
+  // ============================================
+  const publicRoutes = ['/login', '/registro', '/auth', '/privacidad', '/terminos', '/seguridad', '/suscripcion-expirada']
+  const publicApiRoutes = ['/api/extract-invoice', '/api/analyze-business', '/api/whatsapp-alert']
+  const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))
+  const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
+
+  if (pathname === '/' || isPublic || isPublicApi) {
     return response
   }
 
   // ============================================
-  // REGLA 2: /suscripcion-expirada - Pública para usuarios logueados
-  // ============================================
-  if (pathname === '/suscripcion-expirada') {
-    return response
-  }
-
-  // ============================================
-  // REGLA 3: / - Landing page pública
-  // Si el usuario ya inició sesión, redirigir al dashboard
-  // ============================================
-  if (pathname === '/') {
-    if (user) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/dashboard'
-      return NextResponse.redirect(url)
-    }
-    return response
-  }
-
-  // ============================================
-  // REGLA 4: Otras rutas públicas
-  // ============================================
-  const publicRoutes = ['/login', '/registro', '/auth', '/privacidad', '/terminos', '/seguridad']
-  if (publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))) {
-    return response
-  }
-
-  // ============================================
-  // REGLA 5: Rutas API públicas
-  // ============================================
-  if (pathname.startsWith('/api/extract-invoice') || 
-      pathname.startsWith('/api/analyze-business')) {
-    return response
-  }
-
-  // ============================================
-  // REGLA 6: Rutas protegidas (requieren auth)
+  // REGLA: No autenticado → login
   // ============================================
   if (!user) {
     const url = request.nextUrl.clone()
@@ -96,27 +65,38 @@ export async function middleware(request: NextRequest) {
   }
 
   // ============================================
-  // REGLA 7: Verificar suscripción (excepto superadmin)
+  // REGLA: Verificar suscripción y plan
   // ============================================
   if (!isSuperAdmin) {
     const { data: boutique } = await supabase
       .from('boutiques')
-      .select('subscription_expires_at, is_active')
+      .select('subscription_expires_at, is_active, plan_type')
       .eq('owner_id', user.id)
       .single()
 
     if (boutique) {
       const now = new Date()
       const expiresAt = boutique.subscription_expires_at ? new Date(boutique.subscription_expires_at) : null
-      const isExpired = !boutique.is_active || (expiresAt && expiresAt < now)
+      const planType = boutique.plan_type || 'free'
 
-      const protectedRoutes = ['/dashboard', '/ingresos', '/ventas', '/metricas']
-      const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+      // Si el plan expiró y no es free → redirect a suscripcion-expirada
+      const isExpiredPremium = !boutique.is_active && planType !== 'free'
+      const isPastTrial = planType === 'trial' && expiresAt && expiresAt < now
 
-      if (isExpired && isProtectedRoute && pathname !== '/suscripcion-expirada') {
+      if ((isExpiredPremium || isPastTrial) && pathname !== '/suscripcion-expirada') {
         const url = request.nextUrl.clone()
         url.pathname = '/suscripcion-expirada'
         return NextResponse.redirect(url)
+      }
+
+      // Si es plan FREE → bloquear rutas premium
+      if (planType === 'free' || (planType === 'trial' && expiresAt && expiresAt < now)) {
+        const isPremiumRoute = PREMIUM_ROUTES.some(route => pathname.startsWith(route))
+        if (isPremiumRoute) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/dashboard'
+          return NextResponse.redirect(url)
+        }
       }
     }
   }
