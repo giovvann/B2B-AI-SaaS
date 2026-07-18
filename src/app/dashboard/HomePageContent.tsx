@@ -16,6 +16,8 @@ import {
   Calculator,
   Wallet,
   Smartphone,
+  Settings,
+  Activity,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
@@ -99,6 +101,15 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       gradient: 'from-rose-500 to-red-600',
       shadowColor: 'shadow-rose-500/30',
     },
+    {
+      id: 'salud',
+      title: 'SALUD',
+      description: 'Semáforo inteligente y recomendaciones IA',
+      icon: Activity,
+      href: '/salud',
+      gradient: 'from-cyan-500 to-teal-600',
+      shadowColor: 'shadow-cyan-500/30',
+    },
   ]
 
   const employeeActions = [
@@ -178,13 +189,22 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                   />
                   <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 p-2 z-20">
                     {showAdmin && (
-                      <button
-                        onClick={() => { setShowSettings(false); setAdminOpen(true) }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
-                      >
-                        <Smartphone className="w-4 h-4" />
-                        Gestionar empleados
-                      </button>
+                      <>
+                        <button
+                          onClick={() => { setShowSettings(false); setAdminOpen(true) }}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                        >
+                          <Smartphone className="w-4 h-4" />
+                          Gestionar empleados
+                        </button>
+                        <button
+                          onClick={() => { setShowSettings(false); router.push('/configuracion') }}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                        >
+                          <Settings className="w-4 h-4" />
+                          Configuración
+                        </button>
+                      </>
                     )}
                     {!showAdmin && (
                       <button
