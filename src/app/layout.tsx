@@ -8,8 +8,11 @@ import { SyncProvider } from "@/components/SyncProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "B2B AI SaaS",
-  description: "Sistema de gestión de inventario",
+  title: {
+    default: "Veliora",
+    template: "%s | Veliora",
+  },
+  description: "Veliora - El sistema inteligente para boutiques de ropa. Controla inventario, ventas y tallas con IA.",
 };
 
 export default function RootLayout({
