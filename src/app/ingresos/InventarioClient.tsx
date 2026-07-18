@@ -41,7 +41,8 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (p.brand || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (p.size || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (p.color || '').toLowerCase().includes(searchTerm.toLowerCase())
+      (p.color || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.sku || '').toLowerCase().includes(searchTerm.toLowerCase())
     ),
     [products, searchTerm]
   )

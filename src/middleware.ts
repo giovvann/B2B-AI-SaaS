@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
   // REGLA: Rutas públicas
   // ============================================
   const publicRoutes = ['/login', '/registro', '/auth', '/privacidad', '/terminos', '/seguridad', '/suscripcion-expirada']
-  const publicApiRoutes = ['/api/extract-invoice', '/api/analyze-business', '/api/whatsapp-alert']
+  const publicApiRoutes = ['/api/extract-invoice', '/api/analyze-business', '/api/whatsapp-alert', '/api/products-by-sku', '/api/add-stock', '/api/export-all']
   const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))
   const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
 
