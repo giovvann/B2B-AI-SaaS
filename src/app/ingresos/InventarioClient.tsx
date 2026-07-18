@@ -2,10 +2,11 @@
 
 import { useState, useMemo, useTransition, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, Edit3, Trash2, Package, Sun, Moon, X, Ruler, Palette, Tag, Plus } from 'lucide-react'
+import { Search, Edit3, Trash2, Package, Sun, Moon, X, Ruler, Palette, Tag, Plus, Camera, Barcode } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { deleteProduct } from './actions'
 import { displaySize, displayColor } from '@/lib/product-utils'
+import { BarcodeScanner } from '@/app/components/BarcodeScanner'
 
 interface Product {
   id: string
@@ -30,6 +31,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [barcodeOpen, setBarcodeOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
 
   useEffect(() => { setMounted(true) }, [])
@@ -43,6 +45,11 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
     ),
     [products, searchTerm]
   )
+
+  const handleBarcodeScan = (code: string) => {
+    setSearchTerm(code)
+    setBarcodeOpen(false)
+  }
 
   const handleDelete = (productId: string) => {
     if (!confirm('Eliminar este producto?')) return

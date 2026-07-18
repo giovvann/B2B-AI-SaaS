@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import {
@@ -20,10 +20,11 @@ import {
   Image as ImageIcon,
   Sparkles,
   CheckCheck,
-  QrCode,
+  Barcode,
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { syncBoutiqueAction } from '@/app/acciones/sync-boutique';
+import { BarcodeScanner } from '@/app/components/BarcodeScanner';
 
 interface Product {
   id: string;
@@ -35,6 +36,7 @@ interface Product {
   quantity: number;
   size: string;
   color: string;
+  sku: string;
   status: 'new' | 'edited';
   sourceImageId: string;
 }
@@ -178,6 +180,7 @@ export default function NewIncomePage() {
           quantity: p.quantity,
           size: p.size || '',
           color: p.color || '',
+          sku: p.sku || '',
           status: 'new',
           sourceImageId: img.id,
         }));
@@ -289,6 +292,7 @@ export default function NewIncomePage() {
           season: p.season,
           size: p.size,
           color: p.color,
+          sku: p.sku,
           purchase_price: p.purchase_price,
           sale_price: p.sale_price,
           quantity: p.quantity,
@@ -309,6 +313,79 @@ export default function NewIncomePage() {
   };
 
   // Función cancelar - LLEVA AL INICIO (/)
+  
+  // ====== C�DIGO DE BARRAS ======
+  const [barcodeOpen, setBarcodeOpen] = useState(false)
+  const [barcodeResult, setBarcodeResult] = useState<{found: boolean; product?: any; code: string} | null>(null)
+  const [barcodeLoading, setBarcodeLoading] = useState(false)
+
+  const handleBarcodeScan = useCallback(async (code: string) => {
+    setBarcodeLoading(true)
+    setBarcodeResult(null)
+    try {
+      const res = await fetch('/api/products-by-sku?sku=' + encodeURIComponent(code) + '&boutiqueId=' + boutiqueId)
+      const data = await res.json()
+      if (data.found && data.product) {
+        setBarcodeResult({ found: true, product: data.product, code })
+      } else {
+        setBarcodeResult({ found: false, code })
+      }
+    } catch (err: any) {
+      setError('Error buscando producto: ' + err.message)
+    } finally {
+      setBarcodeLoading(false)
+    }
+  }, [boutiqueId])
+
+  const handleAddStockFromBarcode = async () => {
+    if (!barcodeResult?.product) return
+    const qty = parseInt(prompt('�Cu�ntas unidades agregar al stock actual?', '1') || '0')
+    if (qty <= 0) return
+    try {
+      const res = await fetch('/api/add-stock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: barcodeResult.product.id, quantity: qty }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setSuccess('� ' + qty + ' unidad(es) agregada(s) a "' + barcodeResult.product.name + '". Stock actual: ' + data.newStock)
+      setBarcodeOpen(false)
+      setBarcodeResult(null)
+      setTimeout(() => setSuccess(''), 3000)
+    } catch (err: any) {
+      setError('Error agregando stock: ' + err.message)
+    }
+  }
+
+  const handleCreateFromBarcode = () => {
+    if (!barcodeResult) return
+    const newProduct: Product = {
+      id: 'prod_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      name: '',
+      brand: '',
+      season: '',
+      purchase_price: 0,
+      sale_price: 0,
+      quantity: 1,
+      size: '',
+      color: '',
+      sku: barcodeResult.code,
+      status: 'edited',
+      sourceImageId: 'barcode',
+    }
+    setProducts(prev => [...prev, newProduct])
+    setBarcodeOpen(false)
+    setBarcodeResult(null)
+    setSuccess('� C�digo ' + barcodeResult.code + ' agregado. Edita los datos del producto.')
+    setTimeout(() => setSuccess(''), 3000)
+  }
+
+  const handleScannerClose = () => {
+    setBarcodeOpen(false)
+    setBarcodeResult(null)
+  }
+
   const handleCancel = () => {
     if (products.length > 0) {
       if (confirm('¿Estás seguro de que quieres cancelar? Se perderán todos los productos extraídos.')) {
@@ -603,18 +680,7 @@ export default function NewIncomePage() {
               )}
             </div>
 
-            {/* ====== SECCIÓN 2: CÓDIGO DE BARRAS ====== */}
-            <div className="bg-zinc-50 dark:bg-[#0a0a0a] rounded-3xl p-6 border-2 border-dashed border-zinc-300 dark:border-zinc-700 opacity-60">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-zinc-200 dark:bg-zinc-800 rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <QrCode className="w-7 h-7 text-zinc-400 dark:text-zinc-500" strokeWidth={1.5} />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-zinc-500 dark:text-zinc-400">Código de barras</h3>
-                  <p className="text-sm text-zinc-400 dark:text-zinc-500">Próximamente — escanea códigos de barras para agregar productos automáticamente</p>
-                </div>
-              </div>
-            </div>
+
 
             {/* ====== SECCIÓN 3: PRODUCTOS EXTRAÍDOS ====== */}
             {products.length > 0 && (

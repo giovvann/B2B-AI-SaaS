@@ -10,6 +10,7 @@ interface ProductInput {
   season?: string
   size?: string
   color?: string
+  sku?: string
   purchase_price: number
   sale_price: number
   quantity: number
@@ -35,6 +36,7 @@ export async function saveProductsAction(products: ProductInput[]) {
     color: p.color || '',
     purchase_price: p.purchase_price,
     sale_price: p.sale_price,
+    sku: p.sku || null,
     stock: p.quantity,
     boutique_id: boutique.boutiqueId,
   }))
