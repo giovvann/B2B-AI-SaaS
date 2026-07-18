@@ -63,7 +63,7 @@ export default function NewIncomePage() {
   const [loadingBoutique, setLoadingBoutique] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showManualForm, setShowManualForm] = useState(false);
-  const [manualProduct, setManualProduct] = useState({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
+  const [manualProduct, setManualProduct] = useState({ name: '', brand: '', season: '', size: '', color: '', sku: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
   const calcSalePrice = (purchase: number) => Math.round(purchase * 2.5 * 100) / 100;
 
   useEffect(() => {
@@ -251,6 +251,7 @@ export default function NewIncomePage() {
         season: manualProduct.season,
         size: manualProduct.size || 'Unitalla',
         color: manualProduct.color || 'Único',
+        sku: manualProduct.sku,
         purchase_price: manualProduct.purchase_price,
         sale_price: manualProduct.sale_price,
         quantity: manualProduct.quantity,
@@ -258,7 +259,7 @@ export default function NewIncomePage() {
 
       if ('error' in res) throw new Error(res.error);
 
-      setManualProduct({ name: '', brand: '', season: '', size: '', color: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
+      setManualProduct({ name: '', brand: '', season: '', size: '', color: '', sku: '', purchase_price: 0, sale_price: 0, quantity: 1, sale_price_input: 0 });
       setShowManualForm(false);
       setSuccess('Producto guardado en inventario');
       setTimeout(() => setSuccess(''), 2000);
@@ -573,7 +574,13 @@ export default function NewIncomePage() {
                         placeholder="Ej: Rojo"
                         className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                     </div>
-                      <div>
+                    <div>
+                      <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Código de barras</label>
+                      <input type="text" value={manualProduct.sku} onChange={(e) => setManualProduct(prev => ({ ...prev, sku: e.target.value }))}
+                        placeholder="Ej: 7501234567890"
+                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 font-mono" />
+                    </div>
+                    <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Precio compra *</label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs">$</span>
@@ -712,8 +719,9 @@ export default function NewIncomePage() {
                 )}
 
                 <div className="space-y-2">
-                  <div className="hidden md:grid md:grid-cols-10 gap-2 px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                  <div className="hidden md:grid md:grid-cols-11 gap-2 px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 tracking-wider border-b border-zinc-200 dark:border-zinc-800">
                     <div className="col-span-3">Producto</div>
+                    <div className="col-span-1">SKU</div>
                     <div className="col-span-1">Talla</div>
                     <div className="col-span-1">Color</div>
                     <div className="col-span-1 text-right">Precio</div>
@@ -750,7 +758,12 @@ export default function NewIncomePage() {
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
-                        <div className="grid grid-cols-4 gap-1.5">
+                        <div className="grid grid-cols-5 gap-1.5">
+                          <div>
+                            <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">SKU</label>
+                            <input type="text" value={product.sku} placeholder="SKU opcional" onChange={(e) => updateProduct(product.id, 'sku', e.target.value)}
+                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 font-mono" />
+                          </div>
                           <div>
                             <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Talla</label>
                             <input type="text" value={product.size} placeholder="Ej: M" onChange={(e) => updateProduct(product.id, 'size', e.target.value)}
@@ -779,10 +792,14 @@ export default function NewIncomePage() {
                       </div>
 
                       {/* Desktop layout */}
-                      <div className="hidden md:grid md:grid-cols-10 gap-2 items-center px-3 py-2.5">
+                      <div className="hidden md:grid md:grid-cols-11 gap-2 items-center px-3 py-2.5">
                         <div className="col-span-3">
                           <input type="text" value={product.name} onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
                             className="w-full text-sm font-semibold bg-transparent border-2 border-transparent focus:border-blue-500 rounded-lg px-2 py-1.5 text-zinc-900 dark:text-white focus:outline-none" />
+                        </div>
+                        <div className="col-span-1">
+                          <input type="text" value={product.sku} onChange={(e) => updateProduct(product.id, 'sku', e.target.value)}
+                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-mono placeholder:text-zinc-400" placeholder="SKU opcional" />
                         </div>
                         <div className="col-span-1">
                           <input type="text" value={product.size} onChange={(e) => updateProduct(product.id, 'size', e.target.value)}
@@ -801,7 +818,7 @@ export default function NewIncomePage() {
                           <input type="number" value={product.quantity} onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
                             className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
                         </div>
-                        <div className="col-span-3 flex justify-end">
+                        <div className="col-span-2 flex justify-end">
                           <button onClick={() => removeProduct(product.id)}
                             className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition-colors">
                             <Trash2 className="w-4 h-4" />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Camera, X, Loader2, Barcode } from 'lucide-react'
+import { Camera, X, Loader2, Barcode, ScanLine } from 'lucide-react'
 
 interface BarcodeScannerProps {
   onScan: (code: string) => void
@@ -12,34 +12,55 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
   const [scanning, setScanning] = useState(true)
   const [error, setError] = useState('')
   const [manualCode, setManualCode] = useState('')
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const streamRef = useRef<MediaStream | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const scannerRef = useRef<any>(null)
 
   useEffect(() => {
-    startCamera()
-    return () => stopCamera()
+    startScanner()
+    return () => { void stopScanner() }
   }, [])
 
-  const startCamera = async () => {
+  const startScanner = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: 640, height: 480 }
-      })
-      streamRef.current = stream
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
+      const { Html5Qrcode } = await import('html5-qrcode')
+
+      const html5QrCode = new Html5Qrcode('barcode-reader')
+      scannerRef.current = html5QrCode
+
+      await html5QrCode.start(
+        { facingMode: 'environment' },
+        {
+          fps: 15,
+          qrbox: { width: 280, height: 120 },
+          aspectRatio: 4 / 3,
+        },
+        (decodedText) => {
+          // Código detectado con éxito
+          try { navigator.vibrate(100) } catch {}
+          onScan(decodedText)
+          stopScanner()
+          onClose()
+        },
+        () => {
+          // Callback de pérdida de cuadro (no hacer nada)
+        }
+      )
+
       setScanning(true)
+      setError('')
     } catch (err) {
+      console.error('Error iniciando escáner:', err)
       setError('No se pudo acceder a la cámara. Ingresa el código manualmente.')
       setScanning(false)
     }
   }
 
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop())
-      streamRef.current = null
+  const stopScanner = async () => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop()
+        scannerRef.current = null
+      } catch {}
     }
   }
 
@@ -75,23 +96,29 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
             </div>
           )}
 
-          {/* Camera view */}
-          <div className="relative rounded-2xl overflow-hidden bg-black mb-4 aspect-[4/3]">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full h-full object-cover"
-            />
+          {/* Camera / Scanner view */}
+          <div
+            ref={containerRef}
+            className="relative rounded-2xl overflow-hidden bg-black mb-4 aspect-[4/3]"
+          >
+            <div id="barcode-reader" className="w-full h-full" />
             {scanning && (
               <>
                 {/* Scan overlay */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-3/4 h-1 bg-blue-500/50 rounded-full animate-pulse shadow-lg shadow-blue-500/50" />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="relative w-4/5">
+                    {/* Scanning line */}
+                    <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent rounded-full animate-pulse shadow-lg shadow-blue-500/50" />
+                    {/* Corner brackets */}
+                    <div className="absolute -top-8 -left-2 w-8 h-8 border-t-2 border-l-2 border-blue-400/60 rounded-tl" />
+                    <div className="absolute -top-8 -right-2 w-8 h-8 border-t-2 border-r-2 border-blue-400/60 rounded-tr" />
+                    <div className="absolute -bottom-8 -left-2 w-8 h-8 border-b-2 border-l-2 border-blue-400/60 rounded-bl" />
+                    <div className="absolute -bottom-8 -right-2 w-8 h-8 border-b-2 border-r-2 border-blue-400/60 rounded-br" />
+                  </div>
                 </div>
                 <div className="absolute top-3 left-3 bg-blue-500/80 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                  <Camera className="w-3 h-3" />
-                  ENFOCANDO...
+                  <ScanLine className="w-3 h-3" />
+                  ESCANEANDO...
                 </div>
               </>
             )}
@@ -127,7 +154,7 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
           </form>
 
           <button
-            onClick={startCamera}
+            onClick={startScanner}
             className="w-full mt-3 px-4 py-3 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-2xl transition-colors"
           >
             Reintentar cámara
