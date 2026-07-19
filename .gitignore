@@ -39,3 +39,7 @@ tsconfig.tsbuildinfo
 
 # local backups (data)
 /backups/
+
+# serwist / service worker (generated)
+/public/sw*
+/public/swe-worker*

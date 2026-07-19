@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#06B6D4" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <!-- Full background for maskable -->
+  <rect width="512" height="512" rx="96" fill="#0a0a0f"/>
+  <!-- Larger V for maskable (fills more of the canvas) -->
+  <path d="M 100 105 L 256 400 L 412 105" fill="none" stroke="url(#grad)" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
