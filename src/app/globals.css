@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.gradient-bg {
+  background: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+}
+
 :root {
   --background: #ffffff;
   --foreground: #09090b;
