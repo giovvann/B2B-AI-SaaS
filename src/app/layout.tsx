@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReminderDock } from "@/app/components/ReminderDock";
 import { SyncProvider } from "@/components/SyncProvider";
+import OfflineBanner from "@/app/components/OfflineBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -78,6 +79,7 @@ export default function RootLayout({
         >
           <SyncProvider>{children}</SyncProvider>
           <ReminderDock />
+          <OfflineBanner />
         </ThemeProvider>
       </body>
     </html>
