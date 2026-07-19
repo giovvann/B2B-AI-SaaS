@@ -37,7 +37,6 @@ export function RoleSelector() {
       })
 
       if (updateError) {
-        console.error('Error guardando rol:', updateError)
         setError(updateError.message)
         return
       }
