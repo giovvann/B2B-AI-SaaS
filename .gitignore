@@ -43,3 +43,7 @@ tsconfig.tsbuildinfo
 # serwist / service worker (generated)
 /public/sw*
 /public/swe-worker*
+
+# Build output logs
+build-*.txt
+build-output*.txt
