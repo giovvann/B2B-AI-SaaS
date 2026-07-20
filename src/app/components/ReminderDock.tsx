@@ -22,7 +22,6 @@ export function ReminderDock() {
   const [boutiqueId, setBoutiqueId] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
 
-  // resolver boutique del dueño y cargar recordatorios en cadena
   useEffect(() => {
     let alive = true
     const supabase = createClient()
@@ -54,7 +53,6 @@ export function ReminderDock() {
       if (rem && alive) setItems(rem as Reminder[])
       setLoaded(true)
     }
-    // sesión puede estar lista ya (persistida) o llegar después
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user && alive) loadAll(session.user.id)
     })
@@ -104,7 +102,6 @@ export function ReminderDock() {
   }
 
   const pending = items.filter(i => !i.done)
-  // Siempre visible el botón (para poder crear el primero); solo oculta tras cargar y si el usuario lo cerró
   if (loaded && pending.length === 0 && !open && items.length === 0) {
     return (
       <div className="fixed bottom-4 left-4 z-40">
@@ -149,16 +146,31 @@ export function ReminderDock() {
             {items.length === 0 && <p className="text-sm text-zinc-400 text-center py-3">Sin recordatorios</p>}
           </div>
           <div className="mt-3 flex gap-2">
-            <input value={title} onChange={e => setTitle(e.target.value)} onKeyDown={e => e.key === 'Enter' && add()} placeholder="¿Qué recordar?" className="flex-1 px-3 py-2 text-sm rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-indigo-500" />
-            <select value={priority} onChange={e => setPriority(e.target.value as any)} className="px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none">
+            <input
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && add()}
+              placeholder="¿Qué recordar?"
+              className="flex-1 px-3 py-2 text-sm rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-[#2a2a2a] text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+            />
+            <select
+              value={priority}
+              onChange={e => setPriority(e.target.value as any)}
+              className="px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-[#2a2a2a] text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+            >
               <option value="low">Baja</option>
               <option value="normal">Normal</option>
               <option value="high">Alta</option>
             </select>
           </div>
           <div className="mt-2 flex gap-2">
-            <input type="datetime-local" value={due} onChange={e => setDue(e.target.value)} className="flex-1 px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none" />
-            <button onClick={add} className="px-3 py-2 bg-indigo-500 text-white rounded-xl active:scale-95"><Plus className="w-4 h-4" /></button>
+            <input
+              type="datetime-local"
+              value={due}
+              onChange={e => setDue(e.target.value)}
+              className="flex-1 px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-[#2a2a2a] text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 [color-scheme:light_dark]"
+            />
+            <button onClick={add} className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl active:scale-95 transition-colors"><Plus className="w-4 h-4" /></button>
           </div>
         </div>
       ) : (

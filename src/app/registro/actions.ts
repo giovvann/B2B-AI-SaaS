@@ -7,6 +7,7 @@ export async function registrarAction(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const trial = formData.get('trial') === 'true'
+  const boutiqueName = (formData.get('boutique_name') as string) || 'Mi Boutique'
 
   if (!email || !password) {
     return { error: 'Email y contraseña son obligatorios' }
@@ -14,6 +15,10 @@ export async function registrarAction(formData: FormData) {
 
   if (password.length < 6) {
     return { error: 'La contraseña debe tener al menos 6 caracteres' }
+  }
+
+  if (!boutiqueName.trim()) {
+    return { error: 'El nombre de la boutique es obligatorio' }
   }
 
   const supabase = await createClient()
@@ -24,6 +29,11 @@ export async function registrarAction(formData: FormData) {
   })
 
   if (signUpError) {
+    // Check if user already exists (e.g. via Google OAuth)
+    if (signUpError.message?.includes('already registered') || signUpError.message?.includes('already exists') || signUpError.status === 400) {
+      // Try to see if there's a user with this email already
+      return { error: 'Este correo ya está registrado. Si usaste Google, inicia sesión con Google.' }
+    }
     return { error: signUpError.message }
   }
 
@@ -40,6 +50,7 @@ export async function registrarAction(formData: FormData) {
       user_metadata: {
         full_name: email.split('@')[0],
         role: 'owner',
+        boutique_name: boutiqueName.trim(),
       },
     }
   )
@@ -54,7 +65,7 @@ export async function registrarAction(formData: FormData) {
 
   const { error: boutiqueError } = await admin.from('boutiques').upsert({
     owner_id: signUpData.user.id,
-    name: 'Mi Boutique',
+    name: boutiqueName.trim(),
     subscription_expires_at: subscriptionExpiresAt,
     is_active: trial ? true : false,
     is_trial: trial ? true : false,

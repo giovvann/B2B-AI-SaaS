@@ -5,6 +5,8 @@ import { useRef, useEffect } from 'react';
 export default function LandingPage() {
 const deferredPromptRef = useRef<any>(null);
 
+function installPWA() {    const d = deferredPromptRef.current;    if (d) {      d.prompt();      d.userChoice.then(function(r:any){if(r.outcome==='accepted')deferredPromptRef.current=null;});    } else if ((window as any).navigator.standalone===true) {      closeDownloadModal();    } else {      openDownloadModal();    }  };
+
 function closeDownloadModal(e?: any) {    if (e && e.target !== e.currentTarget) return;    const modal = document.getElementById('downloadModalOverlay');    const content = document.getElementById('downloadModal');    if (!modal || !content) return;    content.classList.remove('scale-100');    content.classList.add('scale-95');    modal.classList.add('opacity-0');    setTimeout(() => modal.classList.add('pointer-events-none'), 300);    document.body.style.overflow = '';  };
 
 function installPWAFromModal() {    const deferred = deferredPromptRef.current;    if (deferred) {      deferred.prompt();      deferred.userChoice.then(function(result: any) {        if (result.outcome === 'accepted') closeDownloadModal();      });      deferredPromptRef.current = null;    } else if ((window as any).navigator.standalone === true) {      const btn = document.getElementById('downloadModalBtn');      if (btn) {        btn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Ya esta instalada</span></span>';        btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';      }      setTimeout(closeDownloadModal, 1500);    } else {      const hint = document.getElementById('downloadModalHint');      const btn2 = document.getElementById('downloadModalBtn');      if (btn2) {        btn2.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg><span>Entendido</span></span>';        (btn2 as any).onclick = closeDownloadModal;      }      if (hint) hint.innerHTML = 'Abre el menu de tu navegador y selecciona "Instalar app" o "Agregar a pantalla de inicio".';      const grid = document.querySelector('#downloadModal .grid-cols-2');      if (grid) {        grid.insertAdjacentHTML('afterend', '<div class="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-xl p-4 mb-6 border border-amber-500/10"><p class="text-xs text-amber-300 text-center"><strong>Tu navegador no soporta instalacion automatica.</strong><br>En Chrome/Edge: Menu → Instalar Veliora.<br>En Safari: Compartir → Agregar a pantalla de inicio.</p></div>');      }    }  };
@@ -111,7 +113,7 @@ return (
   <button className="mob-close" onClick={() => { cMob() }}>
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
-  <a href="#" onClick={(e) => { e.preventDefault(); cMob(); openDownloadModal(); }}>Descargar</a>
+  <a href="#" onClick={(e) => { e.preventDefault(); cMob(); installPWA(); }}>Descargar</a>
   <a href="#funciona" onClick={() => { cMob() }}>C&oacute;mo funciona</a>
   <a href="#beneficios" onClick={() => { cMob() }}>Beneficios</a>
   <a href="#planes" onClick={() => { cMob() }}>Planes</a>
@@ -125,7 +127,7 @@ return (
   <div className="nav-inner">
     <a href="#" className="logo">Veliora <em>· lat</em></a>
     <div className="nav-links">
-      <a href="#" onClick={(e) => { e.preventDefault(); openDownloadModal(); }}>Descargar</a>
+      <a href="#" onClick={(e) => { e.preventDefault(); installPWA(); }}>Descargar</a>
       <a href="#funciona">C&oacute;mo funciona</a>
       <a href="#beneficios">Beneficios</a>
       <a href="#planes">Planes</a>
