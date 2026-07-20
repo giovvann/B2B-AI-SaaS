@@ -111,7 +111,7 @@ return (
   <button className="mob-close" onClick={() => { cMob() }}>
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
-  <a href="/registro?trial=true" onClick={() => { cMob() }} style={{"display":"inline-flex","alignItems":"center","gap":".4rem","fontSize":".9rem","border":"1px solid rgba(42,36,32,.12)","padding":".5rem 1.2rem","borderRadius":"100px"}}><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 1v10M3 8l5 5 5-5" strokeLinecap="round"/></svg> Descargar</a>
+  <a href="#" onClick={(e) => { e.preventDefault(); cMob(); openDownloadModal(); }}>Descargar</a>
   <a href="#funciona" onClick={() => { cMob() }}>C&oacute;mo funciona</a>
   <a href="#beneficios" onClick={() => { cMob() }}>Beneficios</a>
   <a href="#planes" onClick={() => { cMob() }}>Planes</a>
@@ -125,7 +125,7 @@ return (
   <div className="nav-inner">
     <a href="#" className="logo">Veliora <em>· lat</em></a>
     <div className="nav-links">
-      <a href="/registro?trial=true" className="btn-download"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 1v10M3 8l5 5 5-5" strokeLinecap="round"/></svg> Descargar</a>
+      <a href="#" onClick={(e) => { e.preventDefault(); openDownloadModal(); }}>Descargar</a>
       <a href="#funciona">C&oacute;mo funciona</a>
       <a href="#beneficios">Beneficios</a>
       <a href="#planes">Planes</a>
@@ -423,32 +423,7 @@ return (
 </section>
 
 
-<section className="compare">
-  <div className="container">
-    <div className="compare-header r">
-      <p style={{"fontSize":".6rem","textTransform":"uppercase","letterSpacing":".22em","color":"#c8a476","fontWeight":"600","marginBottom":".5rem"}}>La diferencia es clara</p>
-      <h2>Dos formas de llevar tu boutique</h2>
-    </div>
-    <div className="compare-grid">
-      <div className="compare-card compare-without r d1">
-        <h3>Sin Veliora</h3>
-        <div className="compare-item"><div className="mk x"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round"/></svg></div><div className="txt">Buscar cada prenda entre montones de ropa</div></div>
-        <div className="compare-item"><div className="mk x"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round"/></svg></div><div className="txt">Inventario en libretas, hojas sueltas o tu memoria</div></div>
-        <div className="compare-item"><div className="mk x"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round"/></svg></div><div className="txt">No saber cu&aacute;nto ganaste realmente al final del mes</div></div>
-        <div className="compare-item"><div className="mk x"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round"/></svg></div><div className="txt">Comprar mercanc&iacute;a a ciegas, esperando que se venda</div></div>
-        <div className="compare-item"><div className="mk x"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4l8 8M12 4l-8 8" strokeLinecap="round"/></svg></div><div className="txt">Horas perdidas cada semana en papeleo y desorden</div></div>
-      </div>
-      <div className="compare-card compare-with r d2">
-        <h3>Con Veliora</h3>
-        <div className="compare-item"><div className="mk c"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 8l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/></svg></div><div className="txt">Encuentra todo en segundos desde tu tel&eacute;fono</div></div>
-        <div className="compare-item"><div className="mk c"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 8l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/></svg></div><div className="txt">Inventario siempre actualizado y al alcance</div></div>
-        <div className="compare-item"><div className="mk c"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 8l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/></svg></div><div className="txt">Reportes autom&aacute;ticos de ganancias y m&aacute;rgenes</div></div>
-        <div className="compare-item"><div className="mk c"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 8l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/></svg></div><div className="txt">Alertas de qu&eacute; pedir basadas en lo que se vende</div></div>
-        <div className="compare-item"><div className="mk c"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 8l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/></svg></div><div className="txt">Horas recuperadas para ti y tu familia</div></div>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 
 <section className="testimonials">
@@ -610,9 +585,9 @@ return (
       </div>
       <div className="footer-col">
         <h4>Legal</h4>
-        <a href="seguridad.html">Seguridad</a>
-        <a href="privacidad.html">Privacidad</a>
-        <a href="terminos.html">T&eacute;rminos</a>
+        <a href="/seguridad">Seguridad</a>
+        <a href="/privacidad">Privacidad</a>
+        <a href="/terminos">T&eacute;rminos</a>
       </div>
     </div>
     <div className="footer-bottom">
