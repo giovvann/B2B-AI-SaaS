@@ -4,8 +4,9 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { registrarAction } from './actions'
-import { Mail, Lock, UserPlus, Sparkles, MessageCircle, ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
+import { Mail, Lock, UserPlus, Sparkles, MessageCircle, CheckCircle, Loader2 } from 'lucide-react'
 import { getDeviceId, getDeviceName } from '@/lib/device'
+import Link from 'next/link'
 
 function RegistroForm() {
   const [email, setEmail] = useState('')
@@ -51,7 +52,6 @@ function RegistroForm() {
       return
     }
 
-    // Ir al paso de creación de PIN
     setStep('pin')
     setLoading(false)
   }
@@ -72,7 +72,6 @@ function RegistroForm() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
-      // Registrar este dispositivo como dueño
       const devRes = await fetch('/api/register-device', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,7 +84,6 @@ function RegistroForm() {
       const devData = await devRes.json()
       if (!devRes.ok) throw new Error(devData.error)
 
-      // Marcar PIN como verificado para esta sesión
       sessionStorage.setItem('veliora_pin_verified', 'true')
 
       setStep('ready')
@@ -106,47 +104,61 @@ function RegistroForm() {
     }`
   )}`
 
+  // V5 Header
+  const v5Header = (
+    <header
+      className="sticky top-0 z-50"
+      style={{ borderBottom: '1px solid rgba(42,36,32,.06)', backdropFilter: 'blur(12px)', background: 'rgba(253,250,245,.85)' }}
+    >
+      <div style={{ maxWidth: '980px', margin: '0 auto', padding: '.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link href="/" style={{ display: 'inline-flex', alignItems: 'baseline', gap: '.15rem', textDecoration: 'none', color: '#2a2420' }}>
+          <span style={{ fontSize: '1.25rem', fontWeight: 600, fontFamily: "'Playfair Display',Georgia,serif" }}>Veliora</span>
+          <em style={{ fontSize: '.65rem', color: '#c8a476', fontStyle: 'normal', fontFamily: "'Inter',sans-serif", fontWeight: 300 }}> · lat</em>
+        </Link>
+      </div>
+    </header>
+  );
+
   if (step === 'pin') {
     return (
-      <main className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
-        <div className="w-full max-w-sm text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mb-6">
-            <Lock className="w-10 h-10 text-white" strokeWidth={2.5} />
+      <main style={{ background: '#fdfaf5', color: '#2a2420', minHeight: '100vh' }}>
+        {v5Header}
+        <div style={{ maxWidth: '420px', margin: '0 auto', padding: '3rem 1.5rem 5rem', textAlign: 'center' }}>
+          <div style={{ width: '5rem', height: '5rem', background: 'linear-gradient(135deg,#c8a476,#b8925e)', borderRadius: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-3">CREA TU PIN</h1>
-          <p className="text-gray-400 mb-6 text-sm leading-relaxed">
-            Este PIN protegerá el acceso a métricas, gastos y configuración.<br />
-            Compartirás tu correo y contraseña con tus empleados, pero solo tú tendrás este PIN.
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2a2420', marginBottom: '.6rem', fontFamily: "'Playfair Display',Georgia,serif" }}>Crea tu PIN</h1>
+          <p style={{ color: 'rgba(42,36,32,.5)', fontSize: '.85rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+            Este PIN protegerá el acceso a métricas, gastos y configuración.
           </p>
-
-          <div className="space-y-4">
+          <div style={{ background: '#fff', borderRadius: '1rem', padding: '1.5rem', border: '1px solid rgba(200,164,118,.12)' }}>
             <input
               type="password"
               inputMode="numeric"
               maxLength={6}
               value={pin}
               onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="Ingresa 4-6 dígitos"
-              className="w-full text-center text-2xl tracking-[0.5em] bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
-              autoFocus
+              placeholder="4-6 dígitos"
               disabled={pinLoading}
+              style={{ width: '100%', textAlign: 'center', fontSize: '1.5rem', letterSpacing: '.5em', background: '#fdfaf5', border: '1px solid rgba(42,36,32,.1)', borderRadius: '.75rem', padding: '.85rem 1rem', color: '#2a2420', outline: 'none' }}
+              onFocus={(e) => e.currentTarget.style.borderColor = '#c8a476'}
+              onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(42,36,32,.1)'}
+              autoFocus
             />
-            {pinError && (
-              <p className="text-red-400 text-sm">{pinError}</p>
-            )}
+            {pinError && <p style={{ color: '#dc2626', fontSize: '.8rem', marginTop: '.5rem' }}>{pinError}</p>}
             <button
               onClick={handleSetPin}
               disabled={pinLoading || pin.length < 4}
-              className="w-full bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-4 rounded-2xl text-lg transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ width: '100%', marginTop: '1rem', padding: '1rem', background: 'linear-gradient(135deg,#c8a476,#b8925e)', color: '#fff', fontWeight: 700, fontSize: '1rem', borderRadius: '.75rem', border: 'none', cursor: (pinLoading || pin.length < 4) ? 'not-allowed' : 'pointer', opacity: (pinLoading || pin.length < 4) ? .5 : 1 }}
             >
               {pinLoading ? (
-                <span className="flex items-center justify-center gap-2">
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem' }}>
                   <Loader2 className="w-5 h-5 animate-spin" />
                   Guardando...
                 </span>
-              ) : (
-                'CONTINUAR'
-              )}
+              ) : 'CONTINUAR'}
             </button>
           </div>
         </div>
@@ -156,15 +168,16 @@ function RegistroForm() {
 
   if (step === 'ready') {
     return (
-      <main className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
-        <div className="w-full max-w-md text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mb-6">
-            <CheckCircle className="w-10 h-10 text-white" strokeWidth={2.5} />
+      <main style={{ background: '#fdfaf5', color: '#2a2420', minHeight: '100vh' }}>
+        {v5Header}
+        <div style={{ maxWidth: '420px', margin: '0 auto', padding: '3rem 1.5rem 5rem', textAlign: 'center' }}>
+          <div style={{ width: '5rem', height: '5rem', background: 'linear-gradient(135deg,#22c55e,#16a34a)', borderRadius: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+            <CheckCircle className="w-8 h-8 text-white" strokeWidth={2.5} />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-3">
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2a2420', marginBottom: '.6rem', fontFamily: "'Playfair Display',Georgia,serif" }}>
             {trial ? '¡Todo listo!' : 'Cuenta creada'}
           </h1>
-          <p className="text-gray-400 mb-6">
+          <p style={{ color: 'rgba(42,36,32,.5)', fontSize: '.85rem', marginBottom: '1.5rem' }}>
             Tu PIN ha sido guardado. Serás redirigido a tu panel.
           </p>
           {!trial && (
@@ -172,36 +185,35 @@ function RegistroForm() {
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold px-8 py-4 rounded-2xl text-lg transition-all active:scale-95 mb-4 w-full justify-center"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem', width: '100%', padding: '1rem', background: 'linear-gradient(135deg,#22c55e,#16a34a)', color: '#fff', fontWeight: 700, fontSize: '1rem', borderRadius: '.75rem', textDecoration: 'none', marginBottom: '1rem' }}
             >
-              <MessageCircle className="w-6 h-6" strokeWidth={2.5} />
+              <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
               Pagar por WhatsApp ahora
             </a>
           )}
-          <p className="text-sm text-gray-500">
-            Abriendo tu panel...
-          </p>
+          <p style={{ fontSize: '.8rem', color: 'rgba(42,36,32,.35)' }}>Abriendo tu panel...</p>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-baseline justify-center space-x-1 mb-2">
-            <span className="text-4xl font-bold text-white" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600, letterSpacing: '0.02em' }}>Veliora</span>
-            <span className="text-sm text-cyan-400" style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300, letterSpacing: '0.1em' }}>.lat</span>
+    <main style={{ background: '#fdfaf5', color: '#2a2420', minHeight: '100vh' }}>
+      {v5Header}
+      <div style={{ maxWidth: '420px', margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', padding: '.3rem 1rem', borderRadius: '100px', background: 'rgba(200,164,118,.1)', border: '1px solid rgba(200,164,118,.2)', marginBottom: '.8rem' }}>
+            <Sparkles className="w-3 h-3" style={{ color: '#c8a476' }} />
+            <span style={{ fontSize: '.6rem', fontWeight: 600, color: '#c8a476', letterSpacing: '.12em', textTransform: 'uppercase' }}>REGISTRO</span>
           </div>
-          <p className="text-gray-400 text-lg">Crea tu cuenta para empezar</p>
+          <h1 style={{ fontSize: 'clamp(1.5rem,3.5vw,2rem)', fontWeight: 800, color: '#2a2420', marginBottom: '.4rem', letterSpacing: '-.02em', fontFamily: "'Playfair Display',Georgia,serif" }}>Crear cuenta</h1>
+          <p style={{ color: 'rgba(42,36,32,.5)', fontSize: '.85rem' }}>Empieza a gestionar tu boutique</p>
         </div>
 
-        <div className="bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-3xl p-8 border border-white/[0.06]">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 flex items-center gap-2">
-                <Mail className="w-4 h-4 text-blue-400" />
+        <div style={{ background: '#fff', borderRadius: '1rem', padding: '1.5rem', border: '1px solid rgba(200,164,118,.12)' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ fontSize: '.75rem', fontWeight: 700, color: '#2a2420', marginBottom: '.35rem', display: 'block', letterSpacing: '.04em' }}>
                 CORREO ELECTRÓNICO
               </label>
               <input
@@ -209,14 +221,14 @@ function RegistroForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-5 py-4 text-base rounded-2xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none transition-colors"
+                style={{ width: '100%', padding: '.85rem 1rem', fontSize: '.9rem', borderRadius: '.75rem', border: '1px solid rgba(42,36,32,.1)', background: '#fdfaf5', color: '#2a2420', outline: 'none', transition: 'border-color .2s' }}
+                onFocus={(e) => e.currentTarget.style.borderColor = '#c8a476'}
+                onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(42,36,32,.1)'}
                 placeholder="tu@correo.com"
               />
             </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-300 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-blue-400" />
+            <div>
+              <label style={{ fontSize: '.75rem', fontWeight: 700, color: '#2a2420', marginBottom: '.35rem', display: 'block', letterSpacing: '.04em' }}>
                 CONTRASEÑA
               </label>
               <input
@@ -225,13 +237,15 @@ function RegistroForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full px-5 py-4 text-base rounded-2xl bg-black/40 border border-white/10 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none transition-colors"
+                style={{ width: '100%', padding: '.85rem 1rem', fontSize: '.9rem', borderRadius: '.75rem', border: '1px solid rgba(42,36,32,.1)', background: '#fdfaf5', color: '#2a2420', outline: 'none', transition: 'border-color .2s' }}
+                onFocus={(e) => e.currentTarget.style.borderColor = '#c8a476'}
+                onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(42,36,32,.1)'}
                 placeholder="Mínimo 6 caracteres"
               />
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-5 py-4 rounded-2xl font-semibold text-sm">
+              <div style={{ background: 'rgba(220,38,38,.06)', border: '1px solid rgba(220,38,38,.15)', borderRadius: '.75rem', padding: '.75rem 1rem', fontSize: '.8rem', color: '#dc2626', fontWeight: 600 }}>
                 {error}
               </div>
             )}
@@ -239,48 +253,32 @@ function RegistroForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full min-h-[64px] bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg tracking-wide rounded-2xl shadow-xl shadow-blue-500/30 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ width: '100%', padding: '1rem', background: 'linear-gradient(135deg,#c8a476,#b8925e)', color: '#fff', fontWeight: 700, fontSize: '1rem', borderRadius: '.75rem', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? .5 : 1, letterSpacing: '.04em' }}
             >
-              {loading ? (
-                <span className="text-base">CREANDO CUENTA...</span>
-              ) : (
-                <>
-                  <UserPlus className="w-6 h-6" strokeWidth={2.5} />
-                  <span>CREAR CUENTA</span>
-                </>
-              )}
+              {loading ? 'CREANDO CUENTA...' : 'CREAR CUENTA'}
             </button>
           </form>
 
-          {trial ? (
-            <div className="mt-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl p-4">
-              <div className="flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-white font-semibold text-sm">7 días gratis</p>
-                  <p className="text-gray-400 text-xs mt-1">Sin compromiso. Cancela cuando quieras.</p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="mt-6 bg-green-500/5 border border-green-500/20 rounded-2xl p-4">
-              <div className="flex items-start gap-3">
-                <MessageCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-white font-semibold text-sm">Pago vía WhatsApp</p>
-                  <p className="text-gray-400 text-xs mt-1">Después de crear tu cuenta te contactamos para activar tu membresía.</p>
-                </div>
-              </div>
+          {trial && (
+            <div style={{ marginTop: '1rem', background: 'rgba(200,164,118,.06)', borderRadius: '.85rem', padding: '1rem', border: '1px solid rgba(200,164,118,.1)' }}>
+              <p style={{ fontSize: '.8rem', color: '#2a2420', fontWeight: 600, marginBottom: '.2rem' }}>7 días gratis</p>
+              <p style={{ fontSize: '.75rem', color: 'rgba(42,36,32,.45)' }}>Sin compromiso. Cancela cuando quieras.</p>
             </div>
           )}
 
-          <div className="mt-6 text-center">
-            <a
-              href="/login"
-              className="text-blue-400 hover:text-blue-300 font-semibold text-sm transition-colors"
-            >
+          <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <Link href="/login" style={{ color: '#c8a476', fontWeight: 600, fontSize: '.85rem', textDecoration: 'underline' }}>
               ¿Ya tienes cuenta? Inicia sesión
-            </a>
+            </Link>
+          </div>
+
+          <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '.35rem', fontSize: '.8rem', color: 'rgba(42,36,32,.4)', textDecoration: 'none' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M10 19l-7-7m0 0l7-7m-7 7h18" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span>Volver al inicio</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -291,8 +289,8 @@ function RegistroForm() {
 export default function RegistroPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-6">
-        <div className="text-gray-400">Cargando...</div>
+      <main style={{ background: '#fdfaf5', color: '#2a2420', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: 'rgba(42,36,32,.5)' }}>Cargando...</p>
       </main>
     }>
       <RegistroForm />
