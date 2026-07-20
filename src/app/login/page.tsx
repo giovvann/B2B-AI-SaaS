@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -13,26 +13,6 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
   const supabase = createClient();
-
-  // Connectivity check on mount
-  const [online, setOnline] = useState(true);
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const c = new AbortController();
-        setTimeout(() => c.abort(), 5000);
-        const r = await fetch('/api/ping', { method: 'GET', signal: c.signal, cache: 'no-store' });
-        setOnline(r.ok);
-      } catch {
-        setOnline(false);
-      }
-    };
-    check();
-    const interval = setInterval(check, 30000);
-    window.addEventListener('online', () => setOnline(true));
-    window.addEventListener('offline', () => setOnline(false));
-    return () => { clearInterval(interval); window.removeEventListener('online', () => {}); window.removeEventListener('offline', () => {}); };
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,14 +54,6 @@ export default function LoginPage() {
 
   return (
     <main style={{ background: '#fdfaf5', color: '#2a2420', minHeight: '100vh' }}>
-      {/* Offline banner */}
-      {!online && (
-        <div style={{ background: 'rgba(200,164,118,.9)', backdropFilter: 'blur(12px)', textAlign: 'center', padding: '.4rem', fontSize: '.75rem', color: '#fff' }}>
-          Sin conexión — los cambios se guardarán localmente
-          <button onClick={() => window.location.reload()} style={{ marginLeft: '.5rem', textDecoration: 'underline', background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>Reintentar</button>
-        </div>
-      )}
-
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ borderBottom: '1px solid rgba(42,36,32,.06)', backdropFilter: 'blur(12px)', background: 'rgba(253,250,245,.85)' }}>
         <div style={{ maxWidth: '980px', margin: '0 auto', padding: '.75rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -109,7 +81,7 @@ export default function LoginPage() {
           <h1 style={{ fontSize: 'clamp(1.5rem,3.5vw,2rem)', fontWeight: 800, color: '#2a2420', marginBottom: '.4rem', letterSpacing: '-.02em', fontFamily: "'Playfair Display',Georgia,serif" }}>
             Bienvenido de vuelta
           </h1>
-          <p style={{ color: 'rgba(42,36,32,.5)', fontSize: '.85rem' }}>
+          <p style={{ color: 'rgba(42,36,32,.6)', fontSize: '.85rem' }}>
             Accede a tu panel de control
           </p>
         </div>
@@ -130,7 +102,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1rem 0' }}>
             <div style={{ flex: 1, height: '1px', background: 'rgba(42,36,32,.08)' }} />
-            <span style={{ fontSize: '.75rem', color: 'rgba(42,36,32,.3)' }}>o con correo</span>
+            <span style={{ fontSize: '.75rem', color: 'rgba(42,36,32,.4)' }}>o con correo</span>
             <div style={{ flex: 1, height: '1px', background: 'rgba(42,36,32,.08)' }} />
           </div>
 

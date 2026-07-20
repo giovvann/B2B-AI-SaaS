@@ -49,8 +49,8 @@ export default function OfflineBanner() {
       // Network error — could be real offline or transient
       pingRef.current.failCount++;
 
-      if (pingRef.current.failCount >= 3) {
-        // 3 consecutive failures = probably really offline
+      if (pingRef.current.failCount >= 5) {
+        // 5 consecutive failures = probably really offline
         if (!navigator.onLine && mountedRef.current) {
           setIsOffline(true);
         }
@@ -72,8 +72,8 @@ export default function OfflineBanner() {
       }
     } catch {}
 
-    // Wait for full page hydration + service worker before first check
-    const initTimer = setTimeout(checkConnectivity, 3000);
+    // Wait for full page hydration + service worker before first check (longer to avoid false positives)
+    const initTimer = setTimeout(checkConnectivity, 6000);
 
     // Browser native events (instant)
     const handleOnline = () => {
@@ -92,8 +92,8 @@ export default function OfflineBanner() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Periodic check every 45s
-    const interval = setInterval(checkConnectivity, 45000);
+    // Periodic check every 90s (less aggressive to avoid false positives)
+    const interval = setInterval(checkConnectivity, 90000);
 
     // Extra safety: check after visibility change (user returns to tab)
     const handleVisibility = () => {

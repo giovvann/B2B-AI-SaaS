@@ -25,25 +25,7 @@ function RegistroForm() {
 
   const trial = searchParams.get('trial') !== 'false'
 
-  // Connectivity check on mount
-  const [online, setOnline] = useState(true);
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const c = new AbortController();
-        setTimeout(() => c.abort(), 5000);
-        const r = await fetch('/api/ping', { method: 'GET', signal: c.signal, cache: 'no-store' });
-        setOnline(r.ok);
-      } catch {
-        setOnline(false);
-      }
-    };
-    check();
-    const interval = setInterval(check, 30000);
-    window.addEventListener('online', () => setOnline(true));
-    window.addEventListener('offline', () => setOnline(false));
-    return () => { clearInterval(interval); };
-  }, []);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -250,13 +232,7 @@ function RegistroForm() {
 
   return (
     <main style={{ background: '#fdfaf5', color: '#2a2420', minHeight: '100vh' }}>
-      {/* Offline banner */}
-      {!online && (
-        <div style={{ background: 'rgba(200,164,118,.9)', backdropFilter: 'blur(12px)', textAlign: 'center', padding: '.4rem', fontSize: '.75rem', color: '#fff' }}>
-          Sin conexión — los cambios se guardarán localmente
-          <button onClick={() => window.location.reload()} style={{ marginLeft: '.5rem', textDecoration: 'underline', background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>Reintentar</button>
-        </div>
-      )}
+
       {v5Header}
       <div style={{ maxWidth: '420px', margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -265,7 +241,7 @@ function RegistroForm() {
             <span style={{ fontSize: '.6rem', fontWeight: 600, color: '#c8a476', letterSpacing: '.12em', textTransform: 'uppercase' }}>REGISTRO</span>
           </div>
           <h1 style={{ fontSize: 'clamp(1.5rem,3.5vw,2rem)', fontWeight: 800, color: '#2a2420', marginBottom: '.4rem', letterSpacing: '-.02em', fontFamily: "'Playfair Display',Georgia,serif" }}>Crear cuenta</h1>
-          <p style={{ color: 'rgba(42,36,32,.5)', fontSize: '.85rem' }}>Empieza a gestionar tu boutique</p>
+          <p style={{ color: 'rgba(42,36,32,.6)', fontSize: '.85rem' }}>Empieza a gestionar tu boutique</p>
         </div>
 
         <div style={{ background: '#fff', borderRadius: '1rem', padding: '1.5rem', border: '1px solid rgba(200,164,118,.12)' }}>

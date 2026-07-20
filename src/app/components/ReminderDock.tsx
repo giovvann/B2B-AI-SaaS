@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Bell, X, Check, Plus, Clock, AlertTriangle } from 'lucide-react'
+import { Bell, X, Check, Plus, Clock, AlertTriangle, Sun, Moon } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
+import { useTheme } from 'next-themes'
 
 interface Reminder {
   id: string
@@ -14,6 +15,9 @@ interface Reminder {
 }
 
 export function ReminderDock() {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => { setMounted(true) }, [])
   const [items, setItems] = useState<Reminder[]>([])
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
@@ -125,7 +129,7 @@ export function ReminderDock() {
             <div className="flex items-center gap-2 font-bold text-zinc-900 dark:text-white">
               <Bell className="w-5 h-5 text-indigo-500" /> Recordatorios
             </div>
-            <button onClick={() => setOpen(false)} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg"><X className="w-4 h-4" /></button>
+            <button onClick={() => setOpen(false)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-400 dark:text-zinc-300 hover:text-zinc-800 dark:hover:text-white border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all" title="Cerrar"><X className="w-4 h-4" strokeWidth={2.5} /></button>
           </div>
           <div className="space-y-2 max-h-60 overflow-auto">
             {items.map(r => (
@@ -145,7 +149,16 @@ export function ReminderDock() {
             ))}
             {items.length === 0 && <p className="text-sm text-zinc-400 text-center py-3">Sin recordatorios</p>}
           </div>
-          <div className="mt-3 flex gap-2">
+          <div className="mt-3 flex items-center gap-2">
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition-all"
+                title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </button>
+            )}
             <input
               value={title}
               onChange={e => setTitle(e.target.value)}
