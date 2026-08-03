@@ -7,25 +7,44 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #09090b;
+  --background: #fdfaf5;
+  --foreground: #2a2420;
   --card: #ffffff;
-  --card-foreground: #09090b;
+  --card-foreground: #2a2420;
   --popover: #ffffff;
-  --popover-foreground: #09090b;
-  --primary: #09090b;
-  --primary-foreground: #fafafa;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
+  --popover-foreground: #2a2420;
+  --primary: #2a2420;
+  --primary-foreground: #fdfaf5;
+  --secondary: #f5efe7;
+  --secondary-foreground: #2a2420;
+  --muted: #f5efe7;
+  --muted-foreground: rgba(42,36,32,0.5);
+  --accent: #f5efe7;
+  --accent-foreground: #2a2420;
   --destructive: #ef4444;
   --destructive-foreground: #fafafa;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: #09090b;
+  --border: rgba(200,164,118,0.12);
+  --input: rgba(200,164,118,0.12);
+  --ring: #c8a476;
+}
+
+/* V5 Warm Light Mode - overrides for internal app */
+html:not(.dark) body {
+  background-color: #fdfaf5;
+  color: #2a2420;
+}
+
+html:not(.dark) ::selection {
+  background: rgba(200,164,118,0.3);
+  color: #1a1612;
+}
+
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: #f5f0e8;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: rgba(200,164,118,0.4);
 }
 
 .dark {

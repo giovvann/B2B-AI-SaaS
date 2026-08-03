@@ -46,29 +46,29 @@ export function RoleSelector() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300 flex items-center justify-center">
+    <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0a0a0a] p-4 transition-colors duration-300 flex items-center justify-center">
       {/* ✅ Botón de tema con protección */}
       <button
         onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="fixed top-4 right-4 p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800 z-10"
+        className="fixed top-4 right-4 p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800 z-10"
         aria-label="Cambiar tema"
         disabled={!mounted}
       >
         {!mounted ? (
           <div className="w-6 h-6" />
         ) : theme === 'dark' ? (
-          <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />
+          <Sun className="w-6 h-6 text-[#2a2420] dark:text-zinc-200" />
         ) : (
-          <Moon className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />
+          <Moon className="w-6 h-6 text-[#2a2420] dark:text-zinc-200" />
         )}
       </button>
 
       <div className="max-w-3xl w-full">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-[#2a2420] dark:text-white mb-4">
             BIENVENIDO
           </h1>
-          <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-medium">
+          <p className="text-lg md:text-xl text-[rgba(42,36,32,0.4)] dark:text-zinc-400 font-medium">
             Selecciona tu rol para continuar
           </p>
         </div>
@@ -98,11 +98,11 @@ export function RoleSelector() {
             <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
               Acceso completo: métricas, inventario, ventas y configuración del negocio.
             </p>
-            <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800">
-              <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2">
+            <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-zinc-800">
+              <div className="text-xs font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 uppercase tracking-wider mb-2">
                 Accesos incluidos
               </div>
-              <ul className="space-y-1.5 text-sm text-zinc-600 dark:text-zinc-400">
+              <ul className="space-y-1.5 text-sm text-[rgba(42,36,32,0.5)] dark:text-zinc-400">
                 <li className="flex items-center gap-2">
                   <div className="w-1 h-1 rounded-full bg-blue-500"></div>
                   Panel de métricas
@@ -123,10 +123,10 @@ export function RoleSelector() {
           <button
             onClick={() => handleSelectRole('employee')}
             disabled={isPending}
-            className={`group relative bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
+            className={`group relative bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl shadow-[rgba(200,164,118,0.04)] p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
               selectedRole === 'employee'
                 ? 'border-blue-500 shadow-blue-500/30'
-                : 'border-zinc-200 dark:border-zinc-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
+                : 'border-[rgba(200,164,118,0.12)] dark:border-zinc-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
             }`}
           >
             <div className="flex items-center justify-between mb-6">
@@ -137,17 +137,17 @@ export function RoleSelector() {
                 <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
               )}
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-zinc-900 dark:text-white mb-3 tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-[#2a2420] dark:text-white mb-3 tracking-tight">
               EMPLEADO
             </h2>
-            <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            <p className="text-sm md:text-base text-[rgba(42,36,32,0.5)] dark:text-zinc-400 leading-relaxed">
               Operación diaria: registrar ventas y agregar productos nuevos al inventario.
             </p>
-            <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800">
-              <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2">
+            <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-zinc-800">
+              <div className="text-xs font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 uppercase tracking-wider mb-2">
                 Accesos incluidos
               </div>
-              <ul className="space-y-1.5 text-sm text-zinc-600 dark:text-zinc-400">
+              <ul className="space-y-1.5 text-sm text-[rgba(42,36,32,0.5)] dark:text-zinc-400">
                 <li className="flex items-center gap-2">
                   <div className="w-1 h-1 rounded-full bg-emerald-500"></div>
                   Nueva venta
@@ -166,7 +166,7 @@ export function RoleSelector() {
             <p className="text-sm font-semibold text-red-700 dark:text-red-400">{error}</p>
           </div>
         )}
-        <p className="text-center text-xs text-zinc-400 dark:text-zinc-600 mt-4">
+        <p className="text-center text-xs text-[rgba(42,36,32,0.3)] dark:text-zinc-600 mt-4">
           Tu rol se guarda en tu cuenta. Puedes cambiarlo más tarde desde configuración.
         </p>
       </div>

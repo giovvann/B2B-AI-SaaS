@@ -116,6 +116,7 @@ return (
   <a href="#" onClick={(e) => { e.preventDefault(); cMob(); installPWA(); }}>Descargar</a>
   <a href="#funciona" onClick={() => { cMob() }}>C&oacute;mo funciona</a>
   <a href="#beneficios" onClick={() => { cMob() }}>Beneficios</a>
+  <a href="#asistente" onClick={() => { cMob() }}>Asistente</a>
   <a href="#planes" onClick={() => { cMob() }}>Planes</a>
   <a href="#faq" onClick={() => { cMob() }}>FAQ</a>
   <a href="/login">Entrar</a>
@@ -129,6 +130,7 @@ return (
     <div className="nav-links">
       <a href="#" onClick={(e) => { e.preventDefault(); installPWA(); }}>Descargar</a>
       <a href="#funciona">C&oacute;mo funciona</a>
+      <a href="#asistente">Asistente</a>
       <a href="#beneficios">Beneficios</a>
       <a href="#planes">Planes</a>
       <a href="#faq">FAQ</a>
@@ -435,12 +437,8 @@ return (
       <p className="testimonial-text">
         Antes pasaba horas cada semana contando inventario. Ahora abro Veliora y en 10 segundos s&eacute; qu&eacute; tengo, qu&eacute; falta y cu&aacute;nto he vendido. Es como tener una asistente personal para mi boutique.
       </p>
-      <p className="testimonial-author"><strong>Mar&iacute;a Garc&iacute;a</strong> &middot; Boutique Mar&iacute;a Bonita, Quer&eacute;taro</p>
-      <div className="testimonial-stats">
-        <div className="testimonial-stat"><div className="n">+2,400</div><div className="l">Boutiques registradas</div></div>
-        <div className="testimonial-stat"><div className="n">+85K</div><div className="l">Prendas organizadas</div></div>
-        <div className="testimonial-stat"><div className="n">97%</div><div className="l">Satisfacci&oacute;n</div></div>
-      </div>
+      <p className="testimonial-author"><strong>Mar&iacute;a Garc&iacute;a</strong> &middot; Boutique Mar&iacute;a Bonita, Cd. Victoria</p>
+
     </div>
   </div>
 </section>
