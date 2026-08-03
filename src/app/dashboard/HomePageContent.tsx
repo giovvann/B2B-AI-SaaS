@@ -19,11 +19,16 @@ import {
   Settings,
   Activity,
   Download,
+  ToggleLeft,
+  UserX,
+  Lock,
+  CheckCircle2,
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { createClient } from '@/lib/supabase'
 import { CalculatorModal } from '../components/CalculatorModal'
 import { AdminPanel } from '@/components/AdminPanel'
+import { AssistantPanel } from '../components/AssistantPanel'
 
 interface HomePageContentProps {
   role: 'owner' | 'employee'
@@ -38,11 +43,63 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
   const [showSettings, setShowSettings] = useState(false)
   const [calcOpen, setCalcOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
+  const [sellerAutoAccept, setSellerAutoAccept] = useState(true)
+  const [pinRequired, setPinRequired] = useState(true)
+  const [toggleLoading, setToggleLoading] = useState<string | null>(null)
+  const [toggleMsg, setToggleMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    if (showAdmin) loadConfigToggles()
   }, [])
+
+  const loadConfigToggles = async () => {
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data: boutique } = await supabase
+        .from('boutiques')
+        .select('auto_accept_employees, pin_required')
+        .eq('owner_id', user.id)
+        .single()
+      if (boutique) {
+        setSellerAutoAccept(boutique.auto_accept_employees !== false)
+        setPinRequired(boutique.pin_required !== false)
+      }
+    } catch {}
+  }
+
+  const handleToggleSetting = async (setting: string, value: boolean) => {
+    setToggleLoading(setting)
+    setToggleMsg(null)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('No autenticado')
+      
+      const updateData: any = {}
+      if (setting === 'auto_accept') updateData.auto_accept_employees = value
+      if (setting === 'pin_required') updateData.pin_required = value
+
+      const { error } = await supabase
+        .from('boutiques')
+        .update(updateData)
+        .eq('owner_id', user.id)
+
+      if (error) throw error
+
+      if (setting === 'auto_accept') setSellerAutoAccept(value)
+      if (setting === 'pin_required') setPinRequired(value)
+      setToggleMsg({ type: 'success', text: `Configuración actualizada ✅` })
+      setTimeout(() => setToggleMsg(null), 2500)
+    } catch (err: any) {
+      setToggleMsg({ type: 'error', text: err.message || 'Error al guardar' })
+    } finally {
+      setToggleLoading(null)
+    }
+  }
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -137,50 +194,50 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
   const actions = role === 'owner' ? ownerActions : employeeActions
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
       <div className="max-w-5xl mx-auto pb-8">
         <div className="mb-10 md:mb-12 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-2">
+            <div className="text-xs font-bold text-[rgba(42,36,32,0.3)] dark:text-zinc-500 uppercase tracking-[0.2em] mb-2">
               {role === 'owner' ? 'Panel del dueño' : 'Panel del empleado'}
             </div>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-[#2a2420] dark:text-white">
               {boutiqueName}
             </h1>
-            <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400 mt-1">
-              Hola, <span className="font-bold text-zinc-700 dark:text-zinc-300">{userName}</span>
+            <p className="text-sm md:text-base text-[rgba(42,36,32,0.5)] dark:text-zinc-400 mt-1">
+              Hola, <span className="font-bold text-[#2a2420] dark:text-zinc-300">{userName}</span>
             </p>
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => setCalcOpen(true)}
-              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
+              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800"
               aria-label="Calculadora"
             >
-              <Calculator className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
+              <Calculator className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
             </button>
             <button
               onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
+              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800"
               aria-label="Cambiar tema"
               disabled={!mounted}
             >
               {!mounted ? (
                 <div className="w-5 h-5" />
               ) : theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
+                <Sun className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
               ) : (
-                <Moon className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
+                <Moon className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
               )}
             </button>
             <div className="relative">
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
+                className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800"
                 aria-label="Configuración"
               >
-                <MoreVertical className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
+                <MoreVertical className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
               </button>
               {showSettings && (
                 <>
@@ -188,7 +245,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                     className="fixed inset-0 z-10" 
                     onClick={() => setShowSettings(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-800 p-2 z-20">
+                  <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-xl border border-[rgba(200,164,118,0.12)] dark:border-zinc-800 p-2 z-20">
                     {showAdmin && (
                       <>
                         <button
@@ -205,6 +262,45 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                           <Settings className="w-4 h-4" />
                           Configuración
                         </button>
+                        <div className="border-t border-zinc-200 dark:border-zinc-800 my-2" />
+                        <div className="px-4 py-2">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                              <UserX className="w-3.5 h-3.5" />
+                              Aceptar empleados
+                            </span>
+                            <button
+                              onClick={() => handleToggleSetting('auto_accept', !sellerAutoAccept)}
+                              disabled={toggleLoading === 'auto_accept'}
+                              className={`relative w-10 h-5 rounded-full transition-colors ${sellerAutoAccept ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}
+                            >
+                              <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${sellerAutoAccept ? 'translate-x-5' : 'translate-x-0.5'}`} style={{ transform: sellerAutoAccept ? 'translateX(20px)' : 'translateX(2px)' }} />
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-zinc-400 dark:text-zinc-500">{sellerAutoAccept ? 'Auto-aprobar nuevos empleados' : 'Requiere aprobación manual'}</p>
+                        </div>
+                        <div className="px-4 py-2">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                              <Lock className="w-3.5 h-3.5" />
+                              PIN del dueño
+                            </span>
+                            <button
+                              onClick={() => handleToggleSetting('pin_required', !pinRequired)}
+                              disabled={toggleLoading === 'pin_required'}
+                              className={`relative w-10 h-5 rounded-full transition-colors ${pinRequired ? 'bg-blue-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}
+                            >
+                              <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${pinRequired ? 'translate-x-5' : 'translate-x-0.5'}`} style={{ transform: pinRequired ? 'translateX(20px)' : 'translateX(2px)' }} />
+                            </button>
+                          </div>
+                          <p className="text-[10px] text-zinc-400 dark:text-zinc-500">{pinRequired ? 'PIN requerido para acceder' : 'Acceso sin PIN'}</p>
+                        </div>
+                        {toggleMsg && (
+                          <div className={`mx-4 px-3 py-2 rounded-xl text-xs font-semibold mb-1 ${toggleMsg.type === 'success' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
+                            {toggleMsg.text}
+                          </div>
+                        )}
+                        <div className="border-t border-zinc-200 dark:border-zinc-800 my-2" />
                         <button
                           onClick={() => { setShowSettings(false); router.push('/exportar-todo') }}
                           className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
@@ -248,7 +344,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
               <button
                 key={action.id}
                 onClick={() => router.push(action.href)}
-                className="group bg-white dark:bg-[#1a1a1a] rounded-3xl p-8 md:p-10 border border-zinc-200 dark:border-zinc-800 hover:border-transparent shadow-xl hover:shadow-2xl transition-all duration-200 active:scale-[0.98] text-left relative overflow-hidden"
+                className="group bg-white dark:bg-[#1a1a1a] rounded-3xl p-8 md:p-10 border border-[rgba(200,164,118,0.12)] dark:border-zinc-800 hover:border-[rgba(200,164,118,0.3)] dark:hover:border-transparent shadow-xl shadow-[rgba(200,164,118,0.04)] hover:shadow-2xl transition-all duration-200 active:scale-[0.98] text-left relative overflow-hidden"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
                 
@@ -256,14 +352,14 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                   <Icon className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
 
-                <h2 className="relative text-2xl md:text-3xl font-black tracking-tight text-zinc-900 dark:text-white mb-2">
+                <h2 className="relative text-2xl md:text-3xl font-black tracking-tight text-[#2a2420] dark:text-white mb-2">
                   {action.title}
                 </h2>
-                <p className="relative text-sm md:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                <p className="relative text-sm md:text-base text-[rgba(42,36,32,0.5)] dark:text-zinc-400 leading-relaxed">
                   {action.description}
                 </p>
 
-                <div className="relative mt-6 flex items-center gap-2 text-sm font-bold text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-700 dark:group-hover:text-zinc-300 transition-colors">
+                <div className="relative mt-6 flex items-center gap-2 text-sm font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 group-hover:text-[#2a2420] dark:group-hover:text-zinc-300 transition-colors">
                   <span>ACCEDER</span>
                   <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -275,16 +371,16 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
         </div>
 
         <button onClick={() => router.push('/ventas')}
-          className="mt-5 w-full md:w-auto md:min-w-[260px] flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-[#1a1a1a] hover:bg-zinc-100 dark:hover:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-800 hover:border-indigo-300 dark:hover:border-indigo-700 rounded-2xl transition-colors group"
+          className="mt-5 w-full md:w-auto md:min-w-[260px] flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-[#1a1a1a] hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 border-2 border-[rgba(200,164,118,0.12)] dark:border-zinc-800 hover:border-[#c8a476] dark:hover:border-indigo-700 rounded-2xl transition-colors group"
         >
           <History className="w-6 h-6 text-indigo-500" strokeWidth={2.5} />
-          <span className="text-lg font-black tracking-tight text-zinc-900 dark:text-white">VER HISTORIAL DE VENTAS</span>
+          <span className="text-lg font-black tracking-tight text-[#2a2420] dark:text-white">VER HISTORIAL DE VENTAS</span>
         </button>
 
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1a1a1a] rounded-full border border-zinc-200 dark:border-zinc-800">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1a1a1a] rounded-full border border-[rgba(200,164,118,0.12)] dark:border-zinc-800">
             <div className={`w-2 h-2 rounded-full ${role === 'owner' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
-            <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-[rgba(42,36,32,0.4)] dark:text-zinc-400 uppercase tracking-wider">
               Sesión activa como {role === 'owner' ? 'Dueño' : 'Empleado'}
             </span>
           </div>
@@ -293,6 +389,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
 
       <CalculatorModal open={calcOpen} onClose={() => setCalcOpen(false)} />
       <AdminPanel open={adminOpen} onClose={() => setAdminOpen(false)} />
+      <AssistantPanel boutiqueName={boutiqueName} />
     </div>
   )
 }

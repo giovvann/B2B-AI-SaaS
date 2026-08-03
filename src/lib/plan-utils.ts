@@ -21,6 +21,7 @@ export const PREMIUM_API_ROUTES = [
   '/api/analyze-business',
   '/api/extract-invoice',
   '/api/whatsapp-alert',
+  '/api/assistant',
 ]
 
 /**
