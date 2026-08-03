@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Sparkles, X, Send, Loader2, Bot, User } from 'lucide-react'
+import { Sparkles, X, Send, Loader2, Bot, User, AlertTriangle, Zap } from 'lucide-react'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -29,7 +29,7 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
       if (!messages.length) {
         setMessages([{
           role: 'assistant',
-          content: `¡Hola! 👋 Soy Tipsy, tu asistente de ${boutiqueName || 'tu boutique'}. Puedo ayudarte a:\n\n• 📦 Agregar productos ("compré 5 camisas blancas a $80")\n• 💰 Registrar ventas ("vendí 2 playeras")\n• 📝 Guardar notas y recordatorios\n• 📊 Decirte cómo va tu negocio\n\n¿Qué necesitas?`,
+          content: `¡Hola! Soy Tipsy, tu asistente de ${boutiqueName || 'tu boutique'}. Puedo ayudarte a:\n\n• Agregar productos: "compré 5 camisas blancas a $80"\n• Registrar ventas: "vendí 2 playeras"\n• Guardar notas y recordatorios\n• Decirte cómo va tu negocio\n\n¿Qué necesitas?`,
           timestamp: Date.now(),
         }])
       }
@@ -74,7 +74,7 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
       setError(err.message || 'Error de conexión')
       setMessages((m) => [
         ...m,
-        { role: 'assistant', content: '⚠️ Ocurrió un error. Intenta de nuevo.', timestamp: Date.now() },
+        { role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo.', timestamp: Date.now() },
       ])
     } finally {
       setLoading(false)
@@ -97,7 +97,7 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
 
       {/* Chat window */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] max-w-md h-[560px] max-h-[calc(100vh-8rem)] bg-white dark:bg-[#141210] rounded-3xl shadow-2xl border border-[rgba(200,164,118,0.2)] dark:border-zinc-800 flex flex-col overflow-hidden transition-all duration-200">
+        <div className="fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] max-w-md h-[560px] max-h-[calc(100vh-8rem)] bg-white dark:bg-[#141210] rounded-3xl shadow-2xl border border-[rgba(200,164,118,0.2)] dark:border-[rgba(200,164,118,0.16)] flex flex-col overflow-hidden transition-all duration-200">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-[#c8a476] to-[#b8925e] text-white">
             <div className="flex items-center gap-3">
@@ -128,14 +128,15 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
                 <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
                   msg.role === 'user'
                     ? 'bg-gradient-to-br from-[#c8a476] to-[#b8925e] text-white rounded-br-md shadow-md shadow-[rgba(200,164,118,0.25)]'
-                    : 'bg-white dark:bg-[#1a1815] border border-[rgba(200,164,118,0.15)] dark:border-zinc-800 text-[#2a2420] dark:text-zinc-100 rounded-bl-md shadow-sm'
+                    : 'bg-white dark:bg-[#1a1815] border border-[rgba(200,164,118,0.15)] dark:border-[rgba(200,164,118,0.16)] text-[#2a2420] dark:text-zinc-100 rounded-bl-md shadow-sm'
                 }`}>
                   {msg.content}
                   {msg.toolResults && msg.toolResults.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-[rgba(200,164,118,0.15)] dark:border-zinc-800 space-y-1">
+                    <div className="mt-2 pt-2 border-t border-[rgba(200,164,118,0.15)] dark:border-[rgba(200,164,118,0.16)] space-y-1.5">
                       {msg.toolResults.map((tr, j) => (
-                        <div key={j} className="text-[11px] font-semibold text-[#b8925e] dark:text-[#c8a476]">
-                          ⚡ {tr.name}: {tr.output.split('\n')[0].slice(0, 80)}
+                        <div key={j} className="flex items-start gap-1.5 text-[11px] font-semibold text-[#b8925e] dark:text-[#c8a476]">
+                          <Zap className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                          <span className="leading-snug">{tr.output.split('\n')[0].slice(0, 80)}</span>
                         </div>
                       ))}
                     </div>
@@ -145,7 +146,7 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-white dark:bg-[#1a1815] border border-[rgba(200,164,118,0.15)] dark:border-zinc-800 rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2">
+                <div className="bg-white dark:bg-[#1a1815] border border-[rgba(200,164,118,0.15)] dark:border-[rgba(200,164,118,0.16)] rounded-2xl rounded-bl-md px-4 py-3 flex items-center gap-2">
                   <Loader2 className="w-4 h-4 text-[#c8a476] animate-spin" />
                   <span className="text-xs text-[rgba(42,36,32,0.5)] dark:text-zinc-400 font-semibold">Tipsy está pensando...</span>
                 </div>
@@ -161,7 +162,7 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
           )}
 
           {/* Input */}
-          <div className="p-3 bg-white dark:bg-[#141210] border-t border-[rgba(200,164,118,0.12)] dark:border-zinc-800">
+          <div className="p-3 bg-white dark:bg-[#141210] border-t border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]">
             <div className="flex items-center gap-2">
               <input
                 ref={inputRef}
@@ -169,7 +170,7 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && send()}
                 placeholder="Escribe en lenguaje natural..."
-                className="flex-1 bg-[#fdfaf5] dark:bg-[#0e0d0b] border border-[rgba(200,164,118,0.2)] dark:border-zinc-800 rounded-xl px-4 py-3 text-sm text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.35)] dark:placeholder-zinc-500 focus:outline-none focus:border-[#c8a476] dark:focus:border-[#c8a476] transition-colors"
+                className="flex-1 bg-[#fdfaf5] dark:bg-[#0e0d0b] border border-[rgba(200,164,118,0.2)] dark:border-[rgba(200,164,118,0.16)] rounded-xl px-4 py-3 text-sm text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.35)] dark:placeholder-zinc-500 focus:outline-none focus:border-[#c8a476] dark:focus:border-[#c8a476] transition-colors"
                 disabled={loading}
               />
               <button

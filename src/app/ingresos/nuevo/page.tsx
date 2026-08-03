@@ -426,7 +426,7 @@ export default function NewIncomePage() {
 
   if (loadingBoutique) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-4 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-16 h-16 animate-spin text-blue-500 mx-auto mb-4" />
           <p className="text-xl font-semibold text-zinc-700 dark:text-zinc-300">Cargando tu boutique...</p>
@@ -436,7 +436,7 @@ export default function NewIncomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-4 transition-colors duration-300">
       <div className="max-w-7xl mx-auto pb-8">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
@@ -452,7 +452,7 @@ export default function NewIncomePage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
+              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]"
               aria-label="Cambiar tema"
             >
               {theme === 'dark' ? (
@@ -476,7 +476,7 @@ export default function NewIncomePage() {
           <div className="lg:col-span-2 space-y-6">
             
             {/* ====== SECCIÓN 1: UPLOAD ====== */}
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
               <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
                 <Upload className="w-5 h-5 md:w-6 md:h-6" />
                 Subir imágenes
@@ -501,7 +501,7 @@ export default function NewIncomePage() {
                   onClick={() => setShowManualForm(!showManualForm)}
                   className={`flex items-center justify-center gap-3 min-h-[80px] font-bold text-lg rounded-2xl shadow-lg transition-all active:scale-[0.98] ${
                     showManualForm
-                      ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 shadow-zinc-500/20'
+                      ? 'bg-zinc-200 dark:bg-[#262019] text-zinc-600 dark:text-zinc-300 shadow-zinc-500/20'
                       : 'bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white shadow-emerald-500/20 hover:shadow-emerald-500/40'
                   }`}
                 >
@@ -543,42 +543,42 @@ export default function NewIncomePage() {
               </div>
 
               {showManualForm && (
-                <div className="mt-4 p-4 bg-zinc-50 dark:bg-[#0a0a0a] rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                <div className="mt-4 p-4 bg-zinc-50 dark:bg-[#0d0b09] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-3">Nuevo producto manual</h3>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div className="col-span-2">
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Nombre *</label>
                       <input type="text" value={manualProduct.name} onChange={(e) => setManualProduct(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="Ej: Camiseta básica"
-                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                        className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Marca</label>
                       <input type="text" value={manualProduct.brand} onChange={(e) => setManualProduct(prev => ({ ...prev, brand: e.target.value }))}
-                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                        className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Temporada</label>
                       <input type="text" value={manualProduct.season} onChange={(e) => setManualProduct(prev => ({ ...prev, season: e.target.value }))}
-                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                        className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Talla</label>
                       <input type="text" value={manualProduct.size} onChange={(e) => setManualProduct(prev => ({ ...prev, size: e.target.value }))}
                         placeholder="Ej: M"
-                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                        className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Color</label>
                       <input type="text" value={manualProduct.color} onChange={(e) => setManualProduct(prev => ({ ...prev, color: e.target.value }))}
                         placeholder="Ej: Rojo"
-                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                        className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Código de barras</label>
                       <input type="text" value={manualProduct.sku} onChange={(e) => setManualProduct(prev => ({ ...prev, sku: e.target.value }))}
                         placeholder="Ej: 7501234567890"
-                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 font-mono" />
+                        className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 font-mono" />
                     </div>
                     <div>
                       <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Precio compra *</label>
@@ -588,7 +588,7 @@ export default function NewIncomePage() {
                           const val = parseFloat(e.target.value) || 0;
                           setManualProduct(prev => ({ ...prev, purchase_price: val, sale_price: calcSalePrice(val), sale_price_input: calcSalePrice(val) }));
                         }}
-                          className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-6 pr-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                          className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-6 pr-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
                       </div>
                     </div>
                     <div>
@@ -599,7 +599,7 @@ export default function NewIncomePage() {
                           const val = parseFloat(e.target.value) || 0;
                           setManualProduct(prev => ({ ...prev, sale_price: val, sale_price_input: val }));
                         }}
-                          className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-6 pr-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                          className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-6 pr-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
                       </div>
                     </div>
                     <div>
@@ -610,7 +610,7 @@ export default function NewIncomePage() {
                         const num = parseInt(raw);
                         if (!isNaN(num) && num >= 0) setManualProduct(prev => ({ ...prev, quantity: num }));
                       }} min="0"
-                        className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                        className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-sm font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
                     </div>
                   </div>
                   <button onClick={addManualProduct}
@@ -691,7 +691,7 @@ export default function NewIncomePage() {
 
             {/* ====== SECCIÓN 3: PRODUCTOS EXTRAÍDOS ====== */}
             {products.length > 0 && (
-              <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                 <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
                   <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
                     <Package className="w-5 h-5 md:w-6 md:h-6" />
@@ -719,7 +719,7 @@ export default function NewIncomePage() {
                 )}
 
                 <div className="space-y-2">
-                  <div className="hidden md:grid md:grid-cols-11 gap-2 px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 tracking-wider border-b border-zinc-200 dark:border-zinc-800">
+                  <div className="hidden md:grid md:grid-cols-11 gap-2 px-3 py-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 tracking-wider border-b border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                     <div className="col-span-3">Producto</div>
                     <div className="col-span-1">SKU</div>
                     <div className="col-span-1">Talla</div>
@@ -735,7 +735,7 @@ export default function NewIncomePage() {
                       className={`rounded-2xl border-2 transition-all ${
                         product.status === 'new'
                           ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-900/50'
-                          : 'bg-zinc-50 dark:bg-[#0a0a0a] border-zinc-200 dark:border-zinc-800'
+                          : 'bg-zinc-50 dark:bg-[#0d0b09] border-zinc-200 dark:border-[rgba(200,164,118,0.16)]'
                       } ${editingId === product.id ? 'ring-2 ring-blue-500' : ''}`}
                     >
                       {/* Mobile layout */}
@@ -762,17 +762,17 @@ export default function NewIncomePage() {
                           <div>
                             <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">SKU</label>
                             <input type="text" value={product.sku} placeholder="SKU opcional" onChange={(e) => updateProduct(product.id, 'sku', e.target.value)}
-                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 font-mono" />
+                              className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 font-mono" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Talla</label>
                             <input type="text" value={product.size} placeholder="Ej: M" onChange={(e) => updateProduct(product.id, 'size', e.target.value)}
-                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                              className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5">Color</label>
                             <input type="text" value={product.color} placeholder="Ej: Rojo" onChange={(e) => updateProduct(product.id, 'color', e.target.value)}
-                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                              className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5 text-right">Precio</label>
@@ -780,13 +780,13 @@ export default function NewIncomePage() {
                               <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 text-xs">$</span>
                               <input type="number" step="0.01" value={product.purchase_price} onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
                                 placeholder="0.00"
-                                className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-5 pr-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 text-right" />
+                                className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-5 pr-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 text-right" />
                             </div>
                           </div>
                           <div>
                             <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-0.5 text-right">Stock</label>
                             <input type="number" value={product.quantity} placeholder="Cant." onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
-                              className="w-full bg-white dark:bg-[#1a1a1a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 text-right" />
+                              className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400 text-right" />
                           </div>
                         </div>
                       </div>
@@ -799,24 +799,24 @@ export default function NewIncomePage() {
                         </div>
                         <div className="col-span-1">
                           <input type="text" value={product.sku} onChange={(e) => updateProduct(product.id, 'sku', e.target.value)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-mono placeholder:text-zinc-400" placeholder="SKU opcional" />
+                            className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none font-mono placeholder:text-zinc-400" placeholder="SKU opcional" />
                         </div>
                         <div className="col-span-1">
                           <input type="text" value={product.size} onChange={(e) => updateProduct(product.id, 'size', e.target.value)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                            className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                         </div>
                         <div className="col-span-1">
                           <input type="text" value={product.color} onChange={(e) => updateProduct(product.id, 'color', e.target.value)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+                            className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
                         </div>
                         <div className="col-span-1 relative">
                           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-400 text-xs">$</span>
                           <input type="number" step="0.01" value={product.purchase_price} onChange={(e) => updateProduct(product.id, 'purchase_price', parseFloat(e.target.value) || 0)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-5 pr-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                            className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg pl-5 pr-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
                         </div>
                         <div className="col-span-1">
                           <input type="number" value={product.quantity} onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 0)}
-                            className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
+                            className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-lg px-2 py-1.5 text-xs text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none text-right" />
                         </div>
                         <div className="col-span-2 flex justify-end">
                           <button onClick={() => removeProduct(product.id)}
@@ -834,7 +834,7 @@ export default function NewIncomePage() {
 
           {/* ============== COLUMNA DERECHA: RESUMEN ============== */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800 lg:sticky lg:top-6">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] lg:sticky lg:top-6">
               <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white mb-6 flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5 md:w-6 md:h-6" />
                 Resumen

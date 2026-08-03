@@ -92,7 +92,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
 
       if (setting === 'auto_accept') setSellerAutoAccept(value)
       if (setting === 'pin_required') setPinRequired(value)
-      setToggleMsg({ type: 'success', text: `Configuración actualizada ✅` })
+      setToggleMsg({ type: 'success', text: `Configuración actualizada` })
       setTimeout(() => setToggleMsg(null), 2500)
     } catch (err: any) {
       setToggleMsg({ type: 'error', text: err.message || 'Error al guardar' })
@@ -194,7 +194,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
   const actions = role === 'owner' ? ownerActions : employeeActions
 
   return (
-    <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0d0b09] p-4 transition-colors duration-300">
       <div className="max-w-5xl mx-auto pb-8">
         <div className="mb-10 md:mb-12 flex items-center justify-between flex-wrap gap-4">
           <div>
@@ -212,14 +212,14 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
           <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => setCalcOpen(true)}
-              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800"
+              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
               aria-label="Calculadora"
             >
               <Calculator className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
             </button>
             <button
               onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800"
+              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
               aria-label="Cambiar tema"
               disabled={!mounted}
             >
@@ -234,7 +234,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
             <div className="relative">
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800"
+                className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
                 aria-label="Configuración"
               >
                 <MoreVertical className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
@@ -245,7 +245,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                     className="fixed inset-0 z-10" 
                     onClick={() => setShowSettings(false)}
                   />
-                  <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#1a1a1a] rounded-2xl shadow-xl border border-[rgba(200,164,118,0.12)] dark:border-zinc-800 p-2 z-20">
+                  <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#16130f] rounded-2xl shadow-xl border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] p-2 z-20">
                     {showAdmin && (
                       <>
                         <button
@@ -262,7 +262,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                           <Settings className="w-4 h-4" />
                           Configuración
                         </button>
-                        <div className="border-t border-zinc-200 dark:border-zinc-800 my-2" />
+                        <div className="border-t border-zinc-200 dark:border-[rgba(200,164,118,0.16)] my-2" />
                         <div className="px-4 py-2">
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
@@ -300,7 +300,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                             {toggleMsg.text}
                           </div>
                         )}
-                        <div className="border-t border-zinc-200 dark:border-zinc-800 my-2" />
+                        <div className="border-t border-zinc-200 dark:border-[rgba(200,164,118,0.16)] my-2" />
                         <button
                           onClick={() => { setShowSettings(false); router.push('/exportar-todo') }}
                           className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
@@ -344,7 +344,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
               <button
                 key={action.id}
                 onClick={() => router.push(action.href)}
-                className="group bg-white dark:bg-[#1a1a1a] rounded-3xl p-8 md:p-10 border border-[rgba(200,164,118,0.12)] dark:border-zinc-800 hover:border-[rgba(200,164,118,0.3)] dark:hover:border-transparent shadow-xl shadow-[rgba(200,164,118,0.04)] hover:shadow-2xl transition-all duration-200 active:scale-[0.98] text-left relative overflow-hidden"
+                className="group bg-white dark:bg-[#16130f] rounded-3xl p-8 md:p-10 border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] hover:border-[rgba(200,164,118,0.3)] dark:hover:border-transparent shadow-xl shadow-[rgba(200,164,118,0.04)] hover:shadow-2xl transition-all duration-200 active:scale-[0.98] text-left relative overflow-hidden"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${action.gradient} opacity-0 group-hover:opacity-5 transition-opacity`} />
                 
@@ -371,14 +371,14 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
         </div>
 
         <button onClick={() => router.push('/ventas')}
-          className="mt-5 w-full md:w-auto md:min-w-[260px] flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-[#1a1a1a] hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 border-2 border-[rgba(200,164,118,0.12)] dark:border-zinc-800 hover:border-[#c8a476] dark:hover:border-indigo-700 rounded-2xl transition-colors group"
+          className="mt-5 w-full md:w-auto md:min-w-[260px] flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-[#16130f] hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 border-2 border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] hover:border-[#c8a476] dark:hover:border-indigo-700 rounded-2xl transition-colors group"
         >
           <History className="w-6 h-6 text-indigo-500" strokeWidth={2.5} />
           <span className="text-lg font-black tracking-tight text-[#2a2420] dark:text-white">VER HISTORIAL DE VENTAS</span>
         </button>
 
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#1a1a1a] rounded-full border border-[rgba(200,164,118,0.12)] dark:border-zinc-800">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#16130f] rounded-full border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]">
             <div className={`w-2 h-2 rounded-full ${role === 'owner' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
             <span className="text-xs font-bold text-[rgba(42,36,32,0.4)] dark:text-zinc-400 uppercase tracking-wider">
               Sesión activa como {role === 'owner' ? 'Dueño' : 'Empleado'}

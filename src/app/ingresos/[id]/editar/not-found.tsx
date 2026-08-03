@@ -3,7 +3,7 @@ import { ArrowLeft, PackageX } from 'lucide-react'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] flex items-center justify-center p-4">
       <div className="text-center max-w-md">
         <div className="inline-flex items-center justify-center w-24 h-24 bg-red-100 dark:bg-red-900/30 rounded-full mb-6">
           <PackageX className="w-12 h-12 text-red-500" />

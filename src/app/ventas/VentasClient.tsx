@@ -136,9 +136,9 @@ export function VentasClient() {
   if (!mounted) return null
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] pb-12">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] pb-12">
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
+      <div className="sticky top-0 z-20 bg-white/80 dark:bg-[#0d0b09]/80 backdrop-blur-md border-b border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between gap-3">
           <button onClick={() => router.push('/dashboard')}
             className="flex items-center gap-2 text-zinc-500 hover:text-zinc-800 dark:hover:text-white transition-colors">
@@ -149,7 +149,7 @@ export function VentasClient() {
             <h1 className="text-xl md:text-2xl font-black tracking-tight text-zinc-900 dark:text-white">Historial de Ventas</h1>
           </div>
           <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+            className="p-2 rounded-xl bg-zinc-100 dark:bg-[#201b16] hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
         </div>
@@ -162,15 +162,15 @@ export function VentasClient() {
             <div className="text-xs font-bold uppercase tracking-wider text-white/70">Total</div>
             <div className="text-2xl font-black">{fmt(stats.total)}</div>
           </div>
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">Ventas</div>
             <div className="text-2xl font-black text-zinc-900 dark:text-white">{stats.count}</div>
           </div>
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">Piezas</div>
             <div className="text-2xl font-black text-zinc-900 dark:text-white">{stats.items}</div>
           </div>
-          <div className="bg-white dark:bg-zinc-900 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">Ticket prom.</div>
             <div className="text-2xl font-black text-zinc-900 dark:text-white">{fmt(stats.ticket)}</div>
           </div>
@@ -182,7 +182,7 @@ export function VentasClient() {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-400" />
             <input type="text" placeholder="Buscar por producto, marca, nota..." value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 text-base border-2 rounded-2xl focus:border-indigo-500 focus:outline-none bg-white dark:bg-[#1a1a1a] border-zinc-300 dark:border-zinc-700" />
+              className="w-full pl-12 pr-4 py-3.5 text-base border-2 rounded-2xl focus:border-indigo-500 focus:outline-none bg-white dark:bg-[#16130f] border-zinc-300 dark:border-zinc-700" />
           </div>
           <div className="flex gap-2">
             {(['all', 'Efectivo', 'Transferencia', 'Tarjeta'] as FilterMethod[]).map(m => (
@@ -190,7 +190,7 @@ export function VentasClient() {
                 className={`px-4 py-3.5 text-sm font-bold rounded-2xl border transition-colors ${
                   methodFilter === m
                     ? 'bg-indigo-500 text-white border-indigo-500'
-                    : 'bg-white dark:bg-[#1a1a1a] text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400'
+                    : 'bg-white dark:bg-[#16130f] text-zinc-500 dark:text-zinc-400 border-zinc-300 dark:border-zinc-700 hover:border-zinc-400'
                 }`}>
                 {m === 'all' ? 'Todas' : m}
               </button>
@@ -216,7 +216,7 @@ export function VentasClient() {
               const MethodIcon = METHOD_ICON[s.payment_method]
               const expanded = expandedId === s.id
               return (
-                <div key={s.id} className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+                <div key={s.id} className="bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] overflow-hidden">
                   <button onClick={() => toggle(s.id)}
                     className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
                     <div className="flex items-center gap-3 min-w-0">
@@ -235,7 +235,7 @@ export function VentasClient() {
                   </button>
 
                   {expanded && (
-                    <div className="border-t border-zinc-200 dark:border-zinc-800 p-4 bg-zinc-50/50 dark:bg-black/20">
+                    <div className="border-t border-zinc-200 dark:border-[rgba(200,164,118,0.16)] p-4 bg-zinc-50/50 dark:bg-black/20">
                       <div className="space-y-2">
                         {s.sale_items?.map(item => {
                           const p = item.products
@@ -257,7 +257,7 @@ export function VentasClient() {
                           {s.notes}
                         </div>
                       )}
-                      <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-zinc-800 flex justify-between font-black text-zinc-900 dark:text-white">
+                      <div className="mt-3 pt-3 border-t border-zinc-200 dark:border-[rgba(200,164,118,0.16)] flex justify-between font-black text-zinc-900 dark:text-white">
                         <span>TOTAL</span>
                         <span>{fmt(s.total_amount)}</span>
                       </div>

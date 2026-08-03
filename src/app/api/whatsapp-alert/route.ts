@@ -154,13 +154,13 @@ export async function POST(request: NextRequest) {
     let message = ''
     switch (type) {
       case 'test':
-        message = data?.message || '🔔 Mensaje de prueba desde Veliora.'
+        message = data?.message || 'Mensaje de prueba desde Veliora.'
         break
       case 'critical_stock':
-        message = `⚠️ *STOCK CRÍTICO* - ${boutique.name}\n\nRevisa el dashboard para más detalles.`
+        message = `*STOCK CRÍTICO* - ${boutique.name}\n\nRevisa el dashboard para más detalles.`
         break
       default:
-        message = data?.message || `📢 Notificación de ${boutique.name}`
+        message = data?.message || `Notificación de ${boutique.name}`
     }
 
     // Guardar en el log

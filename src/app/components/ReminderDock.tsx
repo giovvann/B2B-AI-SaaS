@@ -110,7 +110,7 @@ export function ReminderDock() {
     return (
       <div className="fixed bottom-4 left-4 z-40">
         <button onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl hover:border-indigo-300 transition-colors">
+          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl hover:border-indigo-300 transition-colors">
           <Bell className="w-5 h-5 text-indigo-500" />
           <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">Recordatorios</span>
         </button>
@@ -124,7 +124,7 @@ export function ReminderDock() {
   return (
     <div className="fixed bottom-4 left-4 z-40 max-w-sm">
       {open ? (
-        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-2xl p-4">
+        <div className="bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-2xl p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2 font-bold text-zinc-900 dark:text-white">
               <Bell className="w-5 h-5 text-indigo-500" /> Recordatorios
@@ -133,7 +133,7 @@ export function ReminderDock() {
           </div>
           <div className="space-y-2 max-h-60 overflow-auto">
             {items.map(r => (
-              <div key={r.id} className={`flex items-center gap-2 p-2 rounded-xl border ${r.done ? 'border-zinc-200 dark:border-zinc-800 opacity-50' : 'border-zinc-200 dark:border-zinc-700'}`}>
+              <div key={r.id} className={`flex items-center gap-2 p-2 rounded-xl border ${r.done ? 'border-zinc-200 dark:border-[rgba(200,164,118,0.16)] opacity-50' : 'border-zinc-200 dark:border-zinc-700'}`}>
                 <button onClick={() => toggle(r)} className={`shrink-0 w-6 h-6 rounded-lg border flex items-center justify-center ${r.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-zinc-300 dark:border-zinc-600'}`}>
                   {r.done && <Check className="w-4 h-4" />}
                 </button>
@@ -153,7 +153,7 @@ export function ReminderDock() {
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition-all"
+                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-zinc-100 dark:bg-[#201b16] hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition-all"
                 title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
               >
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -188,7 +188,7 @@ export function ReminderDock() {
         </div>
       ) : (
         <button onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl hover:border-indigo-300 transition-colors">
+          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl hover:border-indigo-300 transition-colors">
           <Bell className="w-5 h-5 text-indigo-500" />
           <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">{pending.length} pendiente{pending.length !== 1 ? 's' : ''}</span>
         </button>

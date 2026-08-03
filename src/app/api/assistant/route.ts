@@ -201,7 +201,7 @@ async function handleAddProducts(supabase: any, boutiqueId: string, args: any): 
 
   const { data, error } = await supabase.from('products').insert(rows).select('id, name, stock, sale_price')
   if (error) throw new Error('Error al guardar productos: ' + error.message)
-  return `✅ ${data.length} producto(s) agregado(s): ${data.map((p: any) => `${p.name} (${p.stock} uds, $${p.sale_price ?? '?'})`).join(', ')}`
+  return `${data.length} producto(s) agregado(s): ${data.map((p: any) => `${p.name} (${p.stock} uds, $${p.sale_price ?? '?'})`).join(', ')}`
 }
 
 async function handleRegisterSale(supabase: any, boutiqueId: string, args: any): Promise<string> {
@@ -289,7 +289,7 @@ async function handleRegisterSale(supabase: any, boutiqueId: string, args: any):
   }
 
   const resumen = normalized.map((i) => `${i.quantity}× ${i.name} ($${i.price})`).join(', ')
-  return `✅ Venta registrada: ${resumen} = $${total.toFixed(2)} MXN (${paymentMethod})${notFound.length ? `\n⚠️ No encontrados: ${notFound.join(', ')}` : ''}`
+  return `Venta registrada: ${resumen} = $${total.toFixed(2)} MXN (${paymentMethod})${notFound.length ? `\nNo encontrados en inventario: ${notFound.join(', ')}` : ''}`
 }
 
 async function handleAddNote(supabase: any, boutiqueId: string, args: any): Promise<string> {
@@ -303,7 +303,7 @@ async function handleAddNote(supabase: any, boutiqueId: string, args: any): Prom
     .select('id, title')
     .single()
   if (error) throw new Error('Error al guardar nota: ' + error.message)
-  return `✅ Nota guardada: "${data.title}"`
+  return `Nota guardada: "${data.title}"`
 }
 
 async function handleListNotes(supabase: any, boutiqueId: string): Promise<string> {
@@ -315,7 +315,7 @@ async function handleListNotes(supabase: any, boutiqueId: string): Promise<strin
     .limit(20)
   if (error) throw new Error('Error al cargar notas: ' + error.message)
   if (!data.length) return 'No tienes notas guardadas todavía.'
-  return data.map((n: any) => `📝 ${n.title}${n.content ? ': ' + n.content : ''} (${new Date(n.created_at).toLocaleDateString('es-MX')})`).join('\n')
+  return data.map((n: any) => `• ${n.title}${n.content ? ': ' + n.content : ''} (${new Date(n.created_at).toLocaleDateString('es-MX')})`).join('\n')
 }
 
 async function handleDeleteNote(supabase: any, boutiqueId: string, args: any): Promise<string> {
@@ -326,7 +326,7 @@ async function handleDeleteNote(supabase: any, boutiqueId: string, args: any): P
     .eq('boutique_id', boutiqueId)
     .select('id')
   if (error) throw new Error('Error al eliminar nota: ' + error.message)
-  return data.length ? '🗑️ Nota eliminada.' : 'No encontré esa nota.'
+  return data.length ? 'Nota eliminada.' : 'No encontré esa nota.'
 }
 
 async function handleAddReminder(supabase: any, boutiqueId: string, args: any): Promise<string> {
@@ -356,7 +356,7 @@ async function handleAddReminder(supabase: any, boutiqueId: string, args: any): 
     .single()
   if (error) throw new Error('Error al crear recordatorio: ' + error.message)
   const dueStr = data.due ? new Date(data.due).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' }) : 'sin fecha'
-  return `⏰ Recordatorio creado: "${data.title}" para ${dueStr}`
+  return `Recordatorio creado: "${data.title}" para ${dueStr} (prioridad ${priority})`
 }
 
 async function handleGetBusinessContext(supabase: any, boutiqueId: string): Promise<string> {
@@ -542,13 +542,13 @@ export async function POST(request: NextRequest) {
 Eres experta en retail y boutiques mexicanas. Tu trabajo: ayudar al dueño a gestionar su negocio con lenguaje natural.
 
 CAPACIDADES (usa las herramientas cuando corresponda):
-- "compré 5 camisas blancas a $80 y las vendo en $150" → add_products
-- "vendí 2 playeras" → register_sale (busca el producto en inventario)
-- "guarda una nota: pedir más bolsas" → add_note
-- "recuérdame mañana llamar al proveedor" → add_reminder
-- "qué notas tengo" → list_notes
-- "cómo va mi negocio / cuánto he vendido" → get_business_context
-- "tienes [algo] en inventario?" → search_products
+- "compré 5 camisas blancas a $80 y las vendo en $150" -> add_products
+- "vendí 2 playeras" -> register_sale (busca el producto en inventario)
+- "guarda una nota: pedir más bolsas" -> add_note
+- "recuérdame mañana llamar al proveedor" -> add_reminder
+- "qué notas tengo" -> list_notes
+- "cómo va mi negocio / cuánto he vendido" -> get_business_context
+- "tienes [algo] en inventario?" -> search_products
 
 REGLAS:
 - Responde SIEMPRE en español mexicano, claro y cálido

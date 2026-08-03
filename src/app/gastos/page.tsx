@@ -126,7 +126,7 @@ export default function GastosPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] flex items-center justify-center">
         <Loader2 className="w-16 h-16 animate-spin text-indigo-500" />
       </div>
     )
@@ -134,7 +134,7 @@ export default function GastosPage() {
 
   return (
     <OwnerOnly>
-      <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
+      <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-4 transition-colors duration-300">
         <div className="max-w-5xl mx-auto pb-8">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
@@ -149,14 +149,14 @@ export default function GastosPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800"
+              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]"
               aria-label="Cambiar tema"
             >
               {theme === 'dark' ? <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" /> : <Moon className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />}
             </button>
             <button
               onClick={() => router.push('/dashboard')}
-              className="flex items-center gap-2 px-5 py-4 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-bold rounded-2xl transition-colors"
+              className="flex items-center gap-2 px-5 py-4 bg-zinc-200 dark:bg-[#201b16] hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-bold rounded-2xl transition-colors"
             >
               <X className="w-5 h-5" strokeWidth={3} />
               <span className="text-base md:text-lg">SALIR</span>
@@ -185,18 +185,18 @@ export default function GastosPage() {
 
         {/* Formulario */}
         {showForm && (
-          <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800 mb-6">
+          <div className="bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Concepto *</label>
                 <input ref={conceptRef} value={form.concept} onChange={e => setForm({ ...form, concept: e.target.value })}
                   placeholder="Ej: Renta de local"
-                  className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder:text-zinc-400" />
               </div>
               <div>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Categoría</label>
                 <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
-                  className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none">
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none">
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
@@ -206,19 +206,19 @@ export default function GastosPage() {
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
                   <input type="number" step="0.01" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })}
                     placeholder="0.00"
-                    className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-7 pr-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none text-right" />
+                    className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-7 pr-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none text-right" />
                 </div>
               </div>
               <div>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Fecha</label>
                 <input type="date" value={form.expense_date} onChange={e => setForm({ ...form, expense_date: e.target.value })}
-                  className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none" />
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none" />
               </div>
               <div>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Nota</label>
                 <input value={form.note} onChange={e => setForm({ ...form, note: e.target.value })}
                   placeholder="Opcional"
-                  className="w-full bg-white dark:bg-[#0a0a0a] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder:text-zinc-400" />
               </div>
             </div>
             <button onClick={handleAdd} disabled={saving}
@@ -245,13 +245,13 @@ export default function GastosPage() {
         {/* Lista */}
         <div className="space-y-3">
           {expenses.length === 0 && (
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 p-10 text-center">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 p-10 text-center">
               <Receipt className="w-12 h-12 text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
               <p className="text-zinc-500 dark:text-zinc-400 font-semibold">Aún no hay gastos registrados</p>
             </div>
           )}
           {expenses.map(e => (
-            <div key={e.id} className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 p-4 flex items-center gap-4">
+            <div key={e.id} className="bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center flex-shrink-0">
                 <TrendingDown className="w-6 h-6 text-rose-500" />
               </div>

@@ -174,8 +174,8 @@ export default function SaludPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0d0b09] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-[#c8a476]" />
       </div>
     )
   }
@@ -183,9 +183,9 @@ export default function SaludPage() {
   if (!health) return null
 
   const statusColors = {
-    green: { bg: 'from-green-500 to-emerald-600', text: 'text-green-400', glow: 'shadow-green-500/30' },
-    yellow: { bg: 'from-amber-500 to-orange-600', text: 'text-amber-400', glow: 'shadow-amber-500/30' },
-    red: { bg: 'from-red-500 to-rose-600', text: 'text-red-400', glow: 'shadow-red-500/30' },
+    green: { bg: 'from-green-500 to-emerald-600', text: 'text-green-600 dark:text-green-400', glow: 'shadow-green-500/30' },
+    yellow: { bg: 'from-amber-500 to-orange-600', text: 'text-amber-600 dark:text-amber-400', glow: 'shadow-amber-500/30' },
+    red: { bg: 'from-red-500 to-rose-600', text: 'text-red-600 dark:text-red-400', glow: 'shadow-red-500/30' },
   }
 
   const colors = statusColors[health.status]
@@ -193,21 +193,21 @@ export default function SaludPage() {
   const formatMoney = (n: number) => `$${n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] p-4 md:p-8">
+    <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0d0b09] p-4 md:p-8 transition-colors duration-300">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => router.push('/dashboard')}
-          className="flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors group"
+          className="flex items-center gap-2 text-[rgba(42,36,32,0.5)] dark:text-zinc-400 hover:text-[#2a2420] dark:hover:text-white mb-8 transition-colors group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           <span>Volver al panel</span>
         </button>
 
         {/* Score card */}
-        <div className="bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-3xl p-8 border border-white/[0.06] mb-6 text-center">
+        <div className="bg-white dark:bg-[#16130f] rounded-3xl p-8 border border-[rgba(200,164,118,0.14)] dark:border-white/[0.06] shadow-[0_1px_2px_rgba(42,36,32,0.04),0_8px_24px_rgba(42,36,32,0.05)] dark:shadow-none mb-6 text-center">
           <div className="flex items-center justify-center gap-2 mb-6">
-            <Activity className="w-6 h-6 text-blue-400" />
-            <span className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Salud de la empresa</span>
+            <Activity className="w-6 h-6 text-blue-500 dark:text-blue-400" />
+            <span className="text-sm font-bold text-[rgba(42,36,32,0.5)] dark:text-zinc-400 uppercase tracking-widest">Salud de la empresa</span>
           </div>
 
           <div className={`w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${colors.bg} ${colors.glow} shadow-2xl flex items-center justify-center mb-4`}>
@@ -215,7 +215,7 @@ export default function SaludPage() {
           </div>
 
           <div className={`text-2xl font-black ${colors.text} mb-2`}>{health.label}</div>
-          <p className="text-zinc-500 text-sm">
+          <p className="text-[rgba(42,36,32,0.5)] dark:text-zinc-500 text-sm">
             Score basado en margen, rotación de inventario y volumen de ventas (últimos 90 días)
           </p>
         </div>
@@ -223,19 +223,19 @@ export default function SaludPage() {
         {/* Metrics grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {[
-            { icon: DollarSign, label: 'Ingresos', value: formatMoney(health.metrics.revenue), color: 'text-green-400' },
-            { icon: TrendingUp, label: 'Ganancia neta', value: formatMoney(health.metrics.profit), color: health.metrics.profit >= 0 ? 'text-green-400' : 'text-red-400' },
-            { icon: Wallet, label: 'Gastos', value: formatMoney(health.metrics.expenses), color: 'text-rose-400' },
-            { icon: TrendingUp, label: 'Margen', value: `${health.metrics.margin.toFixed(1)}%`, color: health.metrics.margin >= 20 ? 'text-green-400' : health.metrics.margin >= 10 ? 'text-amber-400' : 'text-red-400' },
-            { icon: ShoppingCart, label: 'Ventas (90d)', value: String(health.metrics.totalSales), color: 'text-blue-400' },
-            { icon: DollarSign, label: 'Ticket promedio', value: formatMoney(health.metrics.avgTicket), color: 'text-cyan-400' },
-            { icon: Package, label: 'Productos', value: String(health.metrics.totalProducts), color: 'text-purple-400' },
-            { icon: AlertTriangle, label: 'Stock crítico', value: String(health.metrics.criticalStockCount), color: health.metrics.criticalStockCount > 0 ? 'text-amber-400' : 'text-green-400' },
+            { icon: DollarSign, label: 'Ingresos', value: formatMoney(health.metrics.revenue), color: 'text-green-600 dark:text-green-400' },
+            { icon: TrendingUp, label: 'Ganancia neta', value: formatMoney(health.metrics.profit), color: health.metrics.profit >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' },
+            { icon: Wallet, label: 'Gastos', value: formatMoney(health.metrics.expenses), color: 'text-rose-600 dark:text-rose-400' },
+            { icon: TrendingUp, label: 'Margen', value: `${health.metrics.margin.toFixed(1)}%`, color: health.metrics.margin >= 20 ? 'text-green-600 dark:text-green-400' : health.metrics.margin >= 10 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400' },
+            { icon: ShoppingCart, label: 'Ventas (90d)', value: String(health.metrics.totalSales), color: 'text-blue-600 dark:text-blue-400' },
+            { icon: DollarSign, label: 'Ticket promedio', value: formatMoney(health.metrics.avgTicket), color: 'text-cyan-600 dark:text-cyan-400' },
+            { icon: Package, label: 'Productos', value: String(health.metrics.totalProducts), color: 'text-purple-600 dark:text-purple-400' },
+            { icon: AlertTriangle, label: 'Stock crítico', value: String(health.metrics.criticalStockCount), color: health.metrics.criticalStockCount > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-green-600 dark:text-green-400' },
           ].map((metric, i) => (
-            <div key={i} className="bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-2xl p-5 border border-white/[0.06]">
+            <div key={i} className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-[rgba(200,164,118,0.14)] dark:border-white/[0.06]">
               <div className="flex items-center gap-2 mb-3">
                 <metric.icon className={`w-4 h-4 ${metric.color}`} />
-                <span className="text-xs font-bold text-zinc-500 uppercase tracking-wider">{metric.label}</span>
+                <span className="text-xs font-bold text-[rgba(42,36,32,0.45)] dark:text-zinc-500 uppercase tracking-wider">{metric.label}</span>
               </div>
               <div className={`text-2xl font-black ${metric.color}`}>{metric.value}</div>
             </div>
@@ -243,16 +243,16 @@ export default function SaludPage() {
         </div>
 
         {/* Recommendations */}
-        <div className="bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-3xl p-6 md:p-8 border border-white/[0.06]">
+        <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-[rgba(200,164,118,0.14)] dark:border-white/[0.06]">
           <div className="flex items-center gap-2 mb-6">
-            <Lightbulb className="w-5 h-5 text-amber-400" />
-            <h2 className="text-lg font-bold text-white">Recomendaciones</h2>
+            <Lightbulb className="w-5 h-5 text-amber-500 dark:text-amber-400" />
+            <h2 className="text-lg font-bold text-[#2a2420] dark:text-white">Recomendaciones</h2>
           </div>
           <div className="space-y-3">
             {health.recommendations.map((rec, i) => (
-              <div key={i} className="flex items-start gap-3 p-4 bg-white/[0.03] rounded-2xl border border-white/[0.04]">
-                <Sparkles className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-zinc-300 leading-relaxed">{rec}</p>
+              <div key={i} className="flex items-start gap-3 p-4 bg-[#f5efe7] dark:bg-white/[0.03] rounded-2xl border border-[rgba(200,164,118,0.1)] dark:border-white/[0.04]">
+                <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-[#2a2420]/80 dark:text-zinc-300 leading-relaxed">{rec}</p>
               </div>
             ))}
           </div>
@@ -262,7 +262,7 @@ export default function SaludPage() {
         <div className="mt-6 text-center">
           <button
             onClick={() => router.push('/metricas')}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/30 transition-all active:scale-[0.98]"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-br from-[#c8a476] to-[#b8925e] hover:from-[#b8925e] hover:to-[#a8814d] text-white font-bold rounded-2xl shadow-xl shadow-[rgba(200,164,118,0.3)] transition-all active:scale-[0.98]"
           >
             <Activity className="w-5 h-5" />
             VER MÉTRICAS DETALLADAS

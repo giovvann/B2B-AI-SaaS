@@ -14,7 +14,7 @@ export function RoleSelector() {
   const [mounted, setMounted] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // ✅ CRÍTICO: Esperar a que el componente se monte
+  // CRÍTICO: Esperar a que el componente se monte
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -46,11 +46,11 @@ export function RoleSelector() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0a0a0a] p-4 transition-colors duration-300 flex items-center justify-center">
-      {/* ✅ Botón de tema con protección */}
+    <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0d0b09] p-4 transition-colors duration-300 flex items-center justify-center">
+      {/* // Botón de tema con protección */}
       <button
         onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="fixed top-4 right-4 p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-zinc-800 z-10"
+        className="fixed top-4 right-4 p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] z-10"
         aria-label="Cambiar tema"
         disabled={!mounted}
       >
@@ -78,10 +78,10 @@ export function RoleSelector() {
           <button
             onClick={() => handleSelectRole('owner')}
             disabled={isPending}
-            className={`group relative bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
+            className={`group relative bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
               selectedRole === 'owner'
                 ? 'border-blue-500 shadow-blue-500/30'
-                : 'border-zinc-200 dark:border-zinc-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
+                : 'border-zinc-200 dark:border-[rgba(200,164,118,0.16)] hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
             }`}
           >
             <div className="flex items-center justify-between mb-6">
@@ -98,7 +98,7 @@ export function RoleSelector() {
             <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
               Acceso completo: métricas, inventario, ventas y configuración del negocio.
             </p>
-            <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-zinc-800">
+            <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-[rgba(200,164,118,0.16)]">
               <div className="text-xs font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 uppercase tracking-wider mb-2">
                 Accesos incluidos
               </div>
@@ -123,10 +123,10 @@ export function RoleSelector() {
           <button
             onClick={() => handleSelectRole('employee')}
             disabled={isPending}
-            className={`group relative bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl shadow-[rgba(200,164,118,0.04)] p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
+            className={`group relative bg-white dark:bg-[#16130f] rounded-3xl shadow-xl shadow-[rgba(200,164,118,0.04)] p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
               selectedRole === 'employee'
                 ? 'border-blue-500 shadow-blue-500/30'
-                : 'border-[rgba(200,164,118,0.12)] dark:border-zinc-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
+                : 'border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
             }`}
           >
             <div className="flex items-center justify-between mb-6">
@@ -143,7 +143,7 @@ export function RoleSelector() {
             <p className="text-sm md:text-base text-[rgba(42,36,32,0.5)] dark:text-zinc-400 leading-relaxed">
               Operación diaria: registrar ventas y agregar productos nuevos al inventario.
             </p>
-            <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-zinc-800">
+            <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-[rgba(200,164,118,0.16)]">
               <div className="text-xs font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 uppercase tracking-wider mb-2">
                 Accesos incluidos
               </div>

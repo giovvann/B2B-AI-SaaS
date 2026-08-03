@@ -53,7 +53,7 @@ export default async function IngresosPage() {
   )
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-4 transition-colors duration-300">
       <div className="max-w-7xl mx-auto pb-8">
         <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
           <div>

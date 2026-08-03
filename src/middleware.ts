@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // ============================================
-  // REGLA: No autenticado → login
+  // REGLA: No autenticado -> login
   // ============================================
   if (!user) {
     const url = request.nextUrl.clone()
@@ -79,7 +79,7 @@ export async function middleware(request: NextRequest) {
       const expiresAt = boutique.subscription_expires_at ? new Date(boutique.subscription_expires_at) : null
       const planType = boutique.plan_type || 'free'
 
-      // Si el plan expiró y no es free → redirect a suscripcion-expirada
+      // Si el plan expiró y no es free -> redirect a suscripcion-expirada
       const isExpiredPremium = !boutique.is_active && planType !== 'free'
       const isPastTrial = planType === 'trial' && expiresAt && expiresAt < now
 
@@ -89,7 +89,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url)
       }
 
-      // Si es plan FREE → bloquear rutas premium
+      // Si es plan FREE -> bloquear rutas premium
       if (planType === 'free' || (planType === 'trial' && expiresAt && expiresAt < now)) {
         const isPremiumRoute = PREMIUM_ROUTES.some(route => pathname.startsWith(route))
         if (isPremiumRoute) {

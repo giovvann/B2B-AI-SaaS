@@ -123,7 +123,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-2xl border border-[rgba(200,164,118,0.12)] dark:border-zinc-800 p-6">
+      <div className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto bg-white dark:bg-[#16130f] rounded-3xl shadow-2xl border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-black text-[#2a2420] dark:text-white flex items-center gap-2">
@@ -136,7 +136,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
         </div>
 
         {/* Contador */}
-        <div className="bg-[rgba(200,164,118,0.06)] dark:bg-zinc-800/50 rounded-2xl p-4 mb-5 text-center">
+        <div className="bg-[rgba(200,164,118,0.06)] dark:bg-[#201b16]/50 rounded-2xl p-4 mb-5 text-center">
           <span className="text-2xl font-black text-[#2a2420] dark:text-white">
             {approvedCount}
           </span>
@@ -274,7 +274,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
         )}
 
         {/* Cambiar PIN */}
-        <div className="border-t border-[rgba(200,164,118,0.12)] dark:border-zinc-800 pt-5 mt-2">
+        <div className="border-t border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] pt-5 mt-2">
           {!showPinChange ? (
             <button
               onClick={() => setShowPinChange(true)}
@@ -296,12 +296,12 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
                 value={newPin}
                 onChange={e => setNewPin(e.target.value.replace(/\D/g, ''))}
                 placeholder="4-6 dígitos"
-                className="w-full text-center text-xl tracking-[0.4em] bg-[#fdfaf5] dark:bg-zinc-800 border border-[rgba(200,164,118,0.12)] dark:border-zinc-700 rounded-2xl px-4 py-3 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.3)] dark:placeholder-zinc-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-blue-500 transition-colors"
+                className="w-full text-center text-xl tracking-[0.4em] bg-[#fdfaf5] dark:bg-[#201b16] border border-[rgba(200,164,118,0.12)] dark:border-zinc-700 rounded-2xl px-4 py-3 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.3)] dark:placeholder-zinc-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-blue-500 transition-colors"
                 autoFocus
                 disabled={pinLoading}
               />
               {pinError && <p className="text-red-400 text-sm">{pinError}</p>}
-              {pinSuccess && <p className="text-emerald-400 text-sm">✅ PIN actualizado correctamente</p>}
+              {pinSuccess && <p className="text-emerald-400 text-sm flex items-center gap-1.5"><CheckCircle className="w-4 h-4" /> PIN actualizado correctamente</p>}
               <div className="flex gap-2">
                 <button
                   onClick={handleChangePin}
@@ -312,7 +312,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
                 </button>
                 <button
                   onClick={() => { setShowPinChange(false); setNewPin(''); setPinError('') }}
-                  className="px-4 py-3 bg-[rgba(200,164,118,0.1)] dark:bg-zinc-800 text-[rgba(42,36,32,0.6)] dark:text-zinc-300 text-sm font-bold rounded-2xl hover:bg-[rgba(200,164,118,0.2)] dark:hover:bg-zinc-700 transition-colors"
+                  className="px-4 py-3 bg-[rgba(200,164,118,0.1)] dark:bg-[#201b16] text-[rgba(42,36,32,0.6)] dark:text-zinc-300 text-sm font-bold rounded-2xl hover:bg-[rgba(200,164,118,0.2)] dark:hover:bg-zinc-700 transition-colors"
                 >
                   Cancelar
                 </button>

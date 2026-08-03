@@ -134,7 +134,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
         <div className="fixed top-4 right-4 flex items-center gap-2 z-20">
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-4 bg-white dark:bg-zinc-900 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800 shadow-sm"
+            className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm"
           >
             {theme === 'dark' ? (
               <Sun className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
@@ -166,7 +166,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
         {/* Paso 1: Seleccionar tipo y subir archivo */}
         {step === 'select' && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800 shadow-xl">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl">
               <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
                 <FileSpreadsheet className="w-6 h-6" />
                 ¿Qué quieres importar?
@@ -178,7 +178,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
                   className={`p-5 rounded-2xl border-2 transition-all text-left ${
                     importType === 'products'
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
-                      : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-300'
+                      : 'border-zinc-200 dark:border-[rgba(200,164,118,0.16)] hover:border-zinc-300'
                   }`}
                 >
                   <Package className={`w-8 h-8 mb-2 ${importType === 'products' ? 'text-blue-500' : 'text-zinc-400'}`} />
@@ -196,7 +196,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
                     })
                   }}
                   disabled
-                  className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 opacity-50 cursor-not-allowed text-left"
+                  className="p-5 rounded-2xl border-2 border-zinc-200 dark:border-[rgba(200,164,118,0.16)] opacity-50 cursor-not-allowed text-left"
                 >
                   <FileSpreadsheet className="w-8 h-8 text-zinc-400 mb-2" />
                   <div className="font-black text-zinc-500 dark:text-zinc-500">VENTAS</div>
@@ -237,7 +237,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
                   <p className="text-sm text-blue-800 dark:text-blue-400 mb-3">
                     Tu archivo debe tener columnas como:
                   </p>
-                  <div className="bg-white dark:bg-zinc-900 rounded-xl p-3 font-mono text-xs text-zinc-700 dark:text-zinc-300 overflow-x-auto">
+                  <div className="bg-white dark:bg-[#16130f] rounded-xl p-3 font-mono text-xs text-zinc-700 dark:text-zinc-300 overflow-x-auto">
                     Nombre, Marca, Temporada, Talla, Color, Precio_Compra, Precio_Venta, Stock<br />
                     Playera Básica, Nike, Verano, M, Blanco, 150, 299, 10<br />
                     Playera Básica, Nike, Verano, L, Blanco, 150, 299, 15<br />
@@ -252,7 +252,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
         {/* Paso 2: Mapeo de columnas */}
         {step === 'mapping' && parsedData && (
           <div className="space-y-6">
-            <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-zinc-800 shadow-xl">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl">
               <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
                 <div>
                   <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white mb-1">
@@ -274,7 +274,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
                 {PRODUCT_FIELDS.map(field => (
                   <div
                     key={field.key}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-3 items-center p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-zinc-800"
+                    className="grid grid-cols-1 md:grid-cols-2 gap-3 items-center p-4 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]"
                   >
                     <div>
                       <div className="font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -290,7 +290,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
                     <select
                       value={mapping[field.key] || ''}
                       onChange={(e) => setMapping({ ...mapping, [field.key]: e.target.value })}
-                      className="w-full bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
+                      className="w-full bg-white dark:bg-[#16130f] border-2 border-zinc-200 dark:border-[rgba(200,164,118,0.16)] rounded-xl px-4 py-3 font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none"
                     >
                       <option value="">-- No mapear --</option>
                       {parsedData.headers.map(h => (
@@ -312,14 +312,14 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
             </div>
             
             {/* Vista previa */}
-            <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl overflow-hidden">
               <h3 className="font-black text-zinc-900 dark:text-white mb-4">
                 Vista previa (primeras 5 filas)
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-zinc-200 dark:border-zinc-800">
+                    <tr className="border-b border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                       {parsedData.headers.map(h => (
                         <th key={h} className="px-3 py-2 text-left font-black text-zinc-500 uppercase text-xs">
                           {h}
@@ -329,7 +329,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
                   </thead>
                   <tbody>
                     {parsedData.rows.slice(0, 5).map((row, i) => (
-                      <tr key={i} className="border-b border-zinc-100 dark:border-zinc-800">
+                      <tr key={i} className="border-b border-zinc-100 dark:border-[rgba(200,164,118,0.16)]">
                         {parsedData.headers.map(h => (
                           <td key={h} className="px-3 py-2 text-zinc-700 dark:text-zinc-300">
                             {String(row[h] ?? '')}
@@ -346,7 +346,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
         
         {/* Paso 3: Importando */}
         {step === 'importing' && (
-          <div className="bg-white dark:bg-zinc-900 rounded-3xl p-12 border border-zinc-200 dark:border-zinc-800 shadow-xl text-center">
+          <div className="bg-white dark:bg-[#16130f] rounded-3xl p-12 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl text-center">
             <Loader2 className="w-20 h-20 text-blue-500 animate-spin mx-auto mb-6" />
             <h2 className="text-2xl md:text-3xl font-black text-zinc-900 dark:text-white mb-2">
               Importando productos...
@@ -378,7 +378,7 @@ export function ImportarClient({ boutiqueName }: { boutiqueName: string }) {
               </button>
               <button
                 onClick={resetAll}
-                className="px-8 py-4 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-black tracking-wider rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 transition-all"
+                className="px-8 py-4 bg-white dark:bg-[#16130f] hover:bg-zinc-50 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-black tracking-wider rounded-2xl border-2 border-zinc-200 dark:border-[rgba(200,164,118,0.16)] transition-all"
               >
                 IMPORTAR OTRO ARCHIVO
               </button>

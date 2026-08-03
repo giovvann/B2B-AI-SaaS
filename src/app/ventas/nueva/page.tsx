@@ -197,11 +197,11 @@ export default function NuevaVentaPage() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4">
+      <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-4">
         <div className="max-w-7xl mx-auto">
           <div className="mb-6 flex items-center justify-between pr-20">
-            <div className="h-12 w-48 bg-zinc-200 dark:bg-zinc-700 rounded-2xl animate-pulse"></div>
-            <div className="h-12 w-40 bg-zinc-200 dark:bg-zinc-700 rounded-xl animate-pulse"></div>
+            <div className="h-12 w-48 bg-zinc-200 dark:bg-[#262019] rounded-2xl animate-pulse"></div>
+            <div className="h-12 w-40 bg-zinc-200 dark:bg-[#262019] rounded-xl animate-pulse"></div>
           </div>
         </div>
       </div>
@@ -221,13 +221,13 @@ export default function NuevaVentaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-4 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 flex items-center justify-between pr-20">
           <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white">NUEVA VENTA</h1>
           <div className="flex items-center gap-4">
             <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-zinc-100 dark:bg-zinc-800 rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
+              className="p-4 bg-zinc-100 dark:bg-[#201b16] rounded-2xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">
               {theme === 'dark' ? <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" /> : <Moon className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />}
             </button>
             <button onClick={() => router.push('/ingresos')}
@@ -244,7 +244,7 @@ export default function NuevaVentaPage() {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-zinc-400" />
               <input type="text" placeholder="Buscar por nombre, marca, talla, color..." value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-14 pr-6 py-5 text-lg border-2 rounded-2xl focus:border-blue-500 focus:outline-none bg-white dark:bg-[#1a1a1a] border-zinc-300 dark:border-zinc-700" />
+                className="w-full pl-14 pr-6 py-5 text-lg border-2 rounded-2xl focus:border-blue-500 focus:outline-none bg-white dark:bg-[#16130f] border-zinc-300 dark:border-zinc-700" />
             </div>
 
             <div className="grid grid-cols-1 gap-3 max-h-[600px] overflow-y-auto">
@@ -265,8 +265,8 @@ export default function NuevaVentaPage() {
                     disabled={product.stock === 0}
                     className={`p-5 rounded-2xl font-bold text-left transition-all ${
                       product.stock === 0
-                        ? 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400 cursor-not-allowed'
-                        : 'bg-white dark:bg-[#1a1a1a] hover:bg-blue-50 dark:hover:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-blue-500 shadow-sm hover:shadow-md'
+                        ? 'bg-zinc-100 dark:bg-[#16130f] text-zinc-400 cursor-not-allowed'
+                        : 'bg-white dark:bg-[#16130f] hover:bg-blue-50 dark:hover:bg-zinc-800 border-2 border-zinc-200 dark:border-zinc-700 hover:border-blue-500 shadow-sm hover:shadow-md'
                     }`}>
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
@@ -297,7 +297,7 @@ export default function NuevaVentaPage() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#1a1a1a] rounded-3xl shadow-xl p-6 space-y-6 border border-zinc-200 dark:border-zinc-800 h-fit">
+          <div className="bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-6 space-y-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] h-fit">
             <h2 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white flex items-center gap-3">
               <ShoppingCart className="w-8 h-8" /> CARRITO
             </h2>
@@ -312,14 +312,14 @@ export default function NuevaVentaPage() {
               <>
                 <div className="space-y-3 max-h-[400px] overflow-y-auto">
                   {cart.map(item => (
-                    <div key={item.id} className="bg-zinc-50 dark:bg-[#0a0a0a] rounded-xl p-4 flex items-center justify-between border border-zinc-200 dark:border-zinc-800">
+                    <div key={item.id} className="bg-zinc-50 dark:bg-[#0d0b09] rounded-xl p-4 flex items-center justify-between border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                       <div className="flex-1 min-w-0 pr-3">
                         <div className="font-bold text-lg text-zinc-900 dark:text-white truncate">{item.name}</div>
                         <div className="text-zinc-600 dark:text-zinc-400">${item.sale_price.toFixed(2)} c/u</div>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <button onClick={() => updateQuantity(item.id, -1)}
-                          className="w-10 h-10 bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded-lg flex items-center justify-center transition-colors">
+                          className="w-10 h-10 bg-zinc-200 dark:bg-[#262019] hover:bg-zinc-300 dark:hover:bg-zinc-600 rounded-lg flex items-center justify-center transition-colors">
                           <Minus className="w-4 h-4" />
                         </button>
                         <span className="text-xl font-black w-8 text-center text-zinc-900 dark:text-white">{item.quantity}</span>
@@ -344,7 +344,7 @@ export default function NuevaVentaPage() {
                       className={`min-h-[80px] rounded-xl font-bold text-sm flex flex-col items-center justify-center gap-2 transition-all ${
                         paymentMethod === 'Efectivo'
                           ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-2 ring-blue-500/20'
-                          : 'bg-zinc-100 dark:bg-[#0a0a0a] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700'
+                          : 'bg-zinc-100 dark:bg-[#0d0b09] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700'
                       }`}>
                       <Banknote className="w-6 h-6" />
                       <span>Efectivo</span>
@@ -353,7 +353,7 @@ export default function NuevaVentaPage() {
                       className={`min-h-[80px] rounded-xl font-bold text-sm flex flex-col items-center justify-center gap-2 transition-all ${
                         paymentMethod === 'Tarjeta'
                           ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-2 ring-blue-500/20'
-                          : 'bg-zinc-100 dark:bg-[#0a0a0a] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700'
+                          : 'bg-zinc-100 dark:bg-[#0d0b09] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700'
                       }`}>
                       <CreditCard className="w-6 h-6" />
                       <span>Tarjeta</span>
@@ -362,7 +362,7 @@ export default function NuevaVentaPage() {
                       className={`min-h-[80px] rounded-xl font-bold text-sm flex flex-col items-center justify-center gap-2 transition-all ${
                         paymentMethod === 'Transferencia'
                           ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/40 ring-2 ring-blue-500/20'
-                          : 'bg-zinc-100 dark:bg-[#0a0a0a] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700'
+                          : 'bg-zinc-100 dark:bg-[#0d0b09] text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700'
                       }`}>
                       <Wallet className="w-6 h-6" />
                       <span>Transfer.</span>
@@ -370,7 +370,7 @@ export default function NuevaVentaPage() {
                   </div>
                 </div>
 
-                <div className="bg-zinc-100 dark:bg-[#0a0a0a] rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800">
+                <div className="bg-zinc-100 dark:bg-[#0d0b09] rounded-2xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                   <div className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white text-center">
                     ${total.toFixed(2)}
                   </div>

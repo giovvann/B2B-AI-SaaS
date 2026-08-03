@@ -2,7 +2,7 @@ import { createClient } from './supabase'
 import { db } from './db'
 
 /**
- * Fetch desde Supabase → cachea en Dexie; si falla (offline), lee de Dexie.
+ * Fetch desde Supabase -> cachea en Dexie; si falla (offline), lee de Dexie.
  */
 async function fetchToCache<T extends { id: string }>(
   table: 'products' | 'sales' | 'sale_items' | 'expenses' | 'boutiques',

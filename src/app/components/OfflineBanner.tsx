@@ -191,7 +191,7 @@ export default function OfflineBanner() {
     return (
       <button
         onClick={handleReopen}
-        className="fixed bottom-4 left-4 z-[9999] flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-lg border border-zinc-200 dark:border-zinc-700 shadow-lg hover:shadow-xl hover:scale-105 transition-all text-xs font-medium text-zinc-600 dark:text-zinc-300"
+        className="fixed bottom-4 left-4 z-[9999] flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-white/80 dark:bg-[#201b16]/80 backdrop-blur-lg border border-zinc-200 dark:border-zinc-700 shadow-lg hover:shadow-xl hover:scale-105 transition-all text-xs font-medium text-zinc-600 dark:text-zinc-300"
         aria-label="Revisar conexión"
         title="Revisar conexión"
       >

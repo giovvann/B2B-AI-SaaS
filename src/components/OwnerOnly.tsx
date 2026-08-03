@@ -56,7 +56,7 @@ export function OwnerOnly({ children }: { children: React.ReactNode }) {
 
   if (allowed === null) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] flex items-center justify-center p-4">
         <div className="text-center">
           <Loader2 className="w-10 h-10 animate-spin text-blue-500 mx-auto mb-4" />
           {errorMsg && (

@@ -194,12 +194,12 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
       <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-4">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 animate-pulse">
-            <div className="h-12 w-64 bg-zinc-200 dark:bg-zinc-800 rounded-2xl mb-4" />
-            <div className="h-6 w-96 bg-zinc-200 dark:bg-zinc-800 rounded-xl" />
+            <div className="h-12 w-64 bg-zinc-200 dark:bg-[#201b16] rounded-2xl mb-4" />
+            <div className="h-6 w-96 bg-zinc-200 dark:bg-[#201b16] rounded-xl" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[1,2,3,4].map(i => (
-              <div key={i} className="h-40 bg-zinc-200 dark:bg-zinc-800 rounded-3xl animate-pulse" />
+              <div key={i} className="h-40 bg-zinc-200 dark:bg-[#201b16] rounded-3xl animate-pulse" />
             ))}
           </div>
         </div>
@@ -213,7 +213,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
         <div className="fixed top-4 right-4 flex items-center gap-2 z-20">
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-4 bg-white dark:bg-zinc-900 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800 shadow-sm"
+            className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm"
             aria-label="Cambiar tema"
           >
             {theme === 'dark' ? (
@@ -305,7 +305,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-xl mb-6">
+        <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl mb-6">
           <div className="relative mb-4">
             <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-400" />
             <input
@@ -313,7 +313,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nombre de boutique o email del dueño..."
-              className="w-full pl-14 pr-5 py-4 text-base border-2 rounded-2xl focus:border-blue-500 focus:outline-none bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white placeholder:text-zinc-400"
+              className="w-full pl-14 pr-5 py-4 text-base border-2 rounded-2xl focus:border-blue-500 focus:outline-none bg-white dark:bg-zinc-950 border-zinc-200 dark:border-[rgba(200,164,118,0.16)] text-zinc-900 dark:text-white placeholder:text-zinc-400"
             />
           </div>
           
@@ -325,14 +325,14 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                 className={`px-5 py-2.5 rounded-2xl font-bold text-xs tracking-wider transition-all flex items-center gap-2 ${
                   filter === f.value
                     ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg'
-                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                    : 'bg-zinc-100 dark:bg-[#201b16] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
                 }`}
               >
                 {f.label}
                 <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                   filter === f.value 
                     ? 'bg-white/20' 
-                    : 'bg-zinc-200 dark:bg-zinc-700'
+                    : 'bg-zinc-200 dark:bg-[#262019]'
                 }`}>
                   {f.count}
                 </span>
@@ -341,7 +341,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
           </div>
         </div>
         
-        <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-[#16130f] rounded-3xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl overflow-hidden">
           {filteredBoutiques.length === 0 ? (
             <div className="text-center py-20">
               <Store className="w-16 h-16 mx-auto mb-4 text-zinc-300 dark:text-zinc-700" />
@@ -352,7 +352,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-zinc-50 dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800">
+                <thead className="bg-zinc-50 dark:bg-zinc-950 border-b border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Negocio</th>
                     <th className="px-6 py-4 text-left text-xs font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Email</th>
@@ -461,7 +461,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
         
         {selectedBoutique && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => { setSelectedBoutique(null); setDetailsData(null) }}>
-            <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 md:p-8 max-w-2xl w-full border border-zinc-200 dark:border-zinc-800 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 max-w-2xl w-full border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-2xl" onClick={e => e.stopPropagation()}>
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">
@@ -489,7 +489,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
               ) : detailsData ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                       <Package className="w-5 h-5 text-blue-500 mb-2" />
                       <div className="text-2xl font-black text-zinc-900 dark:text-white">
                         {detailsData.productsCount}
@@ -498,7 +498,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                         Productos
                       </div>
                     </div>
-                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                       <ShoppingBag className="w-5 h-5 text-emerald-500 mb-2" />
                       <div className="text-2xl font-black text-zinc-900 dark:text-white">
                         {detailsData.salesCount}
@@ -507,7 +507,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                         Ventas
                       </div>
                     </div>
-                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                       <TrendingUp className="w-5 h-5 text-green-500 mb-2" />
                       <div className="text-2xl font-black text-zinc-900 dark:text-white">
                         ${detailsData.totalSales.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
@@ -516,7 +516,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                         Total vendido
                       </div>
                     </div>
-                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+                    <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                       <CalendarPlus className="w-5 h-5 text-purple-500 mb-2" />
                       <div className="text-sm font-bold text-zinc-900 dark:text-white truncate">
                         {detailsData.lastSale 
@@ -529,7 +529,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                     </div>
                   </div>
                   
-                  <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-zinc-800">
+                  <div className="bg-zinc-50 dark:bg-zinc-950 rounded-2xl p-4 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
                     <div className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
                       Suscripción
                     </div>

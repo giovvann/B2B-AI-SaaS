@@ -77,7 +77,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
     return (
       <div className="space-y-3">
         {[1, 2, 3].map(i => (
-          <div key={i} className="bg-zinc-200 dark:bg-zinc-800 rounded-2xl h-32 animate-pulse" />
+          <div key={i} className="bg-zinc-200 dark:bg-[#201b16] rounded-2xl h-32 animate-pulse" />
         ))}
       </div>
     )
@@ -87,7 +87,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
     <div>
       <div className="fixed top-4 right-4 flex items-center gap-2 z-20">
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
           {theme === 'dark' ? <Sun className="w-5 h-5 text-zinc-800 dark:text-zinc-200" /> : <Moon className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />}
         </button>
         <button onClick={() => router.push('/ingresos/nuevo')}
@@ -104,11 +104,11 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
 
       {!isEmpty && (
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 border border-zinc-200 dark:border-zinc-800">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
             <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.15em] mb-1">Productos</div>
             <div className="text-3xl font-black text-zinc-900 dark:text-white">{totalProducts}</div>
           </div>
-          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl p-5 border border-zinc-200 dark:border-zinc-800">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
             <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.15em] mb-1">Valor total</div>
             <div className="text-3xl font-black text-emerald-500">
               ${inventoryValue.toLocaleString('es-MX', { maximumFractionDigits: 0 })}
@@ -122,7 +122,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
           <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-400" />
           <input type="text" placeholder="Buscar por nombre, marca, talla o color..." value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-14 pr-12 py-4 text-base border-2 rounded-2xl focus:border-blue-500 focus:outline-none bg-white dark:bg-[#1a1a1a] border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white" />
+            className="w-full pl-14 pr-12 py-4 text-base border-2 rounded-2xl focus:border-blue-500 focus:outline-none bg-white dark:bg-[#16130f] border-zinc-200 dark:border-[rgba(200,164,118,0.16)] text-zinc-900 dark:text-white" />
           {searchTerm && (
             <button onClick={() => setSearchTerm('')}
               className="absolute right-5 top-1/2 transform -translate-y-1/2 text-zinc-400">
@@ -133,7 +133,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
       )}
 
       {isEmpty ? (
-        <div className="text-center py-20 bg-white dark:bg-[#1a1a1a] rounded-3xl border-2 border-dashed border-zinc-300 dark:border-zinc-800">
+        <div className="text-center py-20 bg-white dark:bg-[#16130f] rounded-3xl border-2 border-dashed border-zinc-300 dark:border-[rgba(200,164,118,0.16)]">
           <Package className="w-20 h-20 mx-auto mb-5 text-zinc-300 dark:text-zinc-700" strokeWidth={1.5} />
           <h2 className="text-2xl font-black text-zinc-700 dark:text-zinc-300 mb-2">Tu inventario esta vacio</h2>
           <p className="text-base text-zinc-500 dark:text-zinc-400">
@@ -141,7 +141,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
           </p>
         </div>
       ) : filteredProducts.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-[#1a1a1a] rounded-3xl border border-zinc-200 dark:border-zinc-800">
+        <div className="text-center py-16 bg-white dark:bg-[#16130f] rounded-3xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
           <Search className="w-14 h-14 mx-auto mb-3 text-zinc-300" />
           <p className="text-lg font-bold text-zinc-500">Sin resultados para &quot;{searchTerm}&quot;</p>
         </div>
@@ -155,7 +155,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
             const colorLabel = displayColor(product.color)
 
             return (
-              <div key={product.id} className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors overflow-hidden">
+              <div key={product.id} className="bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors overflow-hidden">
                 <div className="p-5">
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="flex-1 min-w-0">
@@ -183,25 +183,25 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
                         </span>
                       )}
                       {product.sku && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 text-xs font-bold rounded-lg border border-zinc-200 dark:border-zinc-700">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-zinc-100 dark:bg-[#201b16] text-zinc-600 dark:text-zinc-400 text-xs font-bold rounded-lg border border-zinc-200 dark:border-zinc-700">
                           <Tag className="w-3 h-3" /> SKU: {product.sku}
                         </span>
                       )}
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                  <div className="flex items-center justify-between gap-3 pt-3 border-t border-zinc-100 dark:border-[rgba(200,164,118,0.16)]">
                     <div className="flex items-center gap-2">
                       <div className={`w-2.5 h-2.5 rounded-full ${stockInfo.dot}`} />
                       <span className={`text-sm font-bold ${stockInfo.text}`}>{stock} en stock</span>
                     </div>
                     <div className="flex gap-1">
                       <button onClick={() => router.push(`/ingresos/${product.id}/editar`)}
-                        className="p-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-blue-50 dark:hover:bg-zinc-700 hover:text-blue-600 rounded-xl transition-colors">
+                        className="p-2.5 bg-zinc-100 dark:bg-[#201b16] hover:bg-blue-50 dark:hover:bg-zinc-700 hover:text-blue-600 rounded-xl transition-colors">
                         <Edit3 className="w-4 h-4" />
                       </button>
                       <button onClick={() => handleDelete(product.id)} disabled={isPending}
-                        className="p-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 disabled:opacity-50 rounded-xl transition-colors">
+                        className="p-2.5 bg-zinc-100 dark:bg-[#201b16] hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 disabled:opacity-50 rounded-xl transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
