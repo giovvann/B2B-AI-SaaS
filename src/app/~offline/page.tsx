@@ -1,10 +1,67 @@
-import type { Metadata } from "next";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Sin conexión",
-};
+import { useEffect, useRef, useState } from 'react';
 
 export default function OfflinePage() {
+  const [retrying, setRetrying] = useState(false);
+  const retryRef = useRef(false);
+
+  useEffect(() => {
+    document.title = 'Sin conexión';
+    let cancelled = false;
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const tryReconnect = async () => {
+      if (cancelled || retryRef.current) return;
+      retryRef.current = true;
+      setRetrying(true);
+      try {
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch('/api/ping', { cache: 'no-store', signal: controller.signal });
+        clearTimeout(t);
+        if (cancelled) return;
+        if (res.ok) {
+          // Back online: reload the page the user was trying to open.
+          // If the SW served this fallback for a real path, the URL bar still has it.
+          const target = window.location.pathname === '/~offline' ? '/' : window.location.pathname + window.location.search;
+          window.location.replace(target);
+          return;
+        }
+      } catch {
+        // still offline, keep polling
+      }
+      if (!cancelled) {
+        retryRef.current = false;
+        setRetrying(false);
+      }
+    };
+
+    const handleOnline = () => {
+      if (!cancelled) tryReconnect();
+    };
+    const handleOffline = () => {
+      if (!cancelled) {
+        retryRef.current = false;
+        setRetrying(false);
+      }
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Poll every 4s while offline
+    timer = setInterval(tryReconnect, 4000);
+    tryReconnect();
+
+    return () => {
+      cancelled = true;
+      if (timer) clearInterval(timer);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#fdfaf5] dark:bg-[#0d0b09] flex items-center justify-center p-6 transition-colors duration-300">
       <div className="text-center max-w-md">
@@ -18,11 +75,25 @@ export default function OfflinePage() {
           No tienes internet en este momento. No te preocupes — las operaciones que realices se guardarán localmente y se sincronizarán automáticamente cuando recuperes la señal.
         </p>
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-sm text-blue-600 dark:text-blue-400">
-          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <svg className={`w-4 h-4 ${retrying ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          Reconectando automáticamente...
+          {retrying ? 'Reconectando automáticamente...' : 'Esperando conexión...'}
+        </div>
+        <div className="mt-6">
+          <button
+            onClick={() => {
+              retryRef.current = false;
+              window.location.reload();
+            }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2a2420] text-[#fdfaf5] text-sm font-semibold hover:bg-[#1a1612] transition-colors cursor-pointer"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h5M20 20v-5h-5M20 9a8 8 0 00-14.32-3.68M4 15a8 8 0 0014.32 3.68" />
+            </svg>
+            Reintentar ahora
+          </button>
         </div>
         <div className="mt-8 text-xs text-[rgba(42,36,32,0.35)] dark:text-gray-600">
           Veliora funciona sin conexión gracias a sincronización local.

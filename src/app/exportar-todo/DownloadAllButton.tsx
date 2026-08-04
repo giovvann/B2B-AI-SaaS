@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Download, Loader2, CheckCircle, FileDown } from 'lucide-react'
+import { useToast } from '@/components/toast'
 
 interface Props {
   boutiqueName: string
@@ -10,6 +11,7 @@ interface Props {
 export function DownloadAllButton({ boutiqueName }: Props) {
   const [downloading, setDownloading] = useState(false)
   const [done, setDone] = useState(false)
+  const { error } = useToast()
 
   const handleDownload = async () => {
     setDownloading(true)
@@ -34,7 +36,7 @@ export function DownloadAllButton({ boutiqueName }: Props) {
       setDone(true)
       setTimeout(() => setDone(false), 5000)
     } catch (err: any) {
-      alert(err.message)
+      error('No se pudo exportar', err.message || 'Error al generar el ZIP')
     } finally {
       setDownloading(false)
     }

@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { Download, FileSpreadsheet, Loader2 } from 'lucide-react'
 import { exportInventory, exportSales } from '@/app/exportar/actions'
 import { downloadCSV, downloadExcel } from '@/lib/import-export/generators'
+import { useToast } from '@/components/toast'
 
 export function ExportButton({ type }: { type: 'inventory' | 'sales' }) {
   const [loading, setLoading] = useState(false)
+  const { error, success } = useToast()
   
   const handleExport = async (format: 'csv' | 'xlsx') => {
     setLoading(true)
@@ -24,8 +26,9 @@ export function ExportButton({ type }: { type: 'inventory' | 'sales' }) {
       } else {
         downloadExcel(result.data, `${filename}.xlsx`, type === 'inventory' ? 'Inventario' : 'Ventas')
       }
+      success(type === 'inventory' ? 'Inventario exportado' : 'Ventas exportadas', 'Archivo descargado correctamente')
     } catch (err) {
-      alert('Error al exportar: ' + (err as Error).message)
+      error('Error al exportar', (err as Error).message)
     } finally {
       setLoading(false)
     }

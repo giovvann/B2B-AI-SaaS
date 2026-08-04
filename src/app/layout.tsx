@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ReminderDock } from "@/app/components/ReminderDock";
 import { SyncProvider } from "@/components/SyncProvider";
 import OfflineBanner from "@/app/components/OfflineBanner";
+import { Toaster } from "@/components/toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -77,9 +78,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SyncProvider>{children}</SyncProvider>
-          <ReminderDock />
-          <OfflineBanner />
+          <Toaster>
+            <SyncProvider>{children}</SyncProvider>
+            <ReminderDock />
+            <OfflineBanner />
+          </Toaster>
         </ThemeProvider>
       </body>
     </html>

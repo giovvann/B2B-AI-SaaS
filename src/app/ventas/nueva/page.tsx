@@ -9,6 +9,7 @@ import { data } from '@/lib/data';
 import { ShoppingCart, Plus, Minus, Trash2, Search, CreditCard, Banknote, Wallet, CheckCircle, Sun, Moon, X, Ruler, Palette } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { displaySize, displayColor } from '@/lib/product-utils';
+import { useToast } from '@/components/toast';
 
 interface Product {
   id: string;
@@ -34,6 +35,7 @@ interface CartItem {
 
 export default function NuevaVentaPage() {
   const router = useRouter();
+  const { error } = useToast();
   const { theme, setTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -176,9 +178,9 @@ export default function NuevaVentaPage() {
         setShowSuccess(false);
         router.push('/dashboard');
       }, 2000);
-    } catch (error) {
-      console.error('Error completando venta:', error);
-      alert('Error al completar la venta: ' + (error as Error).message);
+    } catch (err) {
+      console.error('Error completando venta:', err);
+      error('Error al completar la venta', (err as Error).message);
     } finally {
       setLoading(false);
     }

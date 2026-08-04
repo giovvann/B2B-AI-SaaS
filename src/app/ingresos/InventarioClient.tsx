@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes'
 import { deleteProduct } from './actions'
 import { displaySize, displayColor } from '@/lib/product-utils'
 import { BarcodeScanner } from '@/app/components/BarcodeScanner'
+import { useToast } from '@/components/toast'
 
 interface Product {
   id: string
@@ -29,6 +30,7 @@ interface Props {
 export function InventarioClient({ products, totalProducts, inventoryValue }: Props) {
   const router = useRouter()
   const { theme, setTheme } = useTheme()
+  const { error } = useToast()
   const [mounted, setMounted] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [barcodeOpen, setBarcodeOpen] = useState(false)
@@ -59,8 +61,8 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
     startTransition(async () => {
       try {
         await deleteProduct(formData)
-      } catch (error) {
-        alert('Error: ' + (error as Error).message)
+      } catch (err) {
+        error('No se pudo eliminar', (err as Error).message)
       }
     })
   }

@@ -79,7 +79,7 @@ export default function TerminosPage() {
               </div>
               <div style={{"background":"rgba(200,164,118,.08)","borderRadius":".75rem","padding":".8rem 1rem","border":"1px solid rgba(200,164,118,.2)"}}>
                 <div style={{"fontSize":"1rem","fontWeight":700,"color":"#2a2420","marginBottom":".15rem"}}>Plan Premium</div>
-                <p style={{"fontSize":".72rem","color":"rgba(42,36,32,.5)"}} id="terminosPrice">$239/mes. Ilimitado, IA, escáner, alertas, multi-dispositivo.</p>
+                <p style={{"fontSize":".72rem","color":"rgba(42,36,32,.5)"}} id="terminosPrice">$199/mes. Ilimitado, IA, escáner, alertas, multi-dispositivo.</p>
               </div>
             </div>
             <ul style={{"listStyle":"disc","paddingLeft":"1.25rem","display":"flex","flexDirection":"column","gap":".25rem","fontSize":".78rem","color":"rgba(42,36,32,.55)"}}>

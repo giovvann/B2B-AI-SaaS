@@ -84,9 +84,20 @@ export default function OfflineBanner() {
       }
     };
     const handleOffline = () => {
-      if (mountedRef.current) {
-        setIsOffline(true);
-      }
+      if (!mountedRef.current) return;
+      // navigator offline events can fire spuriously (VPN, Wi-Fi handoffs, NLA).
+      // Verify with a quick ping before showing the banner to avoid false positives.
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 3000);
+      fetch('/api/ping', { method: 'GET', cache: 'no-store', signal: controller.signal })
+        .then((r) => {
+          clearTimeout(t);
+          if (mountedRef.current && r.ok) setIsOffline(false);
+        })
+        .catch(() => {
+          clearTimeout(t);
+          if (mountedRef.current) setIsOffline(true);
+        });
     };
 
     window.addEventListener('online', handleOnline);
