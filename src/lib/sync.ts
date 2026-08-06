@@ -161,7 +161,19 @@ export function startSyncEngine(onState?: (s: Partial<SyncState>) => void) {
 
   if (navigator.onLine) void go()
   window.addEventListener('online', go)
-  const onOffline = () => onState?.({ online: false })
+  // El evento 'offline' del navegador puede dispararse de forma espuria (VPN,
+  // handoffs de Wi-Fi, ahorro de energía). No marcar offline de inmediato:
+  // verificar con un ping real antes de cambiar el estado.
+  const onOffline = () => {
+    fetch('/api/ping', { method: 'GET', cache: 'no-store' })
+      .then((r) => {
+        if (r.ok) onState?.({ online: true })
+      })
+      .catch(() => {
+        // Solo confirmar offline si el navegador también lo reporta.
+        if (!navigator.onLine) onState?.({ online: false })
+      })
+  }
   window.addEventListener('offline', onOffline)
   return () => {
     window.removeEventListener('online', go)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
@@ -9,6 +9,7 @@ export default function AuthCallbackPage() {
   const router = useRouter();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(true);
+  const retriedRef = useRef(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -17,6 +18,20 @@ export default function AuthCallbackPage() {
     const errorDesc = params.get('error_description');
 
     const supabase = createClient({ detectSessionInUrl: false });
+
+    async function restartGoogleFlow() {
+      // Limpia el verifier corrupto y vuelve a lanzar el flujo de Google una sola vez.
+      try {
+        const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || '');
+        const ref = url.hostname.split('.')[0];
+        if (ref) localStorage.removeItem(`sb-${ref}-auth-token-code-verifier`);
+      } catch {}
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/auth/callback` },
+      });
+      return error;
+    }
 
     async function finish() {
       if (errorCode) {
@@ -45,10 +60,33 @@ export default function AuthCallbackPage() {
           return;
         } catch (err: any) {
           console.error('Auth callback error:', err);
+          const msg = err?.message || '';
+          const isPkce =
+            msg.includes('code_verifier') ||
+            msg.includes('PKCE') ||
+            msg.includes('verifier') ||
+            msg.includes('state');
+
+          // El verifier de PKCE se perdió (storage limpio, pestaña nueva, etc.):
+          // re-lanzar el flujo de Google automáticamente, una sola vez.
+          if (isPkce && !retriedRef.current) {
+            retriedRef.current = true;
+            const retryError = await restartGoogleFlow();
+            if (!retryError) return; // Google está redirigiendo de nuevo
+          }
+
+          const isNetwork =
+            msg.includes('fetch') ||
+            msg.includes('Failed to fetch') ||
+            msg.includes('Network') ||
+            msg.includes('network');
+
           setError(
-            err?.message?.includes('code_verifier') || err?.message?.includes('PKCE')
-              ? 'El inicio de sesión se interrumpió entre servidores. Vuelve a intentarlo y si persiste, entra desde velioralat.vercel.app.'
-              : 'No se pudo completar el inicio de sesión. El enlace pudo expirar o ya fue usado. Inténtalo de nuevo.'
+            isNetwork
+              ? 'No se pudo conectar con el servidor. Verifica tu conexión a internet e inténtalo de nuevo.'
+              : isPkce
+                ? 'El inicio de sesión se interrumpió. Vuelve a intentarlo.'
+                : 'No se pudo completar el inicio de sesión. El enlace pudo expirar o ya fue usado. Inténtalo de nuevo.'
           );
           setBusy(false);
           return;

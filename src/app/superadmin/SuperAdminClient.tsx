@@ -75,7 +75,7 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
     })
   }, [boutiques])
   
-  const SUBSCRIPTION_PRICE = Number(process.env.NEXT_PUBLIC_SUBSCRIPTION_PRICE) || 449
+  const SUBSCRIPTION_PRICE = Number(process.env.NEXT_PUBLIC_SUBSCRIPTION_PRICE) || 199
 
   const metrics = useMemo(() => {
     const total = boutiquesWithStatus.length

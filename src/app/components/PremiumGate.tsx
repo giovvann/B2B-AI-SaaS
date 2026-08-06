@@ -50,7 +50,7 @@ export function PremiumGate({ feature, description }: PremiumGateProps) {
 
           <div className="bg-gradient-to-br from-blue-500/[0.08] to-cyan-500/[0.08] rounded-2xl p-5 mb-6 border border-blue-500/20 text-left">
             <p className="text-xs text-[rgba(42,36,32,0.5)] dark:text-zinc-400 font-semibold mb-3 text-center uppercase tracking-wider">
-              Plan Premium — $449/mes
+              Plan Premium — $199/mes
             </p>
             <div className="space-y-2 text-sm text-[rgba(42,36,32,0.6)] dark:text-zinc-400">
               {[
@@ -61,7 +61,7 @@ export function PremiumGate({ feature, description }: PremiumGateProps) {
                 'Métricas avanzadas con gráficas',
                 'Código de barras',
                 'Multi-dispositivo (hasta 6)',
-                'Primer mes solo $199 MXN',
+                'Soporte WhatsApp',
               ].map((feat, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <Sparkles className="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400 flex-shrink-0" />

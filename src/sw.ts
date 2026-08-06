@@ -21,7 +21,14 @@ const serwist = new Serwist({
       {
         url: "/~offline",
         matcher({ request }) {
-          return request.destination === "document";
+          // Solo mostrar "Sin conexión" cuando el navegador realmente no tiene red.
+          // Si hay internet, un fallo transitorio de fetch NO debe mostrar offline.
+          return (
+            request.destination === "document" &&
+            typeof self !== "undefined" &&
+            typeof self.navigator !== "undefined" &&
+            self.navigator.onLine === false
+          );
         },
       },
     ],

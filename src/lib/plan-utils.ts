@@ -62,7 +62,7 @@ export const PLAN_FEATURES = {
   },
   [PLAN_PREMIUM]: {
     name: 'Premium',
-    price: '$449/mes',
+    price: '$199/mes',
     badge: 'PREMIUM',
     color: 'text-blue-400',
     features: [
@@ -74,7 +74,7 @@ export const PLAN_FEATURES = {
       'Métricas avanzadas con gráficas',
       'Código de barras',
       'Multi-dispositivo (hasta 6)',
-      'Precio lanzamiento: $199 primer mes',
+      'Soporte WhatsApp',
     ],
   },
   [PLAN_TRIAL]: {

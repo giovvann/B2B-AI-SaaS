@@ -17,7 +17,7 @@ export default async function SuscripcionExpiradaPage() {
   }
 
   const WHATSAPP_NUMBER = '528342177709'
-  const SUBSCRIPTION_PRICE = process.env.NEXT_PUBLIC_SUBSCRIPTION_PRICE || '449'
+  const SUBSCRIPTION_PRICE = process.env.NEXT_PUBLIC_SUBSCRIPTION_PRICE || '199'
 
   const whatsappMessage = encodeURIComponent(
     `Hola, soy ${user.email} y quiero activar mi membresía en Veliora.`

@@ -49,6 +49,8 @@ function RegistroForm() {
     if (result.error) {
       if (result.error.includes('already registered') || result.error.includes('already exists')) {
         setError('Este correo ya está registrado. Si usaste Google, inicia sesión con Google.');
+      } else if (result.error.includes('fetch') || result.error.includes('Network') || result.error.includes('network')) {
+        setError('No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.');
       } else {
         setError(result.error)
       }
@@ -81,7 +83,12 @@ function RegistroForm() {
       });
       if (error) throw error;
     } catch (err: any) {
-      setError(err.message || 'Error al iniciar con Google');
+      const msg = err?.message || '';
+      if (msg.includes('fetch') || msg.includes('Network') || msg.includes('network')) {
+        setError('No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.');
+      } else {
+        setError(msg || 'Error al iniciar con Google');
+      }
       setGoogleLoading(false);
     }
   };

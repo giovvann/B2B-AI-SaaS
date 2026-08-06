@@ -29,6 +29,8 @@ export default function LoginPage() {
         setError('Correo o contraseña incorrectos');
       } else if (err.message?.includes('Email not confirmed')) {
         setError('Correo no confirmado. Revisa tu bandeja de entrada.');
+      } else if (err.message?.includes('fetch') || err.message?.includes('Network') || err.message?.includes('network')) {
+        setError('No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.');
       } else {
         setError(err.message || 'Error al iniciar sesión');
       }
@@ -47,7 +49,12 @@ export default function LoginPage() {
       });
       if (error) throw error;
     } catch (err: any) {
-      setError(err.message || 'Error al iniciar con Google');
+      const msg = err?.message || '';
+      if (msg.includes('fetch') || msg.includes('Network') || msg.includes('network')) {
+        setError('No se pudo conectar con el servidor. Revisa tu conexión a internet e inténtalo de nuevo.');
+      } else {
+        setError(msg || 'Error al iniciar con Google');
+      }
       setGoogleLoading(false);
     }
   };
