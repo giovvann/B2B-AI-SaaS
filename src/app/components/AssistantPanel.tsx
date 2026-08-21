@@ -59,7 +59,9 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
       })
       const data = await res.json()
       if (!res.ok) {
-        throw new Error(data.error || 'Error al comunicarme con Tipsy')
+        const err: any = new Error(data.error || 'Error al comunicarme con Tipsy')
+        err.type = data.type
+        throw err
       }
       setMessages((m) => [
         ...m,
@@ -71,10 +73,17 @@ export function AssistantPanel({ boutiqueName }: AssistantPanelProps) {
         },
       ])
     } catch (err: any) {
-      setError(err.message || 'Error de conexión')
+      // 402 premium_required: mostrar el mensaje de upgrade en el chat (conversión),
+      // no el genérico de error ni el banner rojo.
+      const isPremium = err?.type === 'premium_required'
+      if (!isPremium) setError(err.message || 'Error de conexión')
       setMessages((m) => [
         ...m,
-        { role: 'assistant', content: 'Ocurrió un error. Intenta de nuevo.', timestamp: Date.now() },
+        {
+          role: 'assistant',
+          content: isPremium ? err.message : 'Ocurrió un error. Intenta de nuevo.',
+          timestamp: Date.now(),
+        },
       ])
     } finally {
       setLoading(false)
