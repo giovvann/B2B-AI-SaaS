@@ -63,6 +63,11 @@ export async function registrarAction(formData: FormData) {
     ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
     : null
 
+  // NOTA: el trigger on_user_created (create_default_boutique) ya insertó una
+  // boutique con defaults de trial durante el mismo signUp. Con ignoreDuplicates:false,
+  // en conflicto (owner_id) esta upsert ACTUALIZA esa fila con el nombre y plan reales.
+  // Con true (= DO NOTHING) el plan/nombre nunca se aplicaban y TODA cuenta nueva
+  // quedaba como trial de 7 días (bug que rompía el freemium).
   const { error: boutiqueError } = await admin.from('boutiques').upsert({
     owner_id: signUpData.user.id,
     name: boutiqueName.trim(),
@@ -70,7 +75,7 @@ export async function registrarAction(formData: FormData) {
     is_active: trial ? true : false,
     is_trial: trial ? true : false,
     plan_type: trial ? 'trial' : 'free',
-  }, { onConflict: 'owner_id', ignoreDuplicates: true })
+  }, { onConflict: 'owner_id', ignoreDuplicates: false })
 
   if (boutiqueError) {
     return { error: boutiqueError.message }
