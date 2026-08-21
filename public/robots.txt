@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /metricas
+Disallow: /gastos
+Disallow: /ventas
+Disallow: /ingresos
+Disallow: /configuracion
+Disallow: /salud
+Disallow: /superadmin
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://velioralat.vercel.app/sitemap.xml

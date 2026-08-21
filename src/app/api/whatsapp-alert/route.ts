@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { isPlanActive } from '@/lib/plan-utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 /**
@@ -32,7 +34,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const { data: boutiques } = await supabase
+    // Sin sesión de usuario (worker con secret) el RLS devolvería vacío: usar admin client
+    const db: any = user ? supabase : createAdminClient()
+
+    const { data: boutiques } = await db
       .from('boutiques')
       .select(`
         id, name, owner_id,
@@ -53,7 +58,7 @@ export async function GET(request: NextRequest) {
       const isPremium = boutique.is_active && (!expiresAt || expiresAt > new Date()) && boutique.whatsapp_alerts_enabled !== false
       if (!isPremium) continue
 
-      const { data: inventory } = await supabase
+      const { data: inventory } = await db
         .from('products')
         .select('id, name, stock, sale_price, purchase_price')
         .eq('boutique_id', boutique.id)
@@ -63,7 +68,7 @@ export async function GET(request: NextRequest) {
       const ninetyDaysAgo = new Date()
       ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
 
-      const { data: sales } = await supabase
+      const { data: sales } = await db
         .from('sales')
         .select('id, created_at, sale_items(product_id)')
         .eq('boutique_id', boutique.id)
@@ -83,7 +88,7 @@ export async function GET(request: NextRequest) {
       const criticalItems = inventory.filter((p: any) => (p.stock || 0) <= 3 && (p.stock || 0) > 0)
       if (criticalItems.length > 0) {
         const alertProducts = criticalItems.map((p: any) => ({ name: p.name, stock: p.stock }))
-        const h = hashAlert('critical', boutique.id, alertProducts.map(p => p.name).join(','))
+        const h = hashAlert('critical', boutique.id, alertProducts.map((p: any) => p.name).join(','))
         const cached = alertCache.get(h)
         if (!cached || (nowMs - cached.sentAt) > CACHE_TTL) {
           alerts.push({ type: 'critical_stock', boutique: boutique.name, data: { products: alertProducts } })
@@ -140,12 +145,20 @@ export async function POST(request: NextRequest) {
     // Obtener boutique del usuario
     const { data: boutique } = await supabase
       .from('boutiques')
-      .select('id, name, whatsapp_number')
+      .select('id, name, whatsapp_number, plan_type, subscription_expires_at, is_active')
       .eq('owner_id', user.id)
       .single()
 
     if (!boutique) {
       return NextResponse.json({ error: 'Boutique no encontrada' }, { status: 404 })
+    }
+
+    // Gating freemium: alertas WhatsApp son Premium
+    if (!isPlanActive(boutique)) {
+      return NextResponse.json(
+        { error: 'Las alertas WhatsApp son una función Premium. Activa tu membresía para usarlas.', type: 'premium_required' },
+        { status: 402 }
+      )
     }
 
     const body = await request.json()

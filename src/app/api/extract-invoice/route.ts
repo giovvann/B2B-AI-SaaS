@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { isPlanActive } from '@/lib/plan-utils';
 
 /**
  * Extract Invoice — Visión IA para facturas y tickets
@@ -13,6 +14,19 @@ export async function POST(req: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    }
+
+    // Gating freemium: escaneo IA de facturas es Premium
+    const { data: boutique } = await supabase
+      .from('boutiques')
+      .select('plan_type, subscription_expires_at, is_active')
+      .eq('owner_id', user.id)
+      .maybeSingle()
+    if (!isPlanActive(boutique)) {
+      return NextResponse.json(
+        { error: 'El escaneo de facturas con IA es una función Premium. Activa tu membresía para usarla.', type: 'premium_required' },
+        { status: 402 }
+      )
     }
 
     const formData = await req.formData();

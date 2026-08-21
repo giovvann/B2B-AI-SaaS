@@ -6,7 +6,7 @@ import { getDeviceId, getDeviceName } from '@/lib/device'
 import { HomePageContent } from '@/app/dashboard/HomePageContent'
 import { Crown, User, Loader2, ShieldAlert, Smartphone, Lock, XCircle, ArrowLeft } from 'lucide-react'
 
-type View = 'loading' | 'choice' | 'pin' | 'pending' | 'owner' | 'employee' | 'revoked' | 'error'
+type View = 'loading' | 'choice' | 'pin' | 'create_pin' | 'pending' | 'owner' | 'employee' | 'revoked' | 'error'
 
 interface DashboardShellProps {
   userName: string
@@ -111,7 +111,8 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId }: Dashboard
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      setView('pending')
+      // Si el dueño tiene activada la auto-aprobación, el empleado entra directo
+      setView(data.status === 'approved' ? 'employee' : 'pending')
     } catch (err: any) {
       setView('error')
       setMessage(err.message)
@@ -132,7 +133,16 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId }: Dashboard
         body: JSON.stringify({ pin }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      if (!res.ok) {
+        if (data.noPin) {
+          // Cuenta sin PIN (ej. creada con Google): crear uno nuevo
+          setPin('')
+          setPinError('')
+          setView('create_pin')
+          return
+        }
+        throw new Error(data.error)
+      }
 
       // PIN correcto: registrar/actualizar dispositivo como dueño
       const deviceId = getDeviceId()
@@ -143,6 +153,7 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId }: Dashboard
           device_id: deviceId,
           device_name: getDeviceName(),
           role: 'owner',
+          pin,
         }),
       })
 
@@ -151,6 +162,45 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId }: Dashboard
       setView('owner')
     } catch (err: any) {
       setPinError(err.message || 'PIN incorrecto')
+    } finally {
+      setPinLoading(false)
+    }
+  }
+
+  const handleCreatePin = async () => {
+    setPinError('')
+    if (pin.length < 4 || pin.length > 6) {
+      setPinError('El PIN debe tener entre 4 y 6 dígitos')
+      return
+    }
+    setPinLoading(true)
+    try {
+      const res = await fetch('/api/set-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      const deviceId = getDeviceId()
+      const devRes = await fetch('/api/register-device', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          device_id: deviceId,
+          device_name: getDeviceName(),
+          role: 'owner',
+          pin,
+        }),
+      })
+      const devData = await devRes.json()
+      if (!devRes.ok) throw new Error(devData.error)
+
+      sessionStorage.setItem('veliora_pin_verified', 'true')
+      setView('owner')
+    } catch (err: any) {
+      setPinError(err.message || 'Error al guardar el PIN')
     } finally {
       setPinLoading(false)
     }
@@ -294,6 +344,56 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId }: Dashboard
             >
               <ArrowLeft className="w-4 h-4" />
               Elegir otro rol
+            </button>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  // Crear PIN (cuentas sin PIN, ej. registro con Google)
+  if (view === 'create_pin') {
+    return (
+      <main className="min-h-screen bg-[#fdfaf5] dark:bg-[#0d0b09] p-4 flex items-center justify-center">
+        <div className="max-w-sm w-full text-center">
+          <div className="w-20 h-20 bg-gradient-to-br from-[#c8a476] to-[#b8925e] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[rgba(200,164,118,0.3)]">
+            <Lock className="w-10 h-10 text-white" strokeWidth={2.5} />
+          </div>
+          <h2 className="text-2xl md:text-3xl font-black text-[#2a2420] dark:text-white mb-3">
+            CREA TU PIN
+          </h2>
+          <p className="text-[rgba(42,36,32,0.5)] dark:text-zinc-400 text-sm mb-8">
+            Tu cuenta aún no tiene PIN. Crea uno de 4 a 6 dígitos para proteger
+            métricas, gastos y configuración.
+          </p>
+          <div className="space-y-4">
+            <input
+              type="password"
+              inputMode="numeric"
+              maxLength={6}
+              value={pin}
+              onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
+              placeholder="4-6 dígitos"
+              className="w-full text-center text-2xl tracking-[0.5em] bg-white dark:bg-[#16130f] border border-[rgba(200,164,118,0.12)] dark:border-zinc-700 rounded-2xl px-6 py-4 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.3)] dark:placeholder-zinc-400 focus:outline-none focus:border-[#c8a476] transition-colors"
+              autoFocus
+              disabled={pinLoading}
+            />
+            {pinError && (
+              <p className="text-red-500 text-sm">{pinError}</p>
+            )}
+            <button
+              onClick={handleCreatePin}
+              disabled={pinLoading || pin.length < 4}
+              className="w-full bg-gradient-to-br from-[#c8a476] to-[#b8925e] hover:from-[#b8925e] hover:to-[#a8814d] text-white font-bold px-8 py-4 rounded-2xl text-lg transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-[rgba(200,164,118,0.3)]"
+            >
+              {pinLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Guardando...
+                </span>
+              ) : (
+                'GUARDAR PIN'
+              )}
             </button>
           </div>
         </div>

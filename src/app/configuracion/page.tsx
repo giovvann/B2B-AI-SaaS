@@ -91,7 +91,11 @@ export default function ConfiguracionPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Error al enviar')
-      setSaveMsg({ type: 'success', text: 'Mensaje de prueba enviado a WhatsApp' })
+      if (data.workerReachable) {
+        setSaveMsg({ type: 'success', text: 'Mensaje de prueba enviado a WhatsApp' })
+      } else {
+        setSaveMsg({ type: 'error', text: 'Alerta guardada, pero el worker de WhatsApp no está disponible: el mensaje no se envió.' })
+      }
     } catch (err: any) {
       setSaveMsg({ type: 'error', text: err.message || 'Error. ¿El worker de WhatsApp está activo?' })
     } finally {

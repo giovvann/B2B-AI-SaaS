@@ -6,7 +6,7 @@ import crypto from 'crypto'
 export async function POST(req: NextRequest) {
   try {
     const { pin } = await req.json()
-    if (!pin || pin.length < 4 || pin.length > 6) {
+    if (!pin || typeof pin !== 'string' || !/^\d{4,6}$/.test(pin)) {
       return NextResponse.json({ error: 'El PIN debe tener 4-6 dígitos' }, { status: 400 })
     }
 

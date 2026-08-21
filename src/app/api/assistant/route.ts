@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { isPlanActive } from '@/lib/plan-utils'
 
 /**
  * Tipsy — Asistente IA de Veliora
@@ -174,7 +175,7 @@ const TOOLS = [
 async function getBoutique(supabase: any, userId: string) {
   const { data, error } = await supabase
     .from('boutiques')
-    .select('id, name, plan_type')
+    .select('id, name, plan_type, subscription_expires_at, is_active')
     .eq('owner_id', userId)
     .maybeSingle()
   if (error || !data) throw new Error('Boutique no encontrada')
@@ -534,6 +535,14 @@ export async function POST(request: NextRequest) {
     }
 
     const boutique = await getBoutique(supabase, user.id)
+
+    // Gating freemium: Tipsy es función Premium
+    if (!isPlanActive(boutique)) {
+      return NextResponse.json(
+        { error: 'Tipsy es una función Premium. Activa tu membresía para usar el asistente IA.', type: 'premium_required' },
+        { status: 402 }
+      )
+    }
 
     // Historial de conversación (limitado)
     const history: any[] = Array.isArray(body.history) ? body.history.slice(-MAX_MESSAGES) : []

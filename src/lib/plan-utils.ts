@@ -43,6 +43,24 @@ export function canAccessRoute(planType: string | null | undefined, pathname: st
 }
 
 /**
+ * Verifica si una boutique tiene acceso premium ACTIVO
+ * (plan premium vigente, o trial no expirado).
+ */
+export function isPlanActive(boutique: {
+  plan_type?: string | null
+  subscription_expires_at?: string | null
+  is_active?: boolean | null
+} | null | undefined): boolean {
+  if (!boutique) return false
+  if (boutique.plan_type === PLAN_PREMIUM) return boutique.is_active !== false
+  if (boutique.plan_type === PLAN_TRIAL) {
+    if (!boutique.subscription_expires_at) return true
+    return new Date(boutique.subscription_expires_at) > new Date()
+  }
+  return false
+}
+
+/**
  * Features disponibles en cada plan (para UI).
  */
 export const PLAN_FEATURES = {

@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import { NetworkOnly, Serwist } from "serwist";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -15,7 +15,17 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  // Reglas propias PRIMERO (la primera coincidencia gana sobre defaultCache):
+  // /api/* NUNCA se cachea — datos y auth siempre frescos (defaultCache
+  // cacheaba GETs de /api/* por 24h y servía datos viejos).
+  runtimeCaching: [
+    {
+      matcher: ({ sameOrigin, url }: { sameOrigin: boolean; url: URL }) =>
+        sameOrigin && url.pathname.startsWith("/api/"),
+      handler: new NetworkOnly(),
+    },
+    ...defaultCache,
+  ],
   fallbacks: {
     entries: [
       {

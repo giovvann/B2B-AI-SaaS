@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { displaySize, displayColor } from '@/lib/product-utils'
+import { isPlanActive } from '@/lib/plan-utils'
 
 const MODEL = 'gemini-2.5-flash'
 const MAX_QUESTIONS_PER_MINUTE = 3
@@ -61,9 +62,17 @@ export async function POST(request: NextRequest) {
 
     // Cargar boutique
     const { data: boutique, error: boutiqueError } = await supabase
-      .from('boutiques').select('id, name').eq('owner_id', user.id).single()
+      .from('boutiques').select('id, name, plan_type, subscription_expires_at, is_active').eq('owner_id', user.id).single()
     if (boutiqueError || !boutique) {
       return NextResponse.json({ error: 'Boutique no encontrada' }, { status: 404 })
+    }
+
+    // Gating freemium: análisis IA es Premium
+    if (!isPlanActive(boutique)) {
+      return NextResponse.json(
+        { error: 'El análisis de negocio con IA es una función Premium. Activa tu membresía para usarla.', type: 'premium_required' },
+        { status: 402 }
+      )
     }
 
     // Cargar ventas de los últimos 90 días

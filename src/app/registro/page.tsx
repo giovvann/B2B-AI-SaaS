@@ -116,6 +116,7 @@ function RegistroForm() {
           device_id: getDeviceId(),
           device_name: getDeviceName(),
           role: 'owner',
+          pin,
         }),
       })
       const devData = await devRes.json()

@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
   // REGLA: Rutas públicas
   // ============================================
   const publicRoutes = ['/login', '/registro', '/auth', '/privacidad', '/terminos', '/seguridad', '/suscripcion-expirada']
-  const publicApiRoutes = ['/api/extract-invoice', '/api/analyze-business', '/api/whatsapp-alert', '/api/products-by-sku', '/api/add-stock', '/api/export-all', '/api/assistant']
+  const publicApiRoutes = ['/api/ping', '/api/extract-invoice', '/api/analyze-business', '/api/whatsapp-alert', '/api/products-by-sku', '/api/add-stock', '/api/export-all', '/api/assistant']
   const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))
   const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
 
@@ -106,6 +106,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|json|xml|txt|webmanifest|js|css|ico)$).*)',
   ],
 }
