@@ -1253,8 +1253,8 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
                       <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                       <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={100} />
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'quantity' ? [v, 'Unidades'] : [v, n]} />
-                      <Bar isAnimationActive={false} dataKey="quantity" fill="#9a7748" radius={[0, 8, 8, 0]} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'ventas' ? [v, 'Unidades'] : [v, n]} />
+                      <Bar isAnimationActive={false} dataKey="ventas" fill="#9a7748" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
