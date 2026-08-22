@@ -161,7 +161,12 @@ export function ReminderDock() {
   }
 
   const pending = items.filter(i => !i.done)
-  if (loaded && pending.length === 0 && !open && items.length === 0) {
+
+  // Sin sesión cargada (visitante anónimo en la landing pública): no pintar
+  // nada. Antes el dock salía con "0 pendientes" hasta en páginas de marketing.
+  if (!loaded) return null
+
+  if (pending.length === 0 && !open && items.length === 0) {
     return (
       <div className="fixed bottom-4 left-4 z-40">
         <button onClick={() => setOpen(true)}
