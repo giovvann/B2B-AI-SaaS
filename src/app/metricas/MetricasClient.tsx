@@ -876,7 +876,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                   <XAxis dataKey="name" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                   <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                   <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
-                  <Area type="monotone" dataKey="ventas" stroke="#c8a476" strokeWidth={3} fillOpacity={1} fill="url(#colorVentas)" />
+                  <Area isAnimationActive={false} type="monotone" dataKey="ventas" stroke="#c8a476" strokeWidth={3} fillOpacity={1} fill="url(#colorVentas)" />
                 </AreaChart>
               </ChartContainer>
             </div>
@@ -901,7 +901,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                   <XAxis dataKey="name" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                   <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                   <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ganancia']} />
-                  <Area type="monotone" dataKey="ganancia" stroke="#b8925e" strokeWidth={3} fillOpacity={1} fill="url(#colorProfit)" />
+                  <Area isAnimationActive={false} type="monotone" dataKey="ganancia" stroke="#b8925e" strokeWidth={3} fillOpacity={1} fill="url(#colorProfit)" />
                 </AreaChart>
               </ChartContainer>
             </div>
@@ -1152,7 +1152,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                       <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={140} />
                       <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'quantity' ? [v, 'Unidades'] : [v, n]} />
-                      <Bar dataKey="quantity" fill="#a56b4a" radius={[0, 8, 8, 0]} />
+                      <Bar isAnimationActive={false} dataKey="quantity" fill="#a56b4a" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
@@ -1177,7 +1177,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                       <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={120} />
                       <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
-                      <Bar dataKey="revenue" fill="#c8a476" radius={[0, 8, 8, 0]} />
+                      <Bar isAnimationActive={false} dataKey="revenue" fill="#c8a476" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
@@ -1202,7 +1202,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <XAxis dataKey="name" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                       <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                       <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
-                      <Bar dataKey="ventas" fill="#b8925e" radius={[8, 8, 0, 0]} />
+                      <Bar isAnimationActive={false} dataKey="ventas" fill="#b8925e" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
@@ -1228,7 +1228,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                         <XAxis dataKey="hour" stroke={textColor} style={{ fontSize: '10px', fontWeight: 600 }} tick={{ fill: textColor }} interval={1} />
                         <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                         <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
-                        <Bar dataKey="ventas" fill="#f59e0b" radius={[8, 8, 0, 0]} />
+                        <Bar isAnimationActive={false} dataKey="ventas" fill="#f59e0b" radius={[8, 8, 0, 0]} />
                       </BarChart>
                     </ChartContainer>
                   )}
@@ -1254,7 +1254,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                       <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={100} />
                       <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'quantity' ? [v, 'Unidades'] : [v, n]} />
-                      <Bar dataKey="quantity" fill="#9a7748" radius={[0, 8, 8, 0]} />
+                      <Bar isAnimationActive={false} dataKey="quantity" fill="#9a7748" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
@@ -1275,7 +1275,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 ) : (
                   <ChartContainer height={320}>
                     <PieChart>
-                      <Pie
+                      <Pie isAnimationActive={false}
                         data={colorData}
                         cx="50%" cy="50%"
                         innerRadius={60} outerRadius={100}
@@ -1309,7 +1309,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 ) : (
                   <ChartContainer height={320}>
                     <PieChart>
-                      <Pie
+                      <Pie isAnimationActive={false}
                         data={seasonData}
                         cx="50%" cy="50%"
                         innerRadius={60} outerRadius={100}
@@ -1343,7 +1343,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 ) : (
                   <ChartContainer height={320}>
                     <PieChart>
-                      <Pie
+                      <Pie isAnimationActive={false}
                         data={paymentData}
                         cx="50%" cy="50%"
                         innerRadius={60} outerRadius={100}
@@ -1382,7 +1382,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                     <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                     <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={140} />
                     <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ganancia']} />
-                    <Bar dataKey="ganancia" fill="#b8925e" radius={[0, 8, 8, 0]} />
+                    <Bar isAnimationActive={false} dataKey="ganancia" fill="#b8925e" radius={[0, 8, 8, 0]} />
                   </BarChart>
                 </ChartContainer>
               )}

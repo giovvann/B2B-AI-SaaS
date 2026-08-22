@@ -31,7 +31,9 @@ export function SyncProvider({ children }: { children: ReactNode }) {
 
     const refresh = async () => {
       const p = await pendingCount()
-      setState(s => ({ ...s, pending: p }))
+      // Bail-out si no cambió: crear objeto nuevo cada 5s re-renderizaba
+      // TODA la app (rompía animaciones de recharts en /metricas).
+      setState(s => (s.pending === p ? s : { ...s, pending: p }))
     }
 
     const stop = startSyncEngine(s => {
@@ -46,13 +48,13 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         setTimeout(() => controller.abort(), 5000)
         const res = await fetch('/api/ping', { method: 'GET', signal: controller.signal, cache: 'no-store' })
         if (res.ok) {
-          setState(prev => ({ ...prev, online: true }))
+          setState(prev => (prev.online ? prev : { ...prev, online: true }))
         }
       } catch {
         // If ping fails but navigator says online, trust navigator
         // Only set offline if both ping AND navigator agree
         if (!navigator.onLine) {
-          setState(prev => ({ ...prev, online: false }))
+          setState(prev => (prev.online ? { ...prev, online: false } : prev))
         }
       }
     }
@@ -63,7 +65,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
 
     // Browser events are still useful for instant feedback
     const handleOnline = () => {
-      setState(prev => ({ ...prev, online: true }))
+      setState(prev => (prev.online ? prev : { ...prev, online: true }))
     }
     const handleOffline = () => {
       // Don't immediately set offline - let ping confirm
