@@ -50,16 +50,16 @@ export function CalculatorModal({ open, onClose }: { open: boolean; onClose: () 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div className="w-full max-w-xs bg-white dark:bg-[#16130f] rounded-3xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-5 py-3 border-b border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
-          <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+      <div className="w-full max-w-xs bg-white dark:bg-[#16130f] rounded-3xl border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-3 border-b border-espresso-200 dark:border-[rgba(200,164,118,0.16)]">
+          <div className="flex items-center gap-2 text-espresso-600 dark:text-espresso-400">
             <Calculator className="w-5 h-5" /> <span className="font-bold text-sm">Calculadora</span>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="p-1 hover:bg-espresso-100 dark:hover:bg-espresso-800 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-5">
-          <div className="bg-zinc-50 dark:bg-[#16130f] rounded-2xl p-4 mb-4 text-right">
-            <div className="text-3xl font-black text-zinc-900 dark:text-white break-all min-h-[2.5rem]">{display}</div>
+          <div className="bg-espresso-50 dark:bg-[#16130f] rounded-2xl p-4 mb-4 text-right">
+            <div className="text-3xl font-black text-espresso-900 dark:text-white break-all min-h-[2.5rem]">{display}</div>
           </div>
           <div className="grid grid-cols-4 gap-2">
             {keys.map(k => {
@@ -73,9 +73,9 @@ export function CalculatorModal({ open, onClose }: { open: boolean; onClose: () 
                   else input(k)
                 }}
                   className={`h-14 rounded-2xl font-black text-lg active:scale-95 transition-all ${
-                    isEq ? 'col-span-1 bg-indigo-500 text-white'
-                    : isOp ? 'bg-zinc-100 dark:bg-[#201b16] text-indigo-600 dark:text-indigo-400'
-                    : 'bg-zinc-50 dark:bg-[#16130f] text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    isEq ? 'col-span-1 bg-espresso-600 text-white'
+                    : isOp ? 'bg-espresso-100 dark:bg-[#201b16] text-espresso-600 dark:text-gold-400'
+                    : 'bg-espresso-50 dark:bg-[#16130f] text-espresso-900 dark:text-white hover:bg-espresso-100 dark:hover:bg-espresso-800'
                   }`}>
                   {k}
                 </button>

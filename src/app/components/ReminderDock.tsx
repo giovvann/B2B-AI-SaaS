@@ -170,9 +170,9 @@ export function ReminderDock() {
     return (
       <div className="fixed bottom-4 left-4 z-40">
         <button onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl hover:border-indigo-300 transition-colors">
-          <Bell className="w-5 h-5 text-indigo-500" />
-          <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">Recordatorios</span>
+          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#16130f] rounded-2xl border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl hover:border-gold-300 transition-colors">
+          <Bell className="w-5 h-5 text-espresso-500" />
+          <span className="text-sm font-bold text-espresso-800 dark:text-espresso-200">Recordatorios</span>
         </button>
       </div>
     )
@@ -184,48 +184,48 @@ export function ReminderDock() {
   return (
     <div className="fixed bottom-4 left-4 z-40 max-w-sm">
       {open ? (
-        <div className="bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-2xl p-4">
+        <div className="bg-white dark:bg-[#16130f] rounded-2xl border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-2xl p-4">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2 font-bold text-zinc-900 dark:text-white">
-              <Bell className="w-5 h-5 text-indigo-500" /> Recordatorios
+            <div className="flex items-center gap-2 font-bold text-espresso-900 dark:text-white">
+              <Bell className="w-5 h-5 text-espresso-500" /> Recordatorios
             </div>
-            <button onClick={() => setOpen(false)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-400 dark:text-zinc-300 hover:text-zinc-800 dark:hover:text-white border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all" title="Cerrar"><X className="w-4 h-4" strokeWidth={2.5} /></button>
+            <button onClick={() => setOpen(false)} className="p-1.5 hover:bg-espresso-100 dark:hover:bg-espresso-800 rounded-lg text-espresso-400 dark:text-espresso-300 hover:text-espresso-800 dark:hover:text-white border border-transparent hover:border-espresso-200 dark:hover:border-espresso-700 transition-all" title="Cerrar"><X className="w-4 h-4" strokeWidth={2.5} /></button>
           </div>
           {pushPerm !== 'unsupported' && pushPerm !== 'granted' && (
             <button onClick={enablePush} disabled={pushBusy}
-              className="mb-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-colors">
+              className="mb-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-espresso-600 hover:bg-espresso-600 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-colors">
               <Bell className="w-4 h-4" />
               {pushBusy ? 'Activando...' : 'Activar avisos en este dispositivo'}
             </button>
           )}
           {pushPerm === 'granted' && (
-            <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold rounded-xl">
+            <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-gold-500/10 text-gold-600 dark:text-gold-400 text-xs font-semibold rounded-xl">
               <Check className="w-4 h-4" /> Avisos activados en este dispositivo
             </div>
           )}
           <div className="space-y-2 max-h-60 overflow-auto">
             {items.map(r => (
-              <div key={r.id} className={`flex items-center gap-2 p-2 rounded-xl border ${r.done ? 'border-zinc-200 dark:border-[rgba(200,164,118,0.16)] opacity-50' : 'border-zinc-200 dark:border-zinc-700'}`}>
-                <button onClick={() => toggle(r)} className={`shrink-0 w-6 h-6 rounded-lg border flex items-center justify-center ${r.done ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-zinc-300 dark:border-zinc-600'}`}>
+              <div key={r.id} className={`flex items-center gap-2 p-2 rounded-xl border ${r.done ? 'border-espresso-200 dark:border-[rgba(200,164,118,0.16)] opacity-50' : 'border-espresso-200 dark:border-espresso-700'}`}>
+                <button onClick={() => toggle(r)} className={`shrink-0 w-6 h-6 rounded-lg border flex items-center justify-center ${r.done ? 'bg-gold-500 border-gold-500 text-white' : 'border-espresso-300 dark:border-espresso-600'}`}>
                   {r.done && <Check className="w-4 h-4" />}
                 </button>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 truncate flex items-center gap-1">
+                  <div className="text-sm font-semibold text-espresso-800 dark:text-espresso-200 truncate flex items-center gap-1">
                     {r.priority === 'high' && <AlertTriangle className="w-3 h-3 text-amber-500" />}
                     {r.title}
                   </div>
-                  <div className="text-xs text-zinc-400 flex items-center gap-1"><Clock className="w-3 h-3" />{fmt(r.due)}</div>
+                  <div className="text-xs text-espresso-400 flex items-center gap-1"><Clock className="w-3 h-3" />{fmt(r.due)}</div>
                 </div>
                 <button onClick={() => remove(r.id)} className="p-1 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg"><X className="w-4 h-4 text-red-400" /></button>
               </div>
             ))}
-            {items.length === 0 && <p className="text-sm text-zinc-400 text-center py-3">Sin recordatorios</p>}
+            {items.length === 0 && <p className="text-sm text-espresso-400 text-center py-3">Sin recordatorios</p>}
           </div>
           <div className="mt-3 flex items-center gap-2">
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-zinc-100 dark:bg-[#201b16] hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 transition-all"
+                className="shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-espresso-100 dark:bg-[#201b16] hover:bg-espresso-200 dark:hover:bg-espresso-700 text-espresso-600 dark:text-espresso-300 border border-espresso-200 dark:border-espresso-700 transition-all"
                 title={theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
               >
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -236,12 +236,12 @@ export function ReminderDock() {
               onChange={e => setTitle(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && add()}
               placeholder="¿Qué recordar?"
-              className="flex-1 px-3 py-2 text-sm rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-[#2a2a2a] text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+              className="flex-1 px-3 py-2 text-sm rounded-xl border border-espresso-300 dark:border-espresso-600 bg-white dark:bg-[#2a2a2a] text-espresso-900 dark:text-espresso-100 placeholder:text-espresso-400 dark:placeholder:text-espresso-500 focus:outline-none focus:border-espresso-500 focus:ring-1 focus:ring-espresso-500/30"
             />
             <select
               value={priority}
               onChange={e => setPriority(e.target.value as any)}
-              className="px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-[#2a2a2a] text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-indigo-500"
+              className="px-2 py-2 text-xs rounded-xl border border-espresso-300 dark:border-espresso-600 bg-white dark:bg-[#2a2a2a] text-espresso-900 dark:text-espresso-100 focus:outline-none focus:border-espresso-500"
             >
               <option value="low">Baja</option>
               <option value="normal">Normal</option>
@@ -253,16 +253,16 @@ export function ReminderDock() {
               type="datetime-local"
               value={due}
               onChange={e => setDue(e.target.value)}
-              className="flex-1 px-2 py-2 text-xs rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-[#2a2a2a] text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-indigo-500/30 [color-scheme:light_dark]"
+              className="flex-1 px-2 py-2 text-xs rounded-xl border border-espresso-300 dark:border-espresso-600 bg-white dark:bg-[#2a2a2a] text-espresso-900 dark:text-espresso-100 focus:outline-none focus:ring-1 focus:ring-espresso-500/30 [color-scheme:light_dark]"
             />
-            <button onClick={add} className="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl active:scale-95 transition-colors"><Plus className="w-4 h-4" /></button>
+            <button onClick={add} className="px-3 py-2 bg-espresso-600 hover:bg-espresso-600 text-white rounded-xl active:scale-95 transition-colors"><Plus className="w-4 h-4" /></button>
           </div>
         </div>
       ) : (
         <button onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl hover:border-indigo-300 transition-colors">
-          <Bell className="w-5 h-5 text-indigo-500" />
-          <span className="text-sm font-bold text-zinc-800 dark:text-zinc-200">{pending.length} pendiente{pending.length !== 1 ? 's' : ''}</span>
+          className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-[#16130f] rounded-2xl border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl hover:border-gold-300 transition-colors">
+          <Bell className="w-5 h-5 text-espresso-500" />
+          <span className="text-sm font-bold text-espresso-800 dark:text-espresso-200">{pending.length} pendiente{pending.length !== 1 ? 's' : ''}</span>
         </button>
       )}
     </div>

@@ -505,7 +505,7 @@ return (
           {billing === 'annual' ? '$159' : '$199'}
           <span className="per">/mes</span>
         </div>
-        <p className="pricing-bill-note">{billing === 'annual' ? 'Facturado anualmente &middot; $1,908 al a&ntilde;o' : 'Sin permanencia &middot; cancela cuando quieras'}</p>
+        <p className="pricing-bill-note">{billing === 'annual' ? 'Facturado anualmente · $1,908 al año' : 'Sin permanencia · cancela cuando quieras'}</p>
         <p className="pricing-desc">Todo lo que necesitas para hacer crecer tu boutique.</p>
         <ul className="pricing-features">
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Productos ilimitados</li>
@@ -535,7 +535,7 @@ return (
           {billing === 'annual' ? '$271' : '$339'}
           <span className="per">/mes</span>
         </div>
-        <p className="pricing-bill-note">{billing === 'annual' ? 'Facturado anualmente &middot; $3,252 al a&ntilde;o' : 'Sin permanencia &middot; cancela cuando quieras'}</p>
+        <p className="pricing-bill-note">{billing === 'annual' ? 'Facturado anualmente · $3,252 al año' : 'Sin permanencia · cancela cuando quieras'}</p>
         <p className="pricing-desc">Para boutiques que quieren crecer sin l&iacute;mites.</p>
         <ul className="pricing-features">
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Productos ilimitados</li>

@@ -44,7 +44,7 @@ export function DownloadAllButton({ boutiqueName }: Props) {
 
   if (done) {
     return (
-      <div className="flex items-center justify-center gap-3 px-8 py-5 bg-green-500/10 border border-green-500/30 text-green-400 font-bold rounded-2xl w-full">
+      <div className="flex items-center justify-center gap-3 px-8 py-5 bg-gold-500/10 border border-gold-500/30 text-gold-400 font-bold rounded-2xl w-full">
         <CheckCircle className="w-6 h-6" />
         <span>DESCARGADO EXITOSAMENTE</span>
       </div>
@@ -55,7 +55,7 @@ export function DownloadAllButton({ boutiqueName }: Props) {
     <button
       onClick={handleDownload}
       disabled={downloading}
-      className="w-full min-h-[64px] bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg tracking-wide rounded-2xl shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+      className="w-full min-h-[64px] bg-gradient-to-br from-gold-400 to-gold-600 hover:from-gold-500 hover:to-gold-700 text-white font-bold text-lg tracking-wide rounded-2xl shadow-xl shadow-gold-400/30 hover:shadow-gold-400/50 flex items-center justify-center gap-3 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
     >
       {downloading ? (
         <>

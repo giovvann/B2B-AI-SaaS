@@ -79,14 +79,14 @@ export function EditarProductoClient({ product, boutiqueName }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-3">
+    <div className="min-h-screen bg-espresso-50 dark:bg-[#0d0b09] p-3">
       <div className="max-w-3xl mx-auto pb-8">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-2xl font-black text-zinc-900 dark:text-white">Editar producto</h1>
+          <h1 className="text-2xl font-black text-espresso-900 dark:text-white">Editar producto</h1>
           <div className="flex items-center gap-2">
             {mounted && <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-3 bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] transition-colors">
-              {theme === 'dark' ? <Sun className="w-5 h-5 text-zinc-400" /> : <Moon className="w-5 h-5 text-zinc-400" />}
+              className="p-3 bg-white dark:bg-[#16130f] rounded-2xl border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] transition-colors">
+              {theme === 'dark' ? <Sun className="w-5 h-5 text-espresso-400" /> : <Moon className="w-5 h-5 text-espresso-400" />}
             </button>}
             <button onClick={() => router.push('/ingresos')}
               className="p-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded-2xl transition-colors">
@@ -99,107 +99,107 @@ export function EditarProductoClient({ product, boutiqueName }: Props) {
           <div className="mb-3 bg-red-50 dark:bg-red-900/20 border-2 border-red-400 rounded-xl p-3 text-sm text-red-700 dark:text-red-400 font-semibold">{error}</div>
         )}
         {success && (
-          <div className="mb-3 bg-green-50 dark:bg-green-900/20 border-2 border-green-400 rounded-xl p-3 text-sm text-green-700 dark:text-green-400 font-semibold">{success}</div>
+          <div className="mb-3 bg-gold-50 dark:bg-gold-900/20 border-2 border-gold-400 rounded-xl p-3 text-sm text-gold-700 dark:text-gold-400 font-semibold">{success}</div>
         )}
 
         <form onSubmit={handleSave} className="space-y-3">
-          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
-            <h2 className="text-sm font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)]">
+            <h2 className="text-sm font-bold text-espresso-600 dark:text-espresso-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Package className="w-4 h-4" /> Producto
             </h2>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Nombre del producto</label>
+                <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">Nombre del producto</label>
                 <input type="text" value={name} onChange={e => setName(e.target.value)}
                   placeholder="Ej: Camiseta básica"
-                  className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-4 py-3 text-base font-semibold text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Marca</label>
+                  <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">Marca</label>
                   <input type="text" value={brand} onChange={e => setBrand(e.target.value)}
                     placeholder="Ej: Nike, Adidas"
-                    className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                    className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-2.5 text-sm text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Temporada</label>
+                  <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">Temporada</label>
                   <input type="text" value={season} onChange={e => setSeason(e.target.value)}
                     placeholder="Ej: Verano 2025"
-                    className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                    className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-2.5 text-sm text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
-            <h2 className="text-sm font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)]">
+            <h2 className="text-sm font-bold text-espresso-600 dark:text-espresso-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Ruler className="w-4 h-4" /> Talla, color y SKU
             </h2>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Talla</label>
+                <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">Talla</label>
                 <input type="text" value={size} onChange={e => setSize(e.target.value)}
                   placeholder="Ej: S, M, L, XL"
-                  className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-2.5 text-sm text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Color</label>
+                <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">Color</label>
                 <input type="text" value={color} onChange={e => setColor(e.target.value)}
                   placeholder="Ej: Blanco, Negro"
-                  className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-2.5 text-sm text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
               </div>
               <div>
-                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">SKU</label>
+                <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">SKU</label>
                 <input type="text" value={sku} onChange={e => setSku(e.target.value)}
                   placeholder="Código interno"
-                  className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-2.5 text-sm text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-2.5 text-sm text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
-            <h2 className="text-sm font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)]">
+            <h2 className="text-sm font-bold text-espresso-600 dark:text-espresso-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <DollarSign className="w-4 h-4" /> Precios
             </h2>
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Precio de compra ($)</label>
+                <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">Precio de compra ($)</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold text-sm">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-espresso-400 font-semibold text-sm">$</span>
                   <input type="number" step="0.01" min="0" value={purchasePrice} onChange={e => setPurchasePrice(parseFloat(e.target.value) || 0)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-7 pr-3 py-2.5 text-sm font-bold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                    className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl pl-7 pr-3 py-2.5 text-sm font-bold text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold text-zinc-500 dark:text-zinc-400 mb-1">Precio de venta ($)</label>
+                <label className="block text-xs font-bold text-espresso-600 dark:text-espresso-400 mb-1">Precio de venta ($)</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold text-sm">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-espresso-400 font-semibold text-sm">$</span>
                   <input type="number" step="0.01" min="0" value={salePrice} onChange={e => setSalePrice(parseFloat(e.target.value) || 0)}
                     placeholder="0.00"
-                    className="w-full bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-7 pr-3 py-2.5 text-sm font-bold text-emerald-600 dark:text-emerald-400 focus:border-blue-500 focus:outline-none placeholder:text-zinc-400" />
+                    className="w-full bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl pl-7 pr-3 py-2.5 text-sm font-bold text-gold-600 dark:text-gold-400 focus:border-gold-400 focus:outline-none placeholder:text-espresso-400" />
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <TrendingUp className="w-4 h-4 text-green-500" />
-              <span className="text-zinc-600 dark:text-zinc-400">Margen:</span>
-              <span className={`font-black ${margin >= 50 ? 'text-green-500' : 'text-amber-500'}`}>{margin.toFixed(0)}%</span>
-              <span className="text-zinc-400">|</span>
-              <span className="text-zinc-500">Ganancia: <span className="font-bold">${(salePrice - purchasePrice).toFixed(2)}</span></span>
+              <TrendingUp className="w-4 h-4 text-gold-500" />
+              <span className="text-espresso-600 dark:text-espresso-400">Margen:</span>
+              <span className={`font-black ${margin >= 50 ? 'text-gold-500' : 'text-amber-500'}`}>{margin.toFixed(0)}%</span>
+              <span className="text-espresso-400">|</span>
+              <span className="text-espresso-500">Ganancia: <span className="font-bold">${(salePrice - purchasePrice).toFixed(2)}</span></span>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]">
-            <h2 className="text-sm font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+          <div className="bg-white dark:bg-[#16130f] rounded-2xl p-5 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)]">
+            <h2 className="text-sm font-bold text-espresso-600 dark:text-espresso-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
               <Package className="w-4 h-4" /> Stock
             </h2>
             <input type="number" min="0" value={stock} onChange={e => setStock(parseInt(e.target.value) || 0)}
-              className="w-full md:w-1/2 bg-zinc-50 dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-4 py-3 text-lg font-bold text-zinc-900 dark:text-white focus:border-blue-500 focus:outline-none" />
+              className="w-full md:w-1/2 bg-espresso-50 dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-4 py-3 text-lg font-bold text-espresso-900 dark:text-white focus:border-gold-400 focus:outline-none" />
           </div>
 
           <button type="submit" disabled={isPending}
-            className="w-full py-5 bg-blue-500 hover:bg-blue-600 disabled:bg-zinc-300 dark:disabled:bg-zinc-700 text-white font-black text-lg tracking-wider rounded-2xl shadow-lg shadow-blue-500/30 disabled:shadow-none flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
+            className="w-full py-5 bg-espresso-700 hover:bg-espresso-800 disabled:bg-espresso-300 dark:disabled:bg-espresso-700 text-white font-black text-lg tracking-wider rounded-2xl shadow-lg shadow-gold-400/30 disabled:shadow-none flex items-center justify-center gap-2 transition-all active:scale-[0.98]">
             {isPending ? <><Loader2 className="w-5 h-5 animate-spin" /> Guardando...</> : <><Check className="w-5 h-5" strokeWidth={3} /> Guardar</>}
           </button>
         </form>

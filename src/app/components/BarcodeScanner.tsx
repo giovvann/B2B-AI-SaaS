@@ -78,14 +78,14 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <Barcode className="w-5 h-5 text-blue-400" />
+            <Barcode className="w-5 h-5 text-gold-400" />
             <span className="text-white font-bold">Escáner de código de barras</span>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-white/10 rounded-xl transition-colors"
           >
-            <X className="w-5 h-5 text-zinc-400" />
+            <X className="w-5 h-5 text-espresso-400" />
           </button>
         </div>
 
@@ -108,15 +108,15 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="relative w-4/5">
                     {/* Scanning line */}
-                    <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-blue-400 to-transparent rounded-full animate-pulse shadow-lg shadow-blue-500/50" />
+                    <div className="w-full h-0.5 bg-gradient-to-r from-transparent via-gold-400 to-transparent rounded-full animate-pulse shadow-lg shadow-gold-400/50" />
                     {/* Corner brackets */}
-                    <div className="absolute -top-8 -left-2 w-8 h-8 border-t-2 border-l-2 border-blue-400/60 rounded-tl" />
-                    <div className="absolute -top-8 -right-2 w-8 h-8 border-t-2 border-r-2 border-blue-400/60 rounded-tr" />
-                    <div className="absolute -bottom-8 -left-2 w-8 h-8 border-b-2 border-l-2 border-blue-400/60 rounded-bl" />
-                    <div className="absolute -bottom-8 -right-2 w-8 h-8 border-b-2 border-r-2 border-blue-400/60 rounded-br" />
+                    <div className="absolute -top-8 -left-2 w-8 h-8 border-t-2 border-l-2 border-gold-400/60 rounded-tl" />
+                    <div className="absolute -top-8 -right-2 w-8 h-8 border-t-2 border-r-2 border-gold-400/60 rounded-tr" />
+                    <div className="absolute -bottom-8 -left-2 w-8 h-8 border-b-2 border-l-2 border-gold-400/60 rounded-bl" />
+                    <div className="absolute -bottom-8 -right-2 w-8 h-8 border-b-2 border-r-2 border-gold-400/60 rounded-br" />
                   </div>
                 </div>
-                <div className="absolute top-3 left-3 bg-blue-500/80 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <div className="absolute top-3 left-3 bg-espresso-700/80 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
                   <ScanLine className="w-3 h-3" />
                   ESCANEANDO...
                 </div>
@@ -124,14 +124,14 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
             )}
             {!scanning && !error && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+                <Loader2 className="w-8 h-8 animate-spin text-gold-400" />
               </div>
             )}
           </div>
 
           {/* Manual entry */}
           <form onSubmit={handleManualSubmit} className="space-y-3">
-            <p className="text-xs text-zinc-500 text-center">
+            <p className="text-xs text-espresso-500 text-center">
               ¿No funciona la cámara? Ingresa el código manualmente:
             </p>
             <div className="flex gap-2">
@@ -140,13 +140,13 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
                 value={manualCode}
                 onChange={e => setManualCode(e.target.value.toUpperCase())}
                 placeholder="Ej: 7501234567890"
-                className="flex-1 px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500 transition-colors text-center font-mono"
+                className="flex-1 px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-white placeholder-espresso-600 focus:outline-none focus:border-gold-400 transition-colors text-center font-mono"
                 autoFocus
               />
               <button
                 type="submit"
                 disabled={!manualCode.trim()}
-                className="px-6 py-3 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-2xl transition-all disabled:opacity-40"
+                className="px-6 py-3 bg-gradient-to-br from-gold-400 to-gold-600 hover:from-gold-500 hover:to-gold-700 text-white font-bold rounded-2xl transition-all disabled:opacity-40"
               >
                 BUSCAR
               </button>
@@ -155,7 +155,7 @@ export function BarcodeScanner({ onScan, onClose }: BarcodeScannerProps) {
 
           <button
             onClick={startScanner}
-            className="w-full mt-3 px-4 py-3 text-sm text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-2xl transition-colors"
+            className="w-full mt-3 px-4 py-3 text-sm text-espresso-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-2xl transition-colors"
           >
             Reintentar cámara
           </button>

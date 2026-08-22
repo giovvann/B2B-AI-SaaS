@@ -50,16 +50,16 @@ export function RoleSelector() {
       {/* // Botón de tema con protección */}
       <button
         onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
-        className="fixed top-4 right-4 p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] z-10"
+        className="fixed top-4 right-4 p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-espresso-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] z-10"
         aria-label="Cambiar tema"
         disabled={!mounted}
       >
         {!mounted ? (
           <div className="w-6 h-6" />
         ) : theme === 'dark' ? (
-          <Sun className="w-6 h-6 text-[#2a2420] dark:text-zinc-200" />
+          <Sun className="w-6 h-6 text-[#2a2420] dark:text-espresso-200" />
         ) : (
-          <Moon className="w-6 h-6 text-[#2a2420] dark:text-zinc-200" />
+          <Moon className="w-6 h-6 text-[#2a2420] dark:text-espresso-200" />
         )}
       </button>
 
@@ -68,7 +68,7 @@ export function RoleSelector() {
           <h1 className="text-4xl md:text-6xl font-black tracking-tight text-[#2a2420] dark:text-white mb-4">
             BIENVENIDO
           </h1>
-          <p className="text-lg md:text-xl text-[rgba(42,36,32,0.4)] dark:text-zinc-400 font-medium">
+          <p className="text-lg md:text-xl text-[rgba(42,36,32,0.55)] dark:text-espresso-400 font-medium">
             Selecciona tu rol para continuar
           </p>
         </div>
@@ -80,39 +80,39 @@ export function RoleSelector() {
             disabled={isPending}
             className={`group relative bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
               selectedRole === 'owner'
-                ? 'border-blue-500 shadow-blue-500/30'
-                : 'border-zinc-200 dark:border-[rgba(200,164,118,0.16)] hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
+                ? 'border-gold-500 shadow-gold-400/30'
+                : 'border-espresso-200 dark:border-[rgba(200,164,118,0.16)] hover:border-gold-400 dark:hover:border-gold-400 hover:shadow-2xl'
             }`}
           >
             <div className="flex items-center justify-between mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+              <div className="w-16 h-16 bg-gradient-to-br from-gold-400 to-gold-600 rounded-2xl flex items-center justify-center shadow-lg shadow-gold-400/30">
                 <Crown className="w-8 h-8 text-white" strokeWidth={2.5} />
               </div>
               {isPending && selectedRole === 'owner' && (
-                <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                <Loader2 className="w-6 h-6 animate-spin text-gold-500" />
               )}
             </div>
-            <h2 className="text-2xl md:text-3xl font-black text-zinc-900 dark:text-white mb-3 tracking-tight">
+            <h2 className="text-2xl md:text-3xl font-black text-espresso-900 dark:text-white mb-3 tracking-tight">
               DUEÑO
             </h2>
-            <p className="text-sm md:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed">
+            <p className="text-sm md:text-base text-espresso-600 dark:text-espresso-400 leading-relaxed">
               Acceso completo: métricas, inventario, ventas y configuración del negocio.
             </p>
             <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-[rgba(200,164,118,0.16)]">
-              <div className="text-xs font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 uppercase tracking-wider mb-2">
+              <div className="text-xs font-bold text-[rgba(42,36,32,0.55)] dark:text-espresso-500 uppercase tracking-wider mb-2">
                 Accesos incluidos
               </div>
-              <ul className="space-y-1.5 text-sm text-[rgba(42,36,32,0.5)] dark:text-zinc-400">
+              <ul className="space-y-1.5 text-sm text-[rgba(42,36,32,0.62)] dark:text-espresso-400">
                 <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 rounded-full bg-blue-500"></div>
+                  <div className="w-1 h-1 rounded-full bg-gold-400"></div>
                   Panel de métricas
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 rounded-full bg-blue-500"></div>
+                  <div className="w-1 h-1 rounded-full bg-gold-400"></div>
                   Ingreso express (IA)
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 rounded-full bg-blue-500"></div>
+                  <div className="w-1 h-1 rounded-full bg-gold-400"></div>
                   Inventario completo
                 </li>
               </ul>
@@ -125,35 +125,35 @@ export function RoleSelector() {
             disabled={isPending}
             className={`group relative bg-white dark:bg-[#16130f] rounded-3xl shadow-xl shadow-[rgba(200,164,118,0.04)] p-8 md:p-10 border-2 transition-all duration-200 text-left active:scale-[0.98] ${
               selectedRole === 'employee'
-                ? 'border-blue-500 shadow-blue-500/30'
-                : 'border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-2xl'
+                ? 'border-gold-500 shadow-gold-400/30'
+                : 'border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] hover:border-gold-400 dark:hover:border-gold-400 hover:shadow-2xl'
             }`}
           >
             <div className="flex items-center justify-between mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30">
+              <div className="w-16 h-16 bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl flex items-center justify-center shadow-lg shadow-gold-500/30">
                 <User className="w-8 h-8 text-white" strokeWidth={2.5} />
               </div>
               {isPending && selectedRole === 'employee' && (
-                <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
+                <Loader2 className="w-6 h-6 animate-spin text-gold-500" />
               )}
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-[#2a2420] dark:text-white mb-3 tracking-tight">
               EMPLEADO
             </h2>
-            <p className="text-sm md:text-base text-[rgba(42,36,32,0.5)] dark:text-zinc-400 leading-relaxed">
+            <p className="text-sm md:text-base text-[rgba(42,36,32,0.62)] dark:text-espresso-400 leading-relaxed">
               Operación diaria: registrar ventas y agregar productos nuevos al inventario.
             </p>
             <div className="mt-6 pt-6 border-t border-[rgba(200,164,118,0.08)] dark:border-[rgba(200,164,118,0.16)]">
-              <div className="text-xs font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 uppercase tracking-wider mb-2">
+              <div className="text-xs font-bold text-[rgba(42,36,32,0.55)] dark:text-espresso-500 uppercase tracking-wider mb-2">
                 Accesos incluidos
               </div>
-              <ul className="space-y-1.5 text-sm text-[rgba(42,36,32,0.5)] dark:text-zinc-400">
+              <ul className="space-y-1.5 text-sm text-[rgba(42,36,32,0.62)] dark:text-espresso-400">
                 <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 rounded-full bg-emerald-500"></div>
+                  <div className="w-1 h-1 rounded-full bg-gold-500"></div>
                   Nueva venta
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1 h-1 rounded-full bg-emerald-500"></div>
+                  <div className="w-1 h-1 rounded-full bg-gold-500"></div>
                   Ingreso express (IA)
                 </li>
               </ul>
@@ -166,7 +166,7 @@ export function RoleSelector() {
             <p className="text-sm font-semibold text-red-700 dark:text-red-400">{error}</p>
           </div>
         )}
-        <p className="text-center text-xs text-[rgba(42,36,32,0.3)] dark:text-zinc-600 mt-4">
+        <p className="text-center text-xs text-[rgba(42,36,32,0.5)] dark:text-espresso-600 mt-4">
           Tu rol se guarda en tu cuenta. Puedes cambiarlo más tarde desde configuración.
         </p>
       </div>

@@ -129,8 +129,8 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       description: 'Ventas, ganancias y estadísticas del negocio',
       icon: BarChart3,
       href: '/metricas',
-      gradient: 'from-blue-500 to-indigo-600',
-      shadowColor: 'shadow-blue-500/30',
+      gradient: 'from-gold-500 to-espresso-600',
+      shadowColor: 'shadow-gold-400/30',
     },
     {
       id: 'income',
@@ -138,8 +138,8 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       description: 'Agregar productos al inventario con IA',
       icon: Sparkles,
       href: '/ingresos/nuevo',
-      gradient: 'from-purple-500 to-pink-600',
-      shadowColor: 'shadow-purple-500/30',
+      gradient: 'from-espresso-500 to-gold-600',
+      shadowColor: 'shadow-gold-400/30',
     },
     {
       id: 'inventory',
@@ -147,8 +147,8 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       description: 'Ver y gestionar todos los productos',
       icon: Package,
       href: '/ingresos',
-      gradient: 'from-emerald-500 to-teal-600',
-      shadowColor: 'shadow-emerald-500/30',
+      gradient: 'from-gold-500 to-gold-600',
+      shadowColor: 'shadow-gold-500/30',
     },
     {
       id: 'gastos',
@@ -165,8 +165,8 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       description: 'Semáforo inteligente y recomendaciones IA',
       icon: Activity,
       href: '/salud',
-      gradient: 'from-cyan-500 to-teal-600',
-      shadowColor: 'shadow-cyan-500/30',
+      gradient: 'from-gold-500 to-gold-600',
+      shadowColor: 'shadow-gold-400/30',
     },
   ]
 
@@ -177,8 +177,8 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       description: 'Registrar una venta al cliente',
       icon: ShoppingCart,
       href: '/ventas/nueva',
-      gradient: 'from-blue-500 to-indigo-600',
-      shadowColor: 'shadow-blue-500/30',
+      gradient: 'from-gold-500 to-espresso-600',
+      shadowColor: 'shadow-gold-400/30',
     },
     {
       id: 'income',
@@ -186,8 +186,8 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       description: 'Agregar productos al inventario con IA',
       icon: Sparkles,
       href: '/ingresos/nuevo',
-      gradient: 'from-purple-500 to-pink-600',
-      shadowColor: 'shadow-purple-500/30',
+      gradient: 'from-espresso-500 to-gold-600',
+      shadowColor: 'shadow-gold-400/30',
     },
   ]
 
@@ -198,46 +198,46 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
       <div className="max-w-5xl mx-auto pb-8">
         <div className="mb-10 md:mb-12 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <div className="text-xs font-bold text-[rgba(42,36,32,0.3)] dark:text-zinc-500 uppercase tracking-[0.2em] mb-2">
+            <div className="text-xs font-bold text-[rgba(42,36,32,0.5)] dark:text-espresso-500 uppercase tracking-[0.2em] mb-2">
               {role === 'owner' ? 'Panel del dueño' : 'Panel del empleado'}
             </div>
             <h1 className="text-3xl md:text-5xl font-black tracking-tight text-[#2a2420] dark:text-white">
               {boutiqueName}
             </h1>
-            <p className="text-sm md:text-base text-[rgba(42,36,32,0.5)] dark:text-zinc-400 mt-1">
-              Hola, <span className="font-bold text-[#2a2420] dark:text-zinc-300">{userName}</span>
+            <p className="text-sm md:text-base text-[rgba(42,36,32,0.62)] dark:text-espresso-400 mt-1">
+              Hola, <span className="font-bold text-[#2a2420] dark:text-espresso-300">{userName}</span>
             </p>
           </div>
 
           <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => setCalcOpen(true)}
-              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
+              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-espresso-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
               aria-label="Calculadora"
             >
-              <Calculator className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
+              <Calculator className="w-5 h-5 text-[#2a2420] dark:text-espresso-200" />
             </button>
             <button
               onClick={() => mounted && setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
+              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-espresso-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
               aria-label="Cambiar tema"
               disabled={!mounted}
             >
               {!mounted ? (
                 <div className="w-5 h-5" />
               ) : theme === 'dark' ? (
-                <Sun className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
+                <Sun className="w-5 h-5 text-[#2a2420] dark:text-espresso-200" />
               ) : (
-                <Moon className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
+                <Moon className="w-5 h-5 text-[#2a2420] dark:text-espresso-200" />
               )}
             </button>
             <div className="relative">
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
+                className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-espresso-800 transition-colors border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]"
                 aria-label="Configuración"
               >
-                <MoreVertical className="w-5 h-5 text-[#2a2420] dark:text-zinc-200" />
+                <MoreVertical className="w-5 h-5 text-[#2a2420] dark:text-espresso-200" />
               </button>
               {showSettings && (
                 <>
@@ -250,60 +250,60 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                       <>
                         <button
                           onClick={() => { setShowSettings(false); setAdminOpen(true) }}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-espresso-700 dark:text-espresso-300 hover:bg-espresso-100 dark:hover:bg-espresso-800 rounded-xl transition-colors"
                         >
                           <Smartphone className="w-4 h-4" />
                           Gestionar empleados
                         </button>
                         <button
                           onClick={() => { setShowSettings(false); router.push('/configuracion') }}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-espresso-700 dark:text-espresso-300 hover:bg-espresso-100 dark:hover:bg-espresso-800 rounded-xl transition-colors"
                         >
                           <Settings className="w-4 h-4" />
                           Configuración
                         </button>
-                        <div className="border-t border-zinc-200 dark:border-[rgba(200,164,118,0.16)] my-2" />
+                        <div className="border-t border-espresso-200 dark:border-[rgba(200,164,118,0.16)] my-2" />
                         <div className="px-4 py-2">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                            <span className="text-xs font-semibold text-espresso-600 dark:text-espresso-400 flex items-center gap-1.5">
                               <UserX className="w-3.5 h-3.5" />
                               Aceptar empleados
                             </span>
                             <button
                               onClick={() => handleToggleSetting('auto_accept', !sellerAutoAccept)}
                               disabled={toggleLoading === 'auto_accept'}
-                              className={`relative w-10 h-5 rounded-full transition-colors ${sellerAutoAccept ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}
+                              className={`relative w-10 h-5 rounded-full transition-colors ${sellerAutoAccept ? 'bg-gold-500' : 'bg-espresso-300 dark:bg-espresso-600'}`}
                             >
                               <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${sellerAutoAccept ? 'translate-x-5' : 'translate-x-0.5'}`} style={{ transform: sellerAutoAccept ? 'translateX(20px)' : 'translateX(2px)' }} />
                             </button>
                           </div>
-                          <p className="text-[10px] text-zinc-400 dark:text-zinc-500">{sellerAutoAccept ? 'Auto-aprobar nuevos empleados' : 'Requiere aprobación manual'}</p>
+                          <p className="text-[10px] text-espresso-600 dark:text-espresso-500">{sellerAutoAccept ? 'Auto-aprobar nuevos empleados' : 'Requiere aprobación manual'}</p>
                         </div>
                         <div className="px-4 py-2">
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                            <span className="text-xs font-semibold text-espresso-600 dark:text-espresso-400 flex items-center gap-1.5">
                               <Lock className="w-3.5 h-3.5" />
                               PIN del dueño
                             </span>
                             <button
                               onClick={() => handleToggleSetting('pin_required', !pinRequired)}
                               disabled={toggleLoading === 'pin_required'}
-                              className={`relative w-10 h-5 rounded-full transition-colors ${pinRequired ? 'bg-blue-500' : 'bg-zinc-300 dark:bg-zinc-600'}`}
+                              className={`relative w-10 h-5 rounded-full transition-colors ${pinRequired ? 'bg-gold-400' : 'bg-espresso-300 dark:bg-espresso-600'}`}
                             >
                               <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${pinRequired ? 'translate-x-5' : 'translate-x-0.5'}`} style={{ transform: pinRequired ? 'translateX(20px)' : 'translateX(2px)' }} />
                             </button>
                           </div>
-                          <p className="text-[10px] text-zinc-400 dark:text-zinc-500">{pinRequired ? 'PIN requerido para acceder' : 'Acceso sin PIN'}</p>
+                          <p className="text-[10px] text-espresso-600 dark:text-espresso-500">{pinRequired ? 'PIN requerido para acceder' : 'Acceso sin PIN'}</p>
                         </div>
                         {toggleMsg && (
-                          <div className={`mx-4 px-3 py-2 rounded-xl text-xs font-semibold mb-1 ${toggleMsg.type === 'success' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
+                          <div className={`mx-4 px-3 py-2 rounded-xl text-xs font-semibold mb-1 ${toggleMsg.type === 'success' ? 'bg-gold-500/10 text-gold-600 dark:text-gold-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
                             {toggleMsg.text}
                           </div>
                         )}
-                        <div className="border-t border-zinc-200 dark:border-[rgba(200,164,118,0.16)] my-2" />
+                        <div className="border-t border-espresso-200 dark:border-[rgba(200,164,118,0.16)] my-2" />
                         <button
                           onClick={() => { setShowSettings(false); router.push('/exportar-todo') }}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-espresso-700 dark:text-espresso-300 hover:bg-espresso-100 dark:hover:bg-espresso-800 rounded-xl transition-colors"
                         >
                           <Download className="w-4 h-4" />
                           Exportar todos mis datos
@@ -313,7 +313,7 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                     {!showAdmin && (
                       <button
                         onClick={handleChangeRole}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-espresso-700 dark:text-espresso-300 hover:bg-espresso-100 dark:hover:bg-espresso-800 rounded-xl transition-colors"
                       >
                         <RotateCcw className="w-4 h-4" />
                         Cambiar rol
@@ -355,11 +355,11 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
                 <h2 className="relative text-2xl md:text-3xl font-black tracking-tight text-[#2a2420] dark:text-white mb-2">
                   {action.title}
                 </h2>
-                <p className="relative text-sm md:text-base text-[rgba(42,36,32,0.5)] dark:text-zinc-400 leading-relaxed">
+                <p className="relative text-sm md:text-base text-[rgba(42,36,32,0.62)] dark:text-espresso-400 leading-relaxed">
                   {action.description}
                 </p>
 
-                <div className="relative mt-6 flex items-center gap-2 text-sm font-bold text-[rgba(42,36,32,0.35)] dark:text-zinc-500 group-hover:text-[#2a2420] dark:group-hover:text-zinc-300 transition-colors">
+                <div className="relative mt-6 flex items-center gap-2 text-sm font-bold text-[rgba(42,36,32,0.55)] dark:text-espresso-500 group-hover:text-[#2a2420] dark:group-hover:text-espresso-300 transition-colors">
                   <span>ACCEDER</span>
                   <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -371,16 +371,16 @@ export function HomePageContent({ role, userName, boutiqueName, showAdmin }: Hom
         </div>
 
         <button onClick={() => router.push('/ventas')}
-          className="mt-5 w-full md:w-auto md:min-w-[260px] flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-[#16130f] hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 border-2 border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] hover:border-[#c8a476] dark:hover:border-indigo-700 rounded-2xl transition-colors group"
+          className="mt-5 w-full md:w-auto md:min-w-[260px] flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-[#16130f] hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-espresso-800 border-2 border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)] hover:border-[#c8a476] dark:hover:border-gold-500 rounded-2xl transition-colors group"
         >
-          <History className="w-6 h-6 text-indigo-500" strokeWidth={2.5} />
+          <History className="w-6 h-6 text-espresso-500" strokeWidth={2.5} />
           <span className="text-lg font-black tracking-tight text-[#2a2420] dark:text-white">VER HISTORIAL DE VENTAS</span>
         </button>
 
         <div className="mt-16 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-[#16130f] rounded-full border border-[rgba(200,164,118,0.12)] dark:border-[rgba(200,164,118,0.16)]">
-            <div className={`w-2 h-2 rounded-full ${role === 'owner' ? 'bg-blue-500' : 'bg-emerald-500'}`} />
-            <span className="text-xs font-bold text-[rgba(42,36,32,0.4)] dark:text-zinc-400 uppercase tracking-wider">
+            <div className={`w-2 h-2 rounded-full ${role === 'owner' ? 'bg-gold-400' : 'bg-gold-500'}`} />
+            <span className="text-xs font-bold text-[rgba(42,36,32,0.55)] dark:text-espresso-400 uppercase tracking-wider">
               Sesión activa como {role === 'owner' ? 'Dueño' : 'Empleado'}
             </span>
           </div>

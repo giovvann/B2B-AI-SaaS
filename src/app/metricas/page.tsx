@@ -41,7 +41,7 @@ export default function MetricasPage() {
 
   if (!ready) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] text-zinc-500">
+      <div className="flex items-center justify-center min-h-[60vh] text-espresso-500">
         Cargando métricas…
       </div>
     )
@@ -49,7 +49,7 @@ export default function MetricasPage() {
 
   if (err) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-zinc-500">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-espresso-500">
         <p className="text-red-500">{err}</p>
         <button onClick={() => window.location.reload()} className="text-sm underline">
           Reintentar

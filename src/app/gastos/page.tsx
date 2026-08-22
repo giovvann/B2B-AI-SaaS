@@ -126,37 +126,37 @@ export default function GastosPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] flex items-center justify-center">
-        <Loader2 className="w-16 h-16 animate-spin text-indigo-500" />
+      <div className="min-h-screen bg-espresso-50 dark:bg-[#0d0b09] flex items-center justify-center">
+        <Loader2 className="w-16 h-16 animate-spin text-espresso-500" />
       </div>
     )
   }
 
   return (
     <OwnerOnly>
-      <div className="min-h-screen bg-zinc-50 dark:bg-[#0d0b09] p-4 transition-colors duration-300">
+      <div className="min-h-screen bg-espresso-50 dark:bg-[#0d0b09] p-4 transition-colors duration-300">
         <div className="max-w-5xl mx-auto pb-8">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-zinc-900 dark:text-white">
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-espresso-900 dark:text-white">
               GASTOS
             </h1>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">
+            <p className="text-sm text-espresso-600 dark:text-espresso-400 font-medium mt-0.5">
               Registra los gastos de tu negocio para ver la salud real
             </p>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]"
+              className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-espresso-100 dark:hover:bg-espresso-800 transition-colors border border-espresso-200 dark:border-[rgba(200,164,118,0.16)]"
               aria-label="Cambiar tema"
             >
-              {theme === 'dark' ? <Sun className="w-6 h-6 text-zinc-800 dark:text-zinc-200" /> : <Moon className="w-6 h-6 text-zinc-800 dark:text-zinc-200" />}
+              {theme === 'dark' ? <Sun className="w-6 h-6 text-espresso-800 dark:text-espresso-200" /> : <Moon className="w-6 h-6 text-espresso-800 dark:text-espresso-200" />}
             </button>
             <button
               onClick={() => router.push('/dashboard')}
-              className="flex items-center gap-2 px-5 py-4 bg-zinc-200 dark:bg-[#201b16] hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 font-bold rounded-2xl transition-colors"
+              className="flex items-center gap-2 px-5 py-4 bg-espresso-200 dark:bg-[#201b16] hover:bg-espresso-300 dark:hover:bg-espresso-700 text-espresso-700 dark:text-espresso-200 font-bold rounded-2xl transition-colors"
             >
               <X className="w-5 h-5" strokeWidth={3} />
               <span className="text-base md:text-lg">SALIR</span>
@@ -177,7 +177,7 @@ export default function GastosPage() {
         {/* Botón agregar */}
         <button
           onClick={() => { setShowForm(!showForm); setTimeout(() => conceptRef.current?.focus(), 50) }}
-          className="w-full min-h-[72px] bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-black text-xl rounded-2xl shadow-xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-6"
+          className="w-full min-h-[72px] bg-gradient-to-br from-espresso-600 to-espresso-700 hover:from-espresso-600 hover:to-espresso-700 text-white font-black text-xl rounded-2xl shadow-xl shadow-espresso-500/30 hover:shadow-espresso-500/50 transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-6"
         >
           <Plus className="w-7 h-7" strokeWidth={3} />
           AGREGAR GASTO
@@ -185,44 +185,44 @@ export default function GastosPage() {
 
         {/* Formulario */}
         {showForm && (
-          <div className="bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] mb-6">
+          <div className="bg-white dark:bg-[#16130f] rounded-3xl shadow-xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] mb-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Concepto *</label>
+                <label className="text-[10px] font-bold text-espresso-400 uppercase tracking-wider block mb-1">Concepto *</label>
                 <input ref={conceptRef} value={form.concept} onChange={e => setForm({ ...form, concept: e.target.value })}
                   placeholder="Ej: Renta de local"
-                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-3 text-base font-semibold text-espresso-900 dark:text-white focus:border-espresso-500 focus:outline-none placeholder:text-espresso-400" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Categoría</label>
+                <label className="text-[10px] font-bold text-espresso-400 uppercase tracking-wider block mb-1">Categoría</label>
                 <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}
-                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none">
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-3 text-base font-semibold text-espresso-900 dark:text-white focus:border-espresso-500 focus:outline-none">
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Monto *</label>
+                <label className="text-[10px] font-bold text-espresso-400 uppercase tracking-wider block mb-1">Monto *</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm">$</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-espresso-400 text-sm">$</span>
                   <input type="number" step="0.01" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })}
                     placeholder="0.00"
-                    className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl pl-7 pr-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none text-right" />
+                    className="w-full bg-white dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl pl-7 pr-3 py-3 text-base font-semibold text-espresso-900 dark:text-white focus:border-espresso-500 focus:outline-none text-right" />
                 </div>
               </div>
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Fecha</label>
+                <label className="text-[10px] font-bold text-espresso-400 uppercase tracking-wider block mb-1">Fecha</label>
                 <input type="date" value={form.expense_date} onChange={e => setForm({ ...form, expense_date: e.target.value })}
-                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none" />
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-3 text-base font-semibold text-espresso-900 dark:text-white focus:border-espresso-500 focus:outline-none" />
               </div>
               <div>
-                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1">Nota</label>
+                <label className="text-[10px] font-bold text-espresso-400 uppercase tracking-wider block mb-1">Nota</label>
                 <input value={form.note} onChange={e => setForm({ ...form, note: e.target.value })}
                   placeholder="Opcional"
-                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-zinc-200 dark:border-zinc-700 rounded-xl px-3 py-3 text-base font-semibold text-zinc-900 dark:text-white focus:border-indigo-500 focus:outline-none placeholder:text-zinc-400" />
+                  className="w-full bg-white dark:bg-[#0d0b09] border-2 border-espresso-200 dark:border-espresso-700 rounded-xl px-3 py-3 text-base font-semibold text-espresso-900 dark:text-white focus:border-espresso-500 focus:outline-none placeholder:text-espresso-400" />
               </div>
             </div>
             <button onClick={handleAdd} disabled={saving}
-              className="w-full mt-4 min-h-[64px] bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-60 text-white font-black text-lg rounded-2xl transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+              className="w-full mt-4 min-h-[64px] bg-gradient-to-br from-espresso-600 to-espresso-700 hover:from-espresso-600 hover:to-espresso-700 disabled:opacity-60 text-white font-black text-lg rounded-2xl transition-all active:scale-[0.98] flex items-center justify-center gap-2">
               {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <CheckCircle2 className="w-6 h-6" />}
               {saving ? 'GUARDANDO...' : 'GUARDAR GASTO'}
             </button>
@@ -236,30 +236,30 @@ export default function GastosPage() {
           </div>
         )}
         {success && (
-          <div className="mb-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-500 rounded-xl p-4 flex items-start gap-3">
-            <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-            <p className="text-green-700 dark:text-green-400 font-semibold text-sm">{success}</p>
+          <div className="mb-4 bg-gold-50 dark:bg-gold-900/20 border-2 border-gold-500 rounded-xl p-4 flex items-start gap-3">
+            <CheckCircle2 className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
+            <p className="text-gold-700 dark:text-gold-400 font-semibold text-sm">{success}</p>
           </div>
         )}
 
         {/* Lista */}
         <div className="space-y-3">
           {expenses.length === 0 && (
-            <div className="bg-white dark:bg-[#16130f] rounded-3xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 p-10 text-center">
-              <Receipt className="w-12 h-12 text-zinc-300 dark:text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-500 dark:text-zinc-400 font-semibold">Aún no hay gastos registrados</p>
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl border-2 border-dashed border-espresso-300 dark:border-espresso-700 p-10 text-center">
+              <Receipt className="w-12 h-12 text-espresso-300 dark:text-espresso-600 mx-auto mb-3" />
+              <p className="text-espresso-600 dark:text-espresso-400 font-semibold">Aún no hay gastos registrados</p>
             </div>
           )}
           {expenses.map(e => (
-            <div key={e.id} className="bg-white dark:bg-[#16130f] rounded-2xl border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] p-4 flex items-center gap-4">
+            <div key={e.id} className="bg-white dark:bg-[#16130f] rounded-2xl border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center flex-shrink-0">
                 <TrendingDown className="w-6 h-6 text-rose-500" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-base font-bold text-zinc-900 dark:text-white truncate">{e.concept}</p>
+                <p className="text-base font-bold text-espresso-900 dark:text-white truncate">{e.concept}</p>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-xs font-bold text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2 py-0.5 rounded-full">{e.category}</span>
-                  <span className="text-xs text-zinc-400 flex items-center gap-1">
+                  <span className="text-xs font-bold text-espresso-500 bg-gold-50 dark:bg-espresso-900/30 px-2 py-0.5 rounded-full">{e.category}</span>
+                  <span className="text-xs text-espresso-400 flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     {parseLocalDate(e.expense_date).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>

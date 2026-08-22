@@ -119,27 +119,27 @@ export default function ConfiguracionPage() {
         {/* Header */}
         <button
           onClick={() => router.push('/dashboard')}
-          className="flex items-center gap-2 text-[rgba(42,36,32,0.5)] dark:text-zinc-400 hover:text-[#2a2420] dark:hover:text-white mb-8 transition-colors group"
+          className="flex items-center gap-2 text-[rgba(42,36,32,0.62)] dark:text-espresso-400 hover:text-[#2a2420] dark:hover:text-white mb-8 transition-colors group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           <span>Volver al panel</span>
         </button>
 
         <h1 className="text-3xl md:text-4xl font-black text-[#2a2420] dark:text-white mb-2 tracking-tight">Configuración</h1>
-        <p className="text-[rgba(42,36,32,0.5)] dark:text-zinc-400 mb-10">
+        <p className="text-[rgba(42,36,32,0.62)] dark:text-espresso-400 mb-10">
           {boutiqueName} — Plan: <span className="font-semibold text-[#2a2420] dark:text-white capitalize">{subscription.plan}</span>
-          {subscription.expiresAt && <span className="text-[rgba(42,36,32,0.35)] dark:text-zinc-500"> (expira {subscription.expiresAt})</span>}
+          {subscription.expiresAt && <span className="text-[rgba(42,36,32,0.55)] dark:text-espresso-500"> (expira {subscription.expiresAt})</span>}
         </p>
 
         {/* WhatsApp Alerts */}
         <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-[rgba(200,164,118,0.14)] dark:border-[rgba(200,164,118,0.16)] shadow-[0_1px_2px_rgba(42,36,32,0.04),0_8px_24px_rgba(42,36,32,0.05)] dark:shadow-none mb-6">
           <div className="flex items-start gap-4 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-500/25">
+            <div className="w-12 h-12 bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-gold-500/25">
               <MessageCircle className="w-6 h-6 text-white" strokeWidth={2.5} />
             </div>
             <div>
               <h2 className="text-xl font-bold text-[#2a2420] dark:text-white mb-1">Alertas por WhatsApp</h2>
-              <p className="text-sm text-[rgba(42,36,32,0.55)] dark:text-zinc-400">
+              <p className="text-sm text-[rgba(42,36,32,0.65)] dark:text-espresso-400">
                 Recibe notificaciones de stock crítico, productos sin vender, y resúmenes semanales directamente en tu WhatsApp.
                 {!isPremium && (
                   <span className="block mt-2 text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1.5">
@@ -156,16 +156,16 @@ export default function ConfiguracionPage() {
               {/* Toggle */}
               <label className="flex items-center justify-between p-4 bg-[#f5efe7] dark:bg-black/30 rounded-2xl border border-[rgba(200,164,118,0.14)] dark:border-white/[0.06] cursor-pointer">
                 <div className="flex items-center gap-3">
-                  <Bell className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <Bell className="w-5 h-5 text-gold-600 dark:text-gold-400" />
                   <div>
                     <p className="text-[#2a2420] dark:text-white font-semibold text-sm">Alertas activadas</p>
-                    <p className="text-[rgba(42,36,32,0.45)] dark:text-zinc-500 text-xs">Stock crítico, dead stock, resumen semanal</p>
+                    <p className="text-[rgba(42,36,32,0.6)] dark:text-espresso-500 text-xs">Stock crítico, dead stock, resumen semanal</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setWhatsappEnabled(!whatsappEnabled)}
                   className={`relative w-14 h-7 rounded-full transition-colors ${
-                    whatsappEnabled ? 'bg-green-500' : 'bg-zinc-300 dark:bg-[#262019]'
+                    whatsappEnabled ? 'bg-gold-500' : 'bg-espresso-300 dark:bg-[#262019]'
                   }`}
                   aria-label="Alternar alertas"
                 >
@@ -177,22 +177,22 @@ export default function ConfiguracionPage() {
 
               {/* Número */}
               <div>
-                <label className="text-sm font-semibold text-[#2a2420] dark:text-zinc-300 mb-2 flex items-center gap-2">
-                  <Smartphone className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <label className="text-sm font-semibold text-[#2a2420] dark:text-espresso-300 mb-2 flex items-center gap-2">
+                  <Smartphone className="w-4 h-4 text-gold-600 dark:text-gold-400" />
                   TU NÚMERO DE WHATSAPP
                 </label>
                 <div className="flex gap-2">
-                  <span className="px-4 py-4 bg-[#f5efe7] dark:bg-[#201b16] text-[rgba(42,36,32,0.5)] dark:text-zinc-400 rounded-2xl font-mono text-sm border border-[rgba(200,164,118,0.14)] dark:border-transparent">+52</span>
+                  <span className="px-4 py-4 bg-[#f5efe7] dark:bg-[#201b16] text-[rgba(42,36,32,0.62)] dark:text-espresso-400 rounded-2xl font-mono text-sm border border-[rgba(200,164,118,0.14)] dark:border-transparent">+52</span>
                   <input
                     type="tel"
                     value={whatsappNumber}
                     onChange={e => setWhatsappNumber(e.target.value.replace(/[^\d]/g, '').slice(0, 10))}
                     placeholder="834217709"
-                    className="flex-1 px-5 py-4 bg-[#f5efe7] dark:bg-black/40 border border-[rgba(200,164,118,0.18)] dark:border-white/10 rounded-2xl text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.35)] dark:placeholder-zinc-600 focus:outline-none focus:border-[#c8a476] dark:focus:border-green-500 transition-colors font-mono text-lg"
+                    className="flex-1 px-5 py-4 bg-[#f5efe7] dark:bg-black/40 border border-[rgba(200,164,118,0.18)] dark:border-white/10 rounded-2xl text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.55)] dark:placeholder-espresso-600 focus:outline-none focus:border-[#c8a476] dark:focus:border-gold-500 transition-colors font-mono text-lg"
                     maxLength={10}
                   />
                 </div>
-                <p className="text-xs text-[rgba(42,36,32,0.4)] dark:text-zinc-600 mt-2">
+                <p className="text-xs text-[rgba(42,36,32,0.55)] dark:text-espresso-600 mt-2">
                   Número de 10 dígitos (sin LADA internacional). Ej: 834217709
                 </p>
               </div>
@@ -201,7 +201,7 @@ export default function ConfiguracionPage() {
               <button
                 onClick={testWhatsApp}
                 disabled={testSending || !whatsappNumber || whatsappNumber.length < 10}
-                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-2xl transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/25"
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-br from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-white font-bold rounded-2xl transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-gold-500/25"
               >
                 {testSending ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -218,7 +218,7 @@ export default function ConfiguracionPage() {
         {saveMsg && (
           <div className={`flex items-center gap-3 px-5 py-4 rounded-2xl mb-6 ${
             saveMsg.type === 'success' 
-              ? 'bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400' 
+              ? 'bg-gold-500/10 border border-gold-500/30 text-gold-600 dark:text-gold-400' 
               : 'bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400'
           }`}>
             {saveMsg.type === 'success' 
@@ -244,7 +244,7 @@ export default function ConfiguracionPage() {
         {/* Información del plan */}
         <div className="mt-8 p-6 bg-white dark:bg-[#16130f] rounded-3xl border border-[rgba(200,164,118,0.14)] dark:border-[rgba(200,164,118,0.16)]">
           <h3 className="text-[#2a2420] dark:text-white font-bold mb-3">Información de la membresía</h3>
-          <div className="space-y-2 text-sm text-[rgba(42,36,32,0.55)] dark:text-zinc-400">
+          <div className="space-y-2 text-sm text-[rgba(42,36,32,0.65)] dark:text-espresso-400">
             <p>Plan actual: <span className="text-[#2a2420] dark:text-white capitalize font-semibold">{subscription.plan}</span></p>
             {subscription.expiresAt && (
               <p>Expira: <span className="text-[#2a2420] dark:text-white">{subscription.expiresAt}</span></p>
@@ -256,7 +256,7 @@ export default function ConfiguracionPage() {
               href="https://wa.me/528342177709"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-semibold transition-colors"
+              className="inline-flex items-center gap-2 text-gold-600 dark:text-gold-400 hover:text-gold-700 dark:hover:text-gold-300 font-semibold transition-colors"
             >
               <MessageCircle className="w-4 h-4" />
               Enviar mensaje

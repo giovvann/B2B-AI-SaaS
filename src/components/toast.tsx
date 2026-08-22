@@ -27,15 +27,15 @@ export function useToast() {
 }
 
 const ICONS: Record<ToastType, ReactNode> = {
-  success: <CheckCircle className="w-5 h-5 text-emerald-500 dark:text-emerald-400" strokeWidth={2.2} />,
+  success: <CheckCircle className="w-5 h-5 text-gold-500 dark:text-gold-400" strokeWidth={2.2} />,
   error: <AlertTriangle className="w-5 h-5 text-red-500 dark:text-red-400" strokeWidth={2.2} />,
-  info: <Info className="w-5 h-5 text-blue-500 dark:text-blue-400" strokeWidth={2.2} />,
+  info: <Info className="w-5 h-5 text-gold-500 dark:text-gold-400" strokeWidth={2.2} />,
 }
 
 const STYLES: Record<ToastType, string> = {
-  success: 'border-emerald-500/30',
+  success: 'border-gold-500/30',
   error: 'border-red-500/30',
-  info: 'border-blue-500/30',
+  info: 'border-gold-500/30',
 }
 
 export function Toaster({ children }: { children: ReactNode }) {
@@ -74,12 +74,12 @@ export function Toaster({ children }: { children: ReactNode }) {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-[#2a2420] dark:text-white leading-snug">{t.title}</p>
               {t.message && (
-                <p className="text-xs text-[rgba(42,36,32,0.55)] dark:text-zinc-400 mt-0.5 leading-snug">{t.message}</p>
+                <p className="text-xs text-[rgba(42,36,32,0.65)] dark:text-espresso-400 mt-0.5 leading-snug">{t.message}</p>
               )}
             </div>
             <button
               onClick={() => dismiss(t.id)}
-              className="flex-shrink-0 p-1 rounded-lg text-[rgba(42,36,32,0.35)] dark:text-zinc-500 hover:text-[#2a2420] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              className="flex-shrink-0 p-1 rounded-lg text-[rgba(42,36,32,0.55)] dark:text-espresso-500 hover:text-[#2a2420] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               aria-label="Cerrar notificación"
             >
               <X className="w-4 h-4" />

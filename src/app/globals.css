@@ -1,3 +1,8 @@
+/* Playfair Display — la serif de la identidad Veliora (la landing la referencia
+   pero nunca se cargaba; sin esto cae a Georgia). Se carga aquí para que el
+   nombre de familia 'Playfair Display' exista en toda la app. */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -25,7 +30,7 @@
   --secondary-foreground: #2a2420;
 
   --muted: #f5efe7;
-  --muted-foreground: rgba(42, 36, 32, 0.55);
+  --muted-foreground: rgba(42, 36, 32, 0.72);
 
   --accent: #f5efe7;
   --accent-foreground: #2a2420;
@@ -68,7 +73,7 @@
   --secondary-foreground: #f3ede4;
 
   --muted: #201b16;
-  --muted-foreground: rgba(243, 237, 228, 0.55);
+  --muted-foreground: rgba(243, 237, 228, 0.72);
 
   --accent: #262019;
   --accent-foreground: #f3ede4;

@@ -127,11 +127,11 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-black text-[#2a2420] dark:text-white flex items-center gap-2">
-            <Smartphone className="w-5 h-5 text-blue-500" strokeWidth={2.5} />
+            <Smartphone className="w-5 h-5 text-gold-500" strokeWidth={2.5} />
             GESTIONAR EMPLEADOS
           </h2>
-          <button onClick={onClose} className="p-2 hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-zinc-800 rounded-xl transition-colors">
-            <X className="w-5 h-5 text-[rgba(42,36,32,0.4)]" />
+          <button onClick={onClose} className="p-2 hover:bg-[rgba(200,164,118,0.06)] dark:hover:bg-espresso-800 rounded-xl transition-colors">
+            <X className="w-5 h-5 text-[rgba(42,36,32,0.55)]" />
           </button>
         </div>
 
@@ -140,7 +140,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
           <span className="text-2xl font-black text-[#2a2420] dark:text-white">
             {approvedCount}
           </span>
-          <span className="text-[rgba(42,36,32,0.4)] dark:text-zinc-400 text-sm font-semibold">
+          <span className="text-[rgba(42,36,32,0.55)] dark:text-espresso-400 text-sm font-semibold">
             /6 dispositivos aprobados
           </span>
           {approvedCount >= maxDevices && (
@@ -178,7 +178,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
                       <p className="text-sm font-bold text-[#2a2420] dark:text-white truncate">
                         {d.device_name || 'Dispositivo'}
                       </p>
-                      <p className="text-xs text-[rgba(42,36,32,0.4)] dark:text-zinc-400">
+                      <p className="text-xs text-[rgba(42,36,32,0.55)] dark:text-espresso-400">
                         {new Date(d.created_at).toLocaleDateString('es-MX')}
                       </p>
                     </div>
@@ -186,7 +186,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
                   <button
                     onClick={() => handleApprove(d)}
                     disabled={actionLoading === d.id || approvedCount >= maxDevices}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-zinc-500 text-white text-sm font-bold rounded-xl transition-colors shrink-0"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-gold-500 hover:bg-gold-600 disabled:bg-espresso-500 text-white text-sm font-bold rounded-xl transition-colors shrink-0"
                   >
                     {actionLoading === d.id ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -203,37 +203,37 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
 
         {/* Aprobados */}
         <div className="mb-5">
-          <h3 className="text-sm font-bold text-emerald-500 uppercase tracking-wider mb-3">
+          <h3 className="text-sm font-bold text-gold-500 uppercase tracking-wider mb-3">
             Aprobados ({approvedCount})
           </h3>
           <div className="space-y-2">
             {dispositivos.filter(d => d.status === 'approved').map(d => (
               <div
                 key={d.id}
-                className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 flex items-center justify-between"
+                className="bg-gold-500/5 border border-gold-500/20 rounded-2xl p-4 flex items-center justify-between"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${d.role === 'owner' ? 'bg-blue-500/20' : 'bg-emerald-500/20'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${d.role === 'owner' ? 'bg-gold-400/20' : 'bg-gold-500/20'}`}>
                     {d.role === 'owner' ? (
-                      <Crown className="w-5 h-5 text-blue-500" />
+                      <Crown className="w-5 h-5 text-gold-500" />
                     ) : (
-                      <User className="w-5 h-5 text-emerald-500" />
+                      <User className="w-5 h-5 text-gold-500" />
                     )}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-zinc-900 dark:text-white truncate">
+                      <p className="text-sm font-bold text-espresso-900 dark:text-white truncate">
                         {d.device_name || 'Dispositivo'}
                       </p>
                       <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-full ${
                         d.role === 'owner'
-                          ? 'bg-blue-500/20 text-blue-500'
-                          : 'bg-emerald-500/20 text-emerald-500'
+                          ? 'bg-gold-400/20 text-gold-500'
+                          : 'bg-gold-500/20 text-gold-500'
                       }`}>
                         {d.role === 'owner' ? 'Dueño' : 'Empleado'}
                       </span>
                     </div>
-                    <p className="text-xs text-[rgba(42,36,32,0.4)] dark:text-zinc-400">
+                    <p className="text-xs text-[rgba(42,36,32,0.55)] dark:text-espresso-400">
                       Último acceso: {new Date(d.last_seen_at).toLocaleDateString('es-MX')}
                     </p>
                   </div>
@@ -260,8 +260,8 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
         {/* Sección vacía */}
         {dispositivos.length === 0 && !loading && (
           <div className="text-center py-10">
-            <Smartphone className="w-12 h-12 text-zinc-400 mx-auto mb-3" />
-            <p className="text-[rgba(42,36,32,0.4)] dark:text-zinc-400 text-sm">
+            <Smartphone className="w-12 h-12 text-espresso-400 mx-auto mb-3" />
+            <p className="text-[rgba(42,36,32,0.55)] dark:text-espresso-400 text-sm">
               No hay dispositivos registrados. El tuyo se registrará automáticamente.
             </p>
           </div>
@@ -269,7 +269,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
 
         {loading && (
           <div className="flex justify-center py-10">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+            <Loader2 className="w-8 h-8 animate-spin text-gold-500" />
           </div>
         )}
 
@@ -278,7 +278,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
           {!showPinChange ? (
             <button
               onClick={() => setShowPinChange(true)}
-              className="flex items-center gap-2 text-sm font-semibold text-[rgba(42,36,32,0.5)] dark:text-zinc-400 hover:text-[#2a2420] dark:hover:text-white transition-colors"
+              className="flex items-center gap-2 text-sm font-semibold text-[rgba(42,36,32,0.62)] dark:text-espresso-400 hover:text-[#2a2420] dark:hover:text-white transition-colors"
             >
               <Lock className="w-4 h-4" strokeWidth={2.5} />
               Cambiar PIN del dueño
@@ -296,23 +296,23 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
                 value={newPin}
                 onChange={e => setNewPin(e.target.value.replace(/\D/g, ''))}
                 placeholder="4-6 dígitos"
-                className="w-full text-center text-xl tracking-[0.4em] bg-[#fdfaf5] dark:bg-[#201b16] border border-[rgba(200,164,118,0.12)] dark:border-zinc-700 rounded-2xl px-4 py-3 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.3)] dark:placeholder-zinc-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-blue-500 transition-colors"
+                className="w-full text-center text-xl tracking-[0.4em] bg-[#fdfaf5] dark:bg-[#201b16] border border-[rgba(200,164,118,0.12)] dark:border-espresso-700 rounded-2xl px-4 py-3 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.5)] dark:placeholder-espresso-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-gold-400 transition-colors"
                 autoFocus
                 disabled={pinLoading}
               />
               {pinError && <p className="text-red-400 text-sm">{pinError}</p>}
-              {pinSuccess && <p className="text-emerald-400 text-sm flex items-center gap-1.5"><CheckCircle className="w-4 h-4" /> PIN actualizado correctamente</p>}
+              {pinSuccess && <p className="text-gold-400 text-sm flex items-center gap-1.5"><CheckCircle className="w-4 h-4" /> PIN actualizado correctamente</p>}
               <div className="flex gap-2">
                 <button
                   onClick={handleChangePin}
                   disabled={pinLoading}
-                  className="flex-1 px-4 py-3 bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-sm font-bold rounded-2xl transition-all disabled:opacity-40"
+                  className="flex-1 px-4 py-3 bg-gradient-to-br from-gold-400 to-gold-600 hover:from-gold-600 hover:to-espresso-700 text-white text-sm font-bold rounded-2xl transition-all disabled:opacity-40"
                 >
                   {pinLoading ? 'Guardando...' : 'Guardar PIN'}
                 </button>
                 <button
                   onClick={() => { setShowPinChange(false); setNewPin(''); setPinError('') }}
-                  className="px-4 py-3 bg-[rgba(200,164,118,0.1)] dark:bg-[#201b16] text-[rgba(42,36,32,0.6)] dark:text-zinc-300 text-sm font-bold rounded-2xl hover:bg-[rgba(200,164,118,0.2)] dark:hover:bg-zinc-700 transition-colors"
+                  className="px-4 py-3 bg-[rgba(200,164,118,0.1)] dark:bg-[#201b16] text-[rgba(42,36,32,0.6)] dark:text-espresso-300 text-sm font-bold rounded-2xl hover:bg-[rgba(200,164,118,0.2)] dark:hover:bg-espresso-700 transition-colors"
                 >
                   Cancelar
                 </button>

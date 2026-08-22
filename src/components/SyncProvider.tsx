@@ -107,7 +107,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
         </div>
       )}
       {state.online && state.pending > 0 && (
-        <div className="fixed top-0 inset-x-0 z-[100] bg-emerald-600 text-white text-center text-xs font-bold py-1.5 px-3 flex items-center justify-center gap-2">
+        <div className="fixed top-0 inset-x-0 z-[100] bg-gold-600 text-white text-center text-xs font-bold py-1.5 px-3 flex items-center justify-center gap-2">
           {state.syncing ? (
             <>
               <RefreshCw className="w-4 h-4 animate-spin shrink-0" /> Sincronizando {state.pending} cambio(s)…

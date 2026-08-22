@@ -67,7 +67,7 @@ interface ChatMessage {
   answer: string
 }
 
-const PIE_COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#f97316', '#6366f1', '#14b8a6', '#e11d48']
+const PIE_COLORS = ['#c8a476', '#8a6c43', '#dcc4a0', '#a56b4a', '#e8d8c0', '#6e5c48', '#d4b98d', '#96826a', '#b8925e', '#40301e']
 const DAY_NAMES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
 
 function ChartContainer({ children, height }: { children: React.ReactNode; height: number }) {
@@ -78,7 +78,7 @@ function ChartContainer({ children, height }: { children: React.ReactNode; heigh
   }, [])
 
   if (!mounted) {
-    return <div className="w-full rounded-2xl animate-pulse bg-zinc-100 dark:bg-[#201b16]" style={{ height }} />
+    return <div className="w-full rounded-2xl animate-pulse bg-espresso-100 dark:bg-[#201b16]" style={{ height }} />
   }
 
   return (
@@ -98,7 +98,7 @@ const fmt = (n: number) =>
 function PctBadge({ value, suffix = '%' }: { value: number; suffix?: string }) {
   if (Math.abs(value) < 0.05) {
     return (
-      <span className="inline-flex items-center gap-0.5 text-xs font-bold text-zinc-500 dark:text-zinc-400">
+      <span className="inline-flex items-center gap-0.5 text-xs font-bold text-espresso-600 dark:text-espresso-400">
         <Minus className="w-3 h-3" />
         {suffix === '%' ? '0%' : '0'}
       </span>
@@ -106,7 +106,7 @@ function PctBadge({ value, suffix = '%' }: { value: number; suffix?: string }) {
   }
   const up = value > 0
   return (
-    <span className={`inline-flex items-center gap-0.5 text-xs font-bold ${up ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+    <span className={`inline-flex items-center gap-0.5 text-xs font-bold ${up ? 'text-gold-600 dark:text-gold-400' : 'text-red-600 dark:text-red-400'}`}>
       {up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
       {up ? '+' : ''}{value.toFixed(1)}{suffix}
     </span>
@@ -606,19 +606,19 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
   ]
 
   const isDark = theme === 'dark'
-  const textColor = isDark ? '#a1a1aa' : '#71717a'
-  const gridColor = isDark ? '#27272a' : '#e4e4e7'
+  const textColor = isDark ? '#c4b39c' : '#6e5c48'
+  const gridColor = isDark ? '#262019' : '#ece2d2'
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-4">
+      <div className="min-h-screen bg-espresso-50 dark:bg-espresso-900 p-4">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 animate-pulse">
-            <div className="h-12 w-64 bg-zinc-200 dark:bg-[#201b16] rounded-2xl mb-4" />
-            <div className="h-6 w-96 bg-zinc-200 dark:bg-[#201b16] rounded-xl" />
+            <div className="h-12 w-64 bg-espresso-200 dark:bg-[#201b16] rounded-2xl mb-4" />
+            <div className="h-6 w-96 bg-espresso-200 dark:bg-[#201b16] rounded-xl" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-40 bg-zinc-200 dark:bg-[#201b16] rounded-3xl animate-pulse" />)}
+            {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-40 bg-espresso-200 dark:bg-[#201b16] rounded-3xl animate-pulse" />)}
           </div>
         </div>
       </div>
@@ -629,18 +629,18 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
   const hasAnyData = sales.length > 0
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 p-4 transition-colors duration-300">
+    <div className="min-h-screen bg-espresso-50 dark:bg-espresso-900 p-4 transition-colors duration-300">
       <div className="max-w-7xl mx-auto pb-8">
         {/* HEADER */}
         <div className="fixed top-4 right-4 flex items-center gap-2 z-20">
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm"
+            className="p-4 bg-white dark:bg-[#16130f] rounded-2xl hover:bg-espresso-100 dark:hover:bg-espresso-800 transition-colors border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm"
           >
             {theme === 'dark' ? (
-              <Sun className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
+              <Sun className="w-5 h-5 text-espresso-800 dark:text-espresso-200" />
             ) : (
-              <Moon className="w-5 h-5 text-zinc-800 dark:text-zinc-200" />
+              <Moon className="w-5 h-5 text-espresso-800 dark:text-espresso-200" />
             )}
           </button>
           <button
@@ -653,10 +653,10 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
         </div>
 
         <div className="mb-8 pr-32">
-          <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-2">
+          <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-[0.2em] mb-2">
             {boutiqueName}
           </div>
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-white mb-6">
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-espresso-900 dark:text-white mb-6">
             MI NEGOCIO
           </h1>
           <div className="flex flex-wrap gap-2">
@@ -666,8 +666,8 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 onClick={() => setSelectedPeriod(p.value)}
                 className={`px-5 py-3 rounded-2xl font-bold text-sm tracking-wider transition-all ${
                   selectedPeriod === p.value
-                    ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg'
-                    : 'bg-white dark:bg-[#16130f] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)]'
+                    ? 'bg-espresso-900 dark:bg-white text-white dark:text-espresso-900 shadow-lg'
+                    : 'bg-white dark:bg-[#16130f] text-espresso-600 dark:text-espresso-400 hover:bg-espresso-100 dark:hover:bg-espresso-800 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)]'
                 }`}
               >
                 {p.label}
@@ -677,17 +677,17 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
         </div>
 
         {!hasAnyData ? (
-          <div className="text-center py-20 bg-white dark:bg-[#16130f] rounded-3xl border-2 border-dashed border-zinc-300 dark:border-[rgba(200,164,118,0.16)]">
-            <Activity className="w-20 h-20 mx-auto mb-5 text-zinc-300 dark:text-zinc-700" strokeWidth={1.5} />
-            <h2 className="text-2xl font-black text-zinc-700 dark:text-zinc-300 mb-2">
+          <div className="text-center py-20 bg-white dark:bg-[#16130f] rounded-3xl border-2 border-dashed border-espresso-300 dark:border-[rgba(200,164,118,0.16)]">
+            <Activity className="w-20 h-20 mx-auto mb-5 text-espresso-300 dark:text-espresso-700" strokeWidth={1.5} />
+            <h2 className="text-2xl font-black text-espresso-700 dark:text-espresso-300 mb-2">
               Aún no hay datos
             </h2>
-            <p className="text-base text-zinc-500 dark:text-zinc-400 max-w-md mx-auto mb-6">
+            <p className="text-base text-espresso-600 dark:text-espresso-400 max-w-md mx-auto mb-6">
               Registra tu primera venta o agrega productos al inventario para ver tus métricas.
             </p>
             <button
               onClick={() => router.push('/ventas/nueva')}
-              className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-2xl transition-colors"
+              className="px-6 py-3 bg-espresso-700 hover:bg-espresso-800 text-white font-bold rounded-2xl transition-colors"
             >
               Ir a nueva venta
             </button>
@@ -695,10 +695,10 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
         ) : (
           <>
             {/* ============ SALUD DE LA EMPRESA (revenue − expenses = profit real) — AL TOPE ============ */}
-            <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-[#111] dark:to-[#0a0a0a] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl mb-8">
+            <div className="bg-gradient-to-br from-espresso-900 to-espresso-800 dark:from-[#111] dark:to-[#0a0a0a] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl mb-8">
               <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
                 <div className="flex items-center gap-2">
-                  <Gauge className="w-6 h-6 text-emerald-400" />
+                  <Gauge className="w-6 h-6 text-gold-400" />
                   <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
                     SALUD DE LA EMPRESA
                   </h2>
@@ -706,7 +706,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 <button
                   onClick={() => handleAskAI(`Analiza la salud financiera real de mi boutique con estos números del período actual: Ventas totales ${fmt(metrics.totalVentas)}, Ganancia bruta (ventas - costo de productos) ${fmt(metrics.gananciaNeta)}, Gastos operativos registrados ${fmt(totalGastos)}, Utilidad real (profit) ${fmt(profitReal)}, Margen real ${margenReal.toFixed(1)}%. ¿Estoy realmente ganando dinero, qué gastos debo recortar y cómo mejorar la utilidad?`)}
                   disabled={aiLoading}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gold-500 hover:bg-gold-600 disabled:opacity-60 text-white text-sm font-bold rounded-xl transition-colors"
                 >
                   <Sparkles className="w-4 h-4" />
                   Análisis IA
@@ -715,33 +715,33 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/5 rounded-2xl p-4">
-                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Ventas</div>
-                  <div className="text-2xl md:text-3xl font-black text-blue-400">{fmt(metrics.totalVentas)}</div>
+                  <div className="text-xs font-bold text-espresso-400 uppercase tracking-wider mb-1">Ventas</div>
+                  <div className="text-2xl md:text-3xl font-black text-gold-400">{fmt(metrics.totalVentas)}</div>
                 </div>
                 <div className="bg-white/5 rounded-2xl p-4">
-                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Costos productos</div>
+                  <div className="text-xs font-bold text-espresso-400 uppercase tracking-wider mb-1">Costos productos</div>
                   <div className="text-2xl md:text-3xl font-black text-orange-400">{fmt(metrics.totalCostos)}</div>
                 </div>
                 <div className="bg-white/5 rounded-2xl p-4">
-                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Gastos</div>
+                  <div className="text-xs font-bold text-espresso-400 uppercase tracking-wider mb-1">Gastos</div>
                   <div className="text-2xl md:text-3xl font-black text-rose-400">{fmt(totalGastos)}</div>
                 </div>
                 <div className="bg-white/5 rounded-2xl p-4">
-                  <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Utilidad real</div>
-                  <div className={`text-2xl md:text-3xl font-black ${profitReal >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <div className="text-xs font-bold text-espresso-400 uppercase tracking-wider mb-1">Utilidad real</div>
+                  <div className={`text-2xl md:text-3xl font-black ${profitReal >= 0 ? 'text-gold-400' : 'text-red-400'}`}>
                     {fmt(profitReal)}
                   </div>
-                  <div className={`text-xs font-semibold mt-0.5 ${profitReal >= 0 ? 'text-emerald-400/80' : 'text-red-400/80'}`}>
+                  <div className={`text-xs font-semibold mt-0.5 ${profitReal >= 0 ? 'text-gold-400/80' : 'text-red-400/80'}`}>
                     Margen {margenReal.toFixed(1)}%
                   </div>
                 </div>
               </div>
 
               {expenses.length === 0 && (
-                <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-zinc-400 bg-white/5 rounded-xl px-4 py-3">
+                <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-espresso-400 bg-white/5 rounded-xl px-4 py-3">
                   <Wallet className="w-4 h-4" />
                   Aún no tienes gastos registrados.{' '}
-                  <button onClick={() => router.push('/gastos')} className="text-emerald-400 hover:underline font-bold">
+                  <button onClick={() => router.push('/gastos')} className="text-gold-400 hover:underline font-bold">
                     Agrégalos aquí
                   </button>{' '}
                   para ver tu profit real.
@@ -750,7 +750,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
             </div>
 
             {/* ============ SECCIÓN 1: HOY RESUMIDO ============ */}
-            <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 md:p-8 shadow-xl shadow-indigo-500/20 mb-6 text-white">
+            <div className="bg-gradient-to-br from-espresso-600 to-espresso-700 rounded-3xl p-6 md:p-8 shadow-xl shadow-espresso-500/20 mb-6 text-white">
               <div className="flex items-center gap-3 mb-4">
                 <Gauge className="w-6 h-6" strokeWidth={2.5} />
                 <h2 className="text-xl md:text-2xl font-black tracking-tight">HOY RESUMIDO</h2>
@@ -782,51 +782,51 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
             {/* ============ 3 TARJETAS SUPERIORES ============ */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
-                <div className="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 mb-4">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+                <div className="w-12 h-12 bg-gold-400 rounded-2xl flex items-center justify-center shadow-lg shadow-gold-400/30 mb-4">
                   <DollarSign className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">
+                <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-1">
                   Ventas totales
                 </div>
-                <div className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white mb-1">
+                <div className="text-3xl md:text-4xl font-black text-espresso-900 dark:text-white mb-1">
                   {fmt(metrics.totalVentas)}
                 </div>
                 <div className="flex items-center gap-1 text-xs font-semibold">
                   {comparison.hasPrev ? (
                     <>
                       <PctBadge value={comparison.ventasDiff} />
-                      <span className="text-zinc-400 dark:text-zinc-500">vs período anterior</span>
+                      <span className="text-espresso-600 dark:text-espresso-500">vs período anterior</span>
                     </>
                   ) : (
-                    <span className="text-zinc-400 dark:text-zinc-500">{metrics.totalTransacciones} transacciones</span>
+                    <span className="text-espresso-600 dark:text-espresso-500">{metrics.totalTransacciones} transacciones</span>
                   )}
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
-                <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/30 mb-4">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+                <div className="w-12 h-12 bg-gold-500 rounded-2xl flex items-center justify-center shadow-lg shadow-gold-500/30 mb-4">
                   <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">
+                <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-1">
                   Ganancia neta
                 </div>
-                <div className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white mb-1">
+                <div className="text-3xl md:text-4xl font-black text-espresso-900 dark:text-white mb-1">
                   {fmt(metrics.gananciaNeta)}
                 </div>
-                <div className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+                <div className="text-xs text-gold-600 dark:text-gold-400 font-semibold">
                   Margen {metrics.margen.toFixed(1)}%
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="w-12 h-12 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30 mb-4">
                   <Package className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">
+                <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-1">
                   Productos vendidos
                 </div>
-                <div className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white mb-1">
+                <div className="text-3xl md:text-4xl font-black text-espresso-900 dark:text-white mb-1">
                   {metrics.totalUnitsSold.toLocaleString()}
                 </div>
                 <div className="text-xs text-violet-600 dark:text-violet-400 font-semibold">
@@ -836,10 +836,10 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
             </div>
 
             {/* ============ GRÁFICA DE ÁREA: VENTAS ============ */}
-            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
               <div className="flex items-center gap-2 mb-6">
-                <Activity className="w-5 h-5 md:w-6 md:h-6 text-blue-500" />
-                <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                <Activity className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
+                <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                   VENTAS POR {selectedPeriod === 'today' ? 'HORA' : selectedPeriod === 'week' ? 'DÍA' : selectedPeriod === 'month' ? 'DÍA' : selectedPeriod === 'year' ? 'MES' : 'PERÍODO'}
                 </h2>
               </div>
@@ -868,24 +868,24 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 }>
                   <defs>
                     <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#c8a476" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#c8a476" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                   <XAxis dataKey="name" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                   <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
-                  <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
-                  <Area type="monotone" dataKey="ventas" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorVentas)" />
+                  <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
+                  <Area type="monotone" dataKey="ventas" stroke="#c8a476" strokeWidth={3} fillOpacity={1} fill="url(#colorVentas)" />
                 </AreaChart>
               </ChartContainer>
             </div>
 
             {/* ============ GRÁFICA DE ÁREA: GANANCIA EN EL TIEMPO ============ */}
-            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
               <div className="flex items-center gap-2 mb-6">
-                <Coins className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
-                <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                <Coins className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
+                <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                   GANANCIA NETA EN EL TIEMPO
                 </h2>
               </div>
@@ -893,63 +893,63 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 <AreaChart data={profitChartData}>
                   <defs>
                     <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#b8925e" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#b8925e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                   <XAxis dataKey="name" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                   <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
-                  <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ganancia']} />
-                  <Area type="monotone" dataKey="ganancia" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorProfit)" />
+                  <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ganancia']} />
+                  <Area type="monotone" dataKey="ganancia" stroke="#b8925e" strokeWidth={3} fillOpacity={1} fill="url(#colorProfit)" />
                 </AreaChart>
               </ChartContainer>
             </div>
 
             {/* ============ 3 TARJETAS INFERIORES ============ */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/30 mb-4">
                   <Receipt className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">
+                <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-1">
                   Ticket promedio
                 </div>
-                <div className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white mb-1">
+                <div className="text-3xl md:text-4xl font-black text-espresso-900 dark:text-white mb-1">
                   {fmt(metrics.ticketPromedio)}
                 </div>
                 <div className="flex items-center gap-1 text-xs font-semibold">
                   <PctBadge value={metrics.ticketDiff} />
-                  <span className="text-zinc-400 dark:text-zinc-500">vs período anterior</span>
+                  <span className="text-espresso-600 dark:text-espresso-500">vs período anterior</span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
-                <div className="w-12 h-12 bg-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-pink-500/30 mb-4">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+                <div className="w-12 h-12 bg-gold-500 rounded-2xl flex items-center justify-center shadow-lg shadow-gold-500/30 mb-4">
                   <Award className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">
+                <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-1">
                   Producto estrella
                 </div>
-                <div className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white mb-1 truncate">
+                <div className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white mb-1 truncate">
                   {metrics.productoEstrella?.name || '---'}
                 </div>
-                <div className="text-xs text-pink-600 dark:text-pink-400 font-semibold">
+                <div className="text-xs text-gold-600 dark:text-gold-400 font-semibold">
                   {metrics.productoEstrella ? `${metrics.productoEstrella.quantity} uds · ${fmt(metrics.productoEstrella.profit)} gan` : 'Sin datos'}
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
-                <div className="w-12 h-12 bg-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-cyan-500/30 mb-4">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+                <div className="w-12 h-12 bg-gold-300 rounded-2xl flex items-center justify-center shadow-lg shadow-gold-400/30 mb-4">
                   <Calendar className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">
+                <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-1">
                   Mejor día de venta
                 </div>
-                <div className="text-2xl md:text-3xl font-black text-zinc-900 dark:text-white mb-1 capitalize">
+                <div className="text-2xl md:text-3xl font-black text-espresso-900 dark:text-white mb-1 capitalize">
                   {metrics.bestDay?.name || '---'}
                 </div>
-                <div className="text-xs text-cyan-600 dark:text-cyan-400 font-semibold">
+                <div className="text-xs text-gold-600 dark:text-gold-400 font-semibold">
                   {metrics.bestDay ? `${fmt(metrics.bestDay.sales)} · ${Math.round(metrics.bestDay.avg).toLocaleString()} ticket` : 'Sin datos'}
                 </div>
               </div>
@@ -957,37 +957,37 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
             {/* ============ SECCIÓN: META DE VENTAS ============ */}
             {salesGoal && (
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Target className="w-5 h-5 md:w-6 md:h-6 text-orange-500" />
-                    <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                    <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                       META DE VENTAS
                     </h2>
                   </div>
-                  <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400">
+                  <span className="text-sm font-bold text-espresso-600 dark:text-espresso-400">
                     {salesGoal.pct.toFixed(0)}% completada
                   </span>
                 </div>
                 <div className="flex items-end justify-between mb-3">
                   <div>
-                    <span className="text-3xl md:text-4xl font-black text-zinc-900 dark:text-white">{fmt(metrics.totalVentas)}</span>
-                    <span className="text-lg text-zinc-400 dark:text-zinc-500 font-semibold"> / {fmt(salesGoal.goal)}</span>
+                    <span className="text-3xl md:text-4xl font-black text-espresso-900 dark:text-white">{fmt(metrics.totalVentas)}</span>
+                    <span className="text-lg text-espresso-600 dark:text-espresso-500 font-semibold"> / {fmt(salesGoal.goal)}</span>
                   </div>
-                  <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">
+                  <span className="text-xs font-semibold text-espresso-600 dark:text-espresso-400">
                     Meta = promedio 6 meses + 10%
                   </span>
                 </div>
-                <div className="w-full h-5 bg-zinc-100 dark:bg-[#201b16] rounded-full overflow-hidden">
+                <div className="w-full h-5 bg-espresso-100 dark:bg-[#201b16] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      salesGoal.color === 'emerald' ? 'bg-emerald-500' :
+                      salesGoal.color === 'emerald' ? 'bg-gold-500' :
                       salesGoal.color === 'amber' ? 'bg-amber-500' : 'bg-red-500'
                     }`}
                     style={{ width: `${salesGoal.pct}%` }}
                   />
                 </div>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-3 font-medium flex items-center gap-1.5">
+                <p className="text-sm text-espresso-600 dark:text-espresso-400 mt-3 font-medium flex items-center gap-1.5">
                   {salesGoal.pct >= 100
                     ? (<><Trophy className="w-4 h-4 text-amber-500" /> ¡Meta alcanzada! Superaste tu objetivo de ventas.</>)
                     : `Te faltan ${fmt(salesGoal.goal - metrics.totalVentas)} para llegar a tu meta.`}
@@ -997,10 +997,10 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
             {/* ============ RÉCORD 7 DÍAS ============ */}
             {record7d.hasHistory && (
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Trophy className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     RÉCORD DE LA SEMANA
                   </h2>
                 </div>
@@ -1008,25 +1008,25 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="flex-1">
                       <div className="text-2xl md:text-3xl font-black text-amber-500 mb-1">¡Nuevo récord!</div>
-                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                      <p className="text-sm text-espresso-600 dark:text-espresso-400">
                         Hoy llevas {fmt(record7d.todayTotal)} — superaste tu mejor día de los últimos 7 días ({fmt(record7d.bestPast)}).
                       </p>
                     </div>
                     <div className="shrink-0 px-5 py-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/40 text-center">
                       <div className="text-3xl font-black text-amber-600 dark:text-amber-400">{fmt(record7d.todayTotal)}</div>
-                      <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">ventas de hoy</div>
+                      <div className="text-xs text-espresso-600 dark:text-espresso-400 mt-1">ventas de hoy</div>
                     </div>
                   </div>
                 ) : (
                   <div>
                     <div className="flex items-end justify-between mb-2">
-                      <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Hoy: {fmt(record7d.todayTotal)}</span>
-                      <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Récord: {fmt(record7d.bestPast)}</span>
+                      <span className="text-sm font-semibold text-espresso-600 dark:text-espresso-400">Hoy: {fmt(record7d.todayTotal)}</span>
+                      <span className="text-sm font-semibold text-espresso-600 dark:text-espresso-400">Récord: {fmt(record7d.bestPast)}</span>
                     </div>
-                    <div className="h-3 bg-zinc-100 dark:bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-3 bg-espresso-100 dark:bg-white/5 rounded-full overflow-hidden">
                       <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500" style={{ width: `${record7d.pct}%` }} />
                     </div>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">
+                    <p className="text-xs text-espresso-600 dark:text-espresso-400 mt-2">
                       {record7d.bestPast > record7d.todayTotal
                         ? `Te faltan ${fmt(record7d.bestPast - record7d.todayTotal)} para romper tu récord de los últimos 7 días.`
                         : 'Sigue así: estás a nada de romper tu récord.'}
@@ -1038,22 +1038,22 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
             {/* ============ SECCIÓN: INVENTARIO EN RIESGO ============ */}
             {allProducts.length > 0 && (
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
                 <div className="flex items-center gap-2 mb-6">
                   <AlertTriangle className="w-5 h-5 md:w-6 md:h-6 text-red-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     INVENTARIO EN RIESGO
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="bg-zinc-100 dark:bg-white/5 rounded-2xl p-5 border border-zinc-300 dark:border-white/10">
+                  <div className="bg-espresso-100 dark:bg-white/5 rounded-2xl p-5 border border-espresso-300 dark:border-white/10">
                     <div className="flex items-center gap-2 mb-2">
-                      <PackageX className="w-5 h-5 text-zinc-600 dark:text-zinc-300" />
-                      <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200 uppercase tracking-wider">Agotados</span>
+                      <PackageX className="w-5 h-5 text-espresso-600 dark:text-espresso-300" />
+                      <span className="text-xs font-bold text-espresso-700 dark:text-espresso-200 uppercase tracking-wider">Agotados</span>
                     </div>
-                    <div className="text-3xl font-black text-zinc-800 dark:text-white">{inventoryAlerts.outOfStock.length}</div>
-                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">stock en 0, reponer</div>
+                    <div className="text-3xl font-black text-espresso-800 dark:text-white">{inventoryAlerts.outOfStock.length}</div>
+                    <div className="text-xs text-espresso-600 dark:text-espresso-400 mt-1">stock en 0, reponer</div>
                   </div>
 
                   <div className="bg-red-50 dark:bg-red-900/10 rounded-2xl p-5 border border-red-200 dark:border-red-900/30">
@@ -1062,7 +1062,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">Stock crítico</span>
                     </div>
                     <div className="text-3xl font-black text-red-600 dark:text-red-400">{inventoryAlerts.criticalStock.length}</div>
-                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">productos con ≤3 uds</div>
+                    <div className="text-xs text-espresso-600 dark:text-espresso-400 mt-1">productos con ≤3 uds</div>
                   </div>
 
                   <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-5 border border-amber-200 dark:border-amber-900/30">
@@ -1071,7 +1071,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">No se mueve</span>
                     </div>
                     <div className="text-3xl font-black text-amber-600 dark:text-amber-400">{inventoryAlerts.deadStock.length}</div>
-                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">sin vender 30+ días</div>
+                    <div className="text-xs text-espresso-600 dark:text-espresso-400 mt-1">sin vender 30+ días</div>
                   </div>
 
                   <div className="bg-orange-50 dark:bg-orange-900/10 rounded-2xl p-5 border border-orange-200 dark:border-orange-900/30">
@@ -1080,18 +1080,18 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">Capital congelado</span>
                     </div>
                     <div className="text-3xl font-black text-orange-600 dark:text-orange-400">{fmt(inventoryAlerts.deadValue)}</div>
-                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">en productos parados</div>
+                    <div className="text-xs text-espresso-600 dark:text-espresso-400 mt-1">en productos parados</div>
                   </div>
                 </div>
 
                 {inventoryAlerts.outOfStock.length > 0 && (
                   <div className="mb-4">
-                    <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-2">
-                      <PackageX className="w-4 h-4 text-zinc-500" /> Agotados — reponer urgente
+                    <div className="text-sm font-bold text-espresso-700 dark:text-espresso-300 mb-2 flex items-center gap-2">
+                      <PackageX className="w-4 h-4 text-espresso-500" /> Agotados — reponer urgente
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {inventoryAlerts.outOfStock.slice(0, 8).map(p => (
-                        <span key={p.id} className="inline-flex items-center gap-1 px-3 py-1.5 bg-zinc-100 dark:bg-white/5 text-zinc-800 dark:text-zinc-100 text-xs font-bold rounded-lg border border-zinc-300 dark:border-white/15">
+                        <span key={p.id} className="inline-flex items-center gap-1 px-3 py-1.5 bg-espresso-100 dark:bg-white/5 text-espresso-800 dark:text-espresso-100 text-xs font-bold rounded-lg border border-espresso-300 dark:border-white/15">
                           {p.name} (0)
                         </span>
                       ))}
@@ -1101,7 +1101,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
                 {inventoryAlerts.criticalStock.length > 0 && (
                   <div className="mb-4">
-                    <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-2">
+                    <div className="text-sm font-bold text-espresso-700 dark:text-espresso-300 mb-2 flex items-center gap-2">
                       <Snowflake className="w-4 h-4 text-red-500" /> Reponer pronto
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -1116,7 +1116,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
                 {inventoryAlerts.deadStock.length > 0 && (
                   <div>
-                    <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-2">
+                    <div className="text-sm font-bold text-espresso-700 dark:text-espresso-300 mb-2 flex items-center gap-2">
                       <Clock className="w-4 h-4 text-amber-500" /> Líquida o promociona
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -1134,15 +1134,15 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
             {/* ============ CHARTS GRID ============ */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               {/* TOP 10 PRODUCTOS */}
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm lg:col-span-2">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm lg:col-span-2">
                 <div className="flex items-center gap-2 mb-6">
                   <Trophy className="w-5 h-5 md:w-6 md:h-6 text-violet-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     TOP 10 PRODUCTOS MÁS VENDIDOS
                   </h2>
                 </div>
                 {topProductsData.length === 0 ? (
-                  <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                  <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                     Sin ventas en este período
                   </div>
                 ) : (
@@ -1151,23 +1151,23 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
                       <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                       <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={140} />
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'quantity' ? [v, 'Unidades'] : [v, n]} />
-                      <Bar dataKey="quantity" fill="#8b5cf6" radius={[0, 8, 8, 0]} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'quantity' ? [v, 'Unidades'] : [v, n]} />
+                      <Bar dataKey="quantity" fill="#a56b4a" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
               </div>
 
               {/* TOP 5 MARCAS */}
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
-                  <Building2 className="w-5 h-5 md:w-6 md:h-6 text-blue-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <Building2 className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     TOP 5 MARCAS
                   </h2>
                 </div>
                 {topBrandsData.length === 0 ? (
-                  <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                  <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                     Sin datos de marca
                   </div>
                 ) : (
@@ -1176,23 +1176,23 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
                       <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                       <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={120} />
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
-                      <Bar dataKey="revenue" fill="#3b82f6" radius={[0, 8, 8, 0]} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
+                      <Bar dataKey="revenue" fill="#c8a476" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
               </div>
 
               {/* VENTAS POR DÍA DE SEMANA */}
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
-                  <Activity className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <Activity className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     VENTAS POR DÍA DE SEMANA
                   </h2>
                 </div>
                 {filteredSales.length === 0 ? (
-                  <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                  <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                     Sin ventas en este período
                   </div>
                 ) : (
@@ -1201,8 +1201,8 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
                       <XAxis dataKey="name" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                       <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
-                      <Bar dataKey="ventas" fill="#10b981" radius={[8, 8, 0, 0]} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
+                      <Bar dataKey="ventas" fill="#b8925e" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
@@ -1210,15 +1210,15 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
               {/* MEJORES HORARIOS */}
               {selectedPeriod === 'today' || selectedPeriod === 'week' ? (
-                <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+                <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                   <div className="flex items-center gap-2 mb-6">
                     <Clock className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
-                    <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                    <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                       MEJORES HORARIOS
                     </h2>
                   </div>
                   {filteredSales.length === 0 ? (
-                    <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                    <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                       Sin ventas en este período
                     </div>
                   ) : (
@@ -1227,7 +1227,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                         <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
                         <XAxis dataKey="hour" stroke={textColor} style={{ fontSize: '10px', fontWeight: 600 }} tick={{ fill: textColor }} interval={1} />
                         <YAxis stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
-                        <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
+                        <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
                         <Bar dataKey="ventas" fill="#f59e0b" radius={[8, 8, 0, 0]} />
                       </BarChart>
                     </ChartContainer>
@@ -1236,15 +1236,15 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
               ) : null}
 
               {/* VENTAS POR TALLA */}
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
-                  <Shirt className="w-5 h-5 md:w-6 md:h-6 text-indigo-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <Shirt className="w-5 h-5 md:w-6 md:h-6 text-espresso-500" />
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     VENTAS POR TALLA
                   </h2>
                 </div>
                 {sizeData.length === 0 ? (
-                  <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                  <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                     Sin datos de talla
                   </div>
                 ) : (
@@ -1253,23 +1253,23 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                       <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
                       <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} />
                       <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={100} />
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'quantity' ? [v, 'Unidades'] : [v, n]} />
-                      <Bar dataKey="quantity" fill="#6366f1" radius={[0, 8, 8, 0]} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any, n: any) => n === 'quantity' ? [v, 'Unidades'] : [v, n]} />
+                      <Bar dataKey="quantity" fill="#9a7748" radius={[0, 8, 8, 0]} />
                     </BarChart>
                   </ChartContainer>
                 )}
               </div>
 
               {/* VENTAS POR COLOR */}
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
-                  <Palette className="w-5 h-5 md:w-6 md:h-6 text-pink-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <Palette className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     VENTAS POR COLOR
                   </h2>
                 </div>
                 {colorData.length === 0 ? (
-                  <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                  <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                     Sin datos de color
                   </div>
                 ) : (
@@ -1288,22 +1288,22 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                           <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [v, 'Unidades']} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [v, 'Unidades']} />
                     </PieChart>
                   </ChartContainer>
                 )}
               </div>
 
               {/* VENTAS POR TEMPORADA */}
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
-                  <PieChartIcon className="w-5 h-5 md:w-6 md:h-6 text-pink-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <PieChartIcon className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     VENTAS POR TEMPORADA
                   </h2>
                 </div>
                 {seasonData.length === 0 ? (
-                  <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                  <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                     Sin datos de temporada
                   </div>
                 ) : (
@@ -1322,22 +1322,22 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                           <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
                     </PieChart>
                   </ChartContainer>
                 )}
               </div>
 
               {/* MÉTODOS DE PAGO */}
-              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
                 <div className="flex items-center gap-2 mb-6">
                   <Wallet className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
-                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                  <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     MÉTODOS DE PAGO
                   </h2>
                 </div>
                 {paymentData.length === 0 ? (
-                  <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                  <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                     Sin datos de pago
                   </div>
                 ) : (
@@ -1356,7 +1356,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                           <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                         ))}
                       </Pie>
-                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
+                      <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ventas']} />
                     </PieChart>
                   </ChartContainer>
                 )}
@@ -1364,15 +1364,15 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
             </div>
 
             {/* ============ GANANCIA POR PRODUCTO ============ */}
-            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
               <div className="flex items-center gap-2 mb-6">
-                <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-emerald-500" />
-                <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
+                <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                   GANANCIA POR PRODUCTO
                 </h2>
               </div>
               {profitByProductData.length === 0 ? (
-                <div className="h-80 flex items-center justify-center text-zinc-400 dark:text-zinc-600 font-semibold">
+                <div className="h-80 flex items-center justify-center text-espresso-400 dark:text-espresso-600 font-semibold">
                   Sin datos de ganancia
                 </div>
               ) : (
@@ -1381,20 +1381,20 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                     <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
                     <XAxis type="number" stroke={textColor} style={{ fontSize: '12px', fontWeight: 600 }} tick={{ fill: textColor }} tickFormatter={(v) => `$${v}`} />
                     <YAxis type="category" dataKey="name" stroke={textColor} style={{ fontSize: '11px', fontWeight: 600 }} tick={{ fill: textColor }} width={140} />
-                    <Tooltip contentStyle={{ backgroundColor: isDark ? '#18181b' : '#fff', border: `1px solid ${isDark ? '#3f3f46' : '#e4e4e7'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#18181b', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ganancia']} />
-                    <Bar dataKey="ganancia" fill="#10b981" radius={[0, 8, 8, 0]} />
+                    <Tooltip contentStyle={{ backgroundColor: isDark ? '#1a1612' : '#fff', border: `1px solid ${isDark ? '#2a2420' : '#ece2d2'}`, borderRadius: '12px', color: isDark ? '#fafafa' : '#1a1612', fontSize: '14px', fontWeight: 600 }} formatter={(v: any) => [`$${Number(v).toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, 'Ganancia']} />
+                    <Bar dataKey="ganancia" fill="#b8925e" radius={[0, 8, 8, 0]} />
                   </BarChart>
                 </ChartContainer>
               )}
             </div>
 
             {/* ============ ASESOR IA ============ */}
-            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
+            <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <div className="w-12 h-12 bg-gradient-to-br from-espresso-600 to-espresso-700 rounded-2xl flex items-center justify-center shadow-lg shadow-espresso-500/30">
                   <Sparkles className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
-                <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                   ASESOR DE VENTAS PRIVADO
                 </h2>
               </div>
@@ -1404,15 +1404,15 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                   {chatHistory.map((msg, i) => (
                     <div key={i}>
                       <div className="flex justify-end mb-2">
-                        <div className="bg-blue-500 text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%] text-sm font-medium">
+                        <div className="bg-gold-400 text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%] text-sm font-medium">
                           {msg.question}
                         </div>
                       </div>
                       <div className="flex justify-start mb-2">
-                        <div className="bg-zinc-100 dark:bg-[#201b16] text-zinc-800 dark:text-zinc-200 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-[85%] text-sm font-medium leading-relaxed">
+                        <div className="bg-espresso-100 dark:bg-[#201b16] text-espresso-800 dark:text-espresso-200 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-[85%] text-sm font-medium leading-relaxed">
                           <div className="flex items-center gap-2 mb-1">
-                            <Sparkles className="w-3 h-3 text-indigo-500" strokeWidth={2.5} />
-                            <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider">Asesor</span>
+                            <Sparkles className="w-3 h-3 text-espresso-500" strokeWidth={2.5} />
+                            <span className="text-[10px] font-bold text-espresso-500 dark:text-gold-400 uppercase tracking-wider">Asesor</span>
                           </div>
                           {msg.answer}
                         </div>
@@ -1424,11 +1424,11 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
               {chatHistory.length === 0 && !aiLoading && !aiError && cooldownSeconds === 0 && (
                 <div className="text-center py-6 mb-4">
-                  <Sparkles className="w-10 h-10 mx-auto mb-3 text-indigo-300 dark:text-indigo-600" strokeWidth={1.5} />
-                  <p className="text-lg font-bold text-zinc-800 dark:text-zinc-200 mb-1">
+                  <Sparkles className="w-10 h-10 mx-auto mb-3 text-gold-300 dark:text-espresso-600" strokeWidth={1.5} />
+                  <p className="text-lg font-bold text-espresso-800 dark:text-espresso-200 mb-1">
                     Hola! Soy tu asesor de ventas privado
                   </p>
-                  <p className="text-sm text-zinc-400 dark:text-zinc-500">
+                  <p className="text-sm text-espresso-600 dark:text-espresso-500">
                     Pregúntame lo que quieras sobre tu boutique
                   </p>
                 </div>
@@ -1437,11 +1437,11 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
               {aiLoading && (
                 <div className="flex items-center gap-3 mb-4 px-2 py-3">
                   <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <div className="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <div className="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                    <div className="w-2.5 h-2.5 bg-gold-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <div className="w-2.5 h-2.5 bg-gold-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <div className="w-2.5 h-2.5 bg-gold-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
-                  <span className="text-sm font-semibold text-indigo-500 dark:text-indigo-400">Analizando tus datos...</span>
+                  <span className="text-sm font-semibold text-espresso-500 dark:text-gold-400">Analizando tus datos...</span>
                 </div>
               )}
 
@@ -1473,13 +1473,13 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                     if (e.key === 'Enter' && !aiLoading && cooldownSeconds === 0) handleAskAI()
                   }}
                   placeholder="Ej: ¿Qué productos me dan más ganancia?"
-                  className="flex-1 bg-zinc-50 dark:bg-[#201b16] border-2 border-zinc-200 dark:border-zinc-700 rounded-2xl px-4 py-3 text-sm font-semibold text-zinc-900 dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none transition-colors"
+                  className="flex-1 bg-espresso-50 dark:bg-[#201b16] border-2 border-espresso-200 dark:border-espresso-700 rounded-2xl px-4 py-3 text-sm font-semibold text-espresso-900 dark:text-white placeholder:text-espresso-400 dark:placeholder:text-espresso-600 focus:border-espresso-500 focus:outline-none transition-colors"
                   disabled={aiLoading || cooldownSeconds > 0}
                 />
                 <button
                   onClick={() => handleAskAI()}
                   disabled={aiLoading || !aiQuestion.trim() || cooldownSeconds > 0}
-                  className="px-6 py-3 bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-zinc-300 disabled:to-zinc-400 dark:disabled:from-zinc-700 dark:disabled:to-zinc-800 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider rounded-2xl shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 disabled:shadow-none flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                  className="px-6 py-3 bg-gradient-to-br from-espresso-600 to-espresso-700 hover:from-espresso-600 hover:to-espresso-700 disabled:from-espresso-300 disabled:to-espresso-400 dark:disabled:from-espresso-700 dark:disabled:to-espresso-800 disabled:cursor-not-allowed text-white font-black text-sm tracking-wider rounded-2xl shadow-lg shadow-espresso-500/30 hover:shadow-espresso-500/50 disabled:shadow-none flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                 >
                   {aiLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -1493,13 +1493,13 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
 
               {showQuestions && (
                 <div>
-                  <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-3">
+                  <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-3">
                     Preguntas sugeridas
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {questionCategories.map(cat => (
                       <div key={cat.title}>
-                        <div className="text-[10px] font-black text-indigo-500 dark:text-indigo-400 uppercase tracking-widest mb-1.5">
+                        <div className="text-[10px] font-black text-espresso-500 dark:text-gold-400 uppercase tracking-widest mb-1.5">
                           {cat.title}
                         </div>
                         <div className="flex flex-col gap-1">
@@ -1508,7 +1508,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                               key={q}
                               onClick={() => handleAskAI(q)}
                               disabled={aiLoading || cooldownSeconds > 0}
-                              className="text-left px-3 py-1.5 bg-zinc-50 dark:bg-[#201b16]/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 text-zinc-600 dark:text-zinc-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-xs font-semibold rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-indigo-200 dark:hover:border-indigo-900/50 transition-all disabled:opacity-50 truncate"
+                              className="text-left px-3 py-1.5 bg-espresso-50 dark:bg-[#201b16]/50 hover:bg-gold-50 dark:hover:bg-espresso-900/20 text-espresso-600 dark:text-espresso-400 hover:text-espresso-700 dark:hover:text-gold-300 text-xs font-semibold rounded-xl border border-espresso-200 dark:border-espresso-700 hover:border-gold-200 dark:hover:border-espresso-900/50 transition-all disabled:opacity-50 truncate"
                             >
                               {q}
                             </button>
@@ -1523,7 +1523,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
               {!showQuestions && (
                 <button
                   onClick={() => setShowQuestions(true)}
-                  className="text-xs font-bold text-indigo-500 dark:text-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors"
+                  className="text-xs font-bold text-espresso-500 dark:text-gold-400 hover:text-espresso-600 dark:hover:text-gold-300 transition-colors"
                 >
                   + Mostrar preguntas sugeridas
                 </button>
