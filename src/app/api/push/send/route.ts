@@ -6,6 +6,27 @@ import { evaluateAlerts, notifyAlerts } from '@/lib/alerts'
 export const dynamic = 'force-dynamic'
 
 /**
+ * Safety net de alertas (récord 7 días / agotado / stock bajo).
+ * Si la app no se abrió en todo el día, esta es la única evaluación.
+ * Idempotente por dedupe_key: correrlo de más no genera avisos repetidos.
+ */
+async function runAlertsSafetyNet(admin: ReturnType<typeof createAdminClient>) {
+  let alertsCreated = 0
+  let alertsDelivered = 0
+  try {
+    const { data: boutiques } = await admin.from('boutiques').select('id')
+    for (const b of boutiques ?? []) {
+      const created = await evaluateAlerts(admin, b.id)
+      alertsCreated += created.length
+      alertsDelivered += await notifyAlerts(admin, b.id, created)
+    }
+  } catch (e) {
+    console.error('Cron: error evaluando alertas', e)
+  }
+  return { alertsCreated, alertsDelivered }
+}
+
+/**
  * GET /api/push/send — CRON de Vercel (vercel.json).
  * Busca recordatorios vencidos que aún no se notificaron y envía un push a
  * las suscripciones de la boutique. Marca push_notified_at para no repetir.
@@ -39,7 +60,10 @@ export async function GET(req: NextRequest) {
 
     if (remErr) throw remErr
     if (!dueReminders || dueReminders.length === 0) {
-      return NextResponse.json({ ok: true, due: 0, deliveries: 0, message: 'Sin recordatorios vencidos' })
+      // BUG FIX: antes se hacía early return aquí y el safety net de alertas
+      // nunca corría en días sin recordatorios (la mayoría). Ahora siempre evalúa.
+      const net = await runAlertsSafetyNet(admin)
+      return NextResponse.json({ ok: true, due: 0, deliveries: 0, message: 'Sin recordatorios vencidos', ...net })
     }
 
     const boutiqueIds = [...new Set(dueReminders.map(r => r.boutique_id))]
@@ -115,21 +139,8 @@ export async function GET(req: NextRequest) {
       await admin.from('push_subscriptions').delete().in('endpoint', deadEndpoints)
     }
 
-    // ── Safety net de alertas (récord 7 días / agotado / stock bajo) ──
-    // Si la app no se abrió en todo el día, esta es la única evaluación.
-    // Idempotente por dedupe_key: correrlo de más no genera avisos repetidos.
-    let alertsCreated = 0
-    let alertsDelivered = 0
-    try {
-      const { data: boutiques } = await admin.from('boutiques').select('id')
-      for (const b of boutiques ?? []) {
-        const created = await evaluateAlerts(admin, b.id)
-        alertsCreated += created.length
-        alertsDelivered += await notifyAlerts(admin, b.id, created)
-      }
-    } catch (e) {
-      console.error('Cron: error evaluando alertas', e)
-    }
+    // Safety net de alertas (récord 7 días / agotado / stock bajo)
+    const net = await runAlertsSafetyNet(admin)
 
     return NextResponse.json({
       ok: true,
@@ -137,8 +148,7 @@ export async function GET(req: NextRequest) {
       deliveries,
       skippedNoSubs,
       deadSubscriptionsRemoved: deadEndpoints.length,
-      alertsCreated,
-      alertsDelivered,
+      ...net,
     })
   } catch (err: any) {
     console.error('Error push/send:', err)
