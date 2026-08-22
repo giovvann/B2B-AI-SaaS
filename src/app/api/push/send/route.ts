@@ -30,7 +30,20 @@ async function runAlertsSafetyNet(admin: ReturnType<typeof createAdminClient>) {
       const { created, diag } = await evaluateAlerts(admin, b.id)
       alertsCreated += created.length
       alertsDelivered += await notifyAlerts(admin, b.id, created)
-      alertDiag.push({ id: String(b.id).slice(0, 8), ...diag, createdTypes: created.map((a) => a.type) })
+      // Diagnóstico extra: re-query de productos con CLIENTE FRESCO para
+      // descartar contaminación de estado del cliente compartido en el loop.
+      const recheck = createAdminClient()
+      const { data: fresh } = await recheck
+        .from('products')
+        .select('id,name,stock')
+        .eq('boutique_id', b.id)
+      alertDiag.push({
+        id: String(b.id).slice(0, 8),
+        ...diag,
+        createdTypes: created.map((a) => a.type),
+        freshProductsSeen: fresh?.length ?? -1,
+        freshNames: (fresh ?? []).map((p: { name: string }) => p.name),
+      })
     } catch (e: any) {
       console.error(`Cron: error evaluando alertas de la boutique ${b.id}`, e)
       alertErrors.push(`${String(b.id).slice(0, 8)}: ${e?.message ?? String(e)}`)
