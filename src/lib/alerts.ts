@@ -86,7 +86,6 @@ export interface EvaluateResult {
     salesSeen: number
     stockCandidates: number
     productsRetried: boolean
-    visibleNames: string[]
   }
 }
 
@@ -128,7 +127,6 @@ export async function evaluateAlerts(
     salesSeen: recentSales?.length ?? -1,
     stockCandidates: (products ?? []).filter((p) => Number(p.stock || 0) <= LOW_STOCK_THRESHOLD).length,
     productsRetried,
-    visibleNames: (products ?? []).map((p) => String(p.name)),
   }
 
   // ── Récord de 7 días ──
