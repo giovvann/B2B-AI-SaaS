@@ -227,11 +227,19 @@ return (
                 <div className="pr">$720</div>
               </div>
             </div>
-            <div className="hero-card-alert">
-              <div className="ic">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5" strokeLinejoin="round"/><path d="M4 9h.01M8 9h.01M12 9h.01"/></svg>
+            <div style={{"display":"flex","flexDirection":"column","gap":".5rem"}}>
+              <div className="hero-card-alert">
+                <div className="ic">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5" strokeLinejoin="round"/><path d="M4 9h.01M8 9h.01M12 9h.01"/></svg>
+                </div>
+                <p><strong>Aviso a tu celular:</strong> Quedan 2 Vestidos Primavera talla M. <span style={{"borderBottom":"1px solid #c8a476","cursor":"pointer"}}>Sugerir pedido &rarr;</span></p>
               </div>
-              <p><strong>Alerta:</strong> Quedan 2 Vestidos Primavera talla M. <span style={{"borderBottom":"1px solid #c8a476","cursor":"pointer"}}>Sugerir pedido &rarr;</span></p>
+              <div className="hero-card-alert">
+                <div className="ic">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1.5l2 4 4.4.6-3.2 3.1.8 4.4L8 11.5l-4 2.1.8-4.4L1.6 6.1 6 5.5z" strokeLinejoin="round"/></svg>
+                </div>
+                <p><strong>R&eacute;cord de ventas:</strong> Hoy superaste tu mejor d&iacute;a de la semana. &iexcl;Felicidades!</p>
+              </div>
             </div>
           </div>
         </div>
@@ -323,7 +331,7 @@ return (
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10" strokeLinecap="round"/><path d="M12 6v6l4 2" strokeLinecap="round"/></svg>
         </div>
         <h3>Veliora organiza todo</h3>
-        <p>Alertas cuando algo se agota, reportes de lo que m&aacute;s se vende, sugerencias de pedido. Tu boutique trabajando con informaci&oacute;n, no con suposiciones.</p>
+        <p>Avisos a tu celular cuando algo se agota, celebraci&oacute;n de tus r&eacute;cords de ventas, reportes de lo que m&aacute;s se vende. Tu boutique trabajando con informaci&oacute;n, no con suposiciones.</p>
       </div>
     </div>
   </div>
@@ -419,7 +427,7 @@ return (
       <div className="benefit-card r d3">
         <span className="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
         <div className="outcome">Nunca te quedes sin una talla</div>
-        <p>Alertas cuando el inventario est&aacute; bajo. Sugerencias de pedido basadas en lo que realmente se vende.</p>
+        <p>Avisos directos a tu celular cuando algo se agota o queda poco &mdash; aunque no tengas la app abierta. Sugerencias de pedido basadas en lo que realmente se vende.</p>
       </div>
       <div className="benefit-card r d1">
         <span className="benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="5" y="2" width="14" height="20" rx="2" strokeLinecap="round"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg></span>
@@ -505,7 +513,7 @@ return (
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Asistente inteligente</li>
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Hasta 5 empleados</li>
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Reportes autom&aacute;ticos</li>
-          <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Alertas de inventario</li>
+          <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Alertas a tu celular (stock y r&eacute;cords)</li>
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Funciona sin internet</li>
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Soporte WhatsApp</li>
         </ul>
@@ -557,6 +565,7 @@ return (
       <div className="faq-item"><div className="faq-q" onClick={(e) => { tF(e.currentTarget) }}>Necesito saber de tecnolog&iacute;a para usarlo?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div><div className="faq-a"><p>No. Veliora est&aacute; dise&ntilde;ada para que cualquier persona lo use desde el primer minuto. Si sabes usar WhatsApp, sabes usar Veliora. Botones grandes, colores claros, todo es intuitivo.</p></div></div>
       <div className="faq-item"><div className="faq-q" onClick={(e) => { tF(e.currentTarget) }}>Qu&eacute; pasa si no tengo internet en mi local?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div><div className="faq-a"><p>Sin problema. Veliora funciona sin conexi&oacute;n. Puedes seguir vendiendo y registrando todo. Cuando regrese el internet, se sincroniza autom&aacute;ticamente. No pierdes ni una venta.</p></div></div>
       <div className="faq-item"><div className="faq-q" onClick={(e) => { tF(e.currentTarget) }}>Puedo usarlo desde mi celular?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div><div className="faq-a"><p>S&iacute;. Veliora funciona en cualquier dispositivo: celular, tablet o computadora. Tus empleados pueden usarlo desde su tel&eacute;fono y t&uacute; supervisas todo desde el tuyo.</p></div></div>
+      <div className="faq-item"><div className="faq-q" onClick={(e) => { tF(e.currentTarget) }}>Me llegan avisos aunque no abra la app?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div><div className="faq-a"><p>S&iacute;. Veliora te manda notificaciones directas a tu celular: cuando una prenda se agota, cuando queda poco stock y cuando rompes tu r&eacute;cord de ventas de la semana. Solo avisos que te importan &mdash; nada de spam.</p></div></div>
       <div className="faq-item"><div className="faq-q" onClick={(e) => { tF(e.currentTarget) }}>C&oacute;mo capturo mi inventario actual?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div><div className="faq-a"><p>Puedes tomarle una foto a tu factura m&aacute;s reciente y Veliora registra todo autom&aacute;ticamente. O si tienes un archivo de Excel, podemos ayudarte a migrarlo sin costo. Si arrancas de cero, tambi&eacute;n puedes agregar productos uno por uno desde tu tel&eacute;fono.</p></div></div>
       <div className="faq-item"><div className="faq-q" onClick={(e) => { tF(e.currentTarget) }}>Qu&eacute; pasa despu&eacute;s de los 7 d&iacute;as gratis?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div><div className="faq-a"><p>Si te gusta Veliora, eliges un plan y contin&uacute;as. Si no, simplemente dejas de usarlo. Sin cargos, sin compromiso, sin llamadas de retenci&oacute;n. Toda tu informaci&oacute;n sigue siendo tuya y la puedes exportar cuando quieras.</p></div></div>
       <div className="faq-item"><div className="faq-q" onClick={(e) => { tF(e.currentTarget) }}>Realmente es f&aacute;cil de usar?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg></div><div className="faq-a"><p>La mayor&iacute;a de nuestras clientas lo usan desde el primer d&iacute;a sin capacitaci&oacute;n. Si en alg&uacute;n momento tienes dudas, estamos a un WhatsApp de distancia. Te respondemos en persona, no un bot.</p></div></div>

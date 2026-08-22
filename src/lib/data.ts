@@ -37,8 +37,12 @@ export const data = {
     )
   },
   async getSales(boutiqueId: string) {
+    // Embed de sale_items + products (FKs existen): sin esto las métricas
+    // por producto/talla/color/marca salen vacías (MetricasClient lee s.sale_items).
     return fetchToCache('sales', s =>
-      s.from('sales').select('*').eq('boutique_id', boutiqueId).order('created_at', { ascending: false }).limit(500)
+      s.from('sales')
+        .select('*, sale_items(id, quantity, price_at_sale, cost_at_sale, product_id, products(id, name, brand, season, size, color, purchase_price, sale_price))')
+        .eq('boutique_id', boutiqueId).order('created_at', { ascending: false }).limit(500)
     )
   },
   async getExpenses(boutiqueId: string) {

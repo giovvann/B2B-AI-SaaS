@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendPush } from '@/lib/push'
+import { evaluateAlerts, notifyAlerts } from '@/lib/alerts'
 
 export const dynamic = 'force-dynamic'
 
@@ -114,12 +115,30 @@ export async function GET(req: NextRequest) {
       await admin.from('push_subscriptions').delete().in('endpoint', deadEndpoints)
     }
 
+    // ── Safety net de alertas (récord 7 días / agotado / stock bajo) ──
+    // Si la app no se abrió en todo el día, esta es la única evaluación.
+    // Idempotente por dedupe_key: correrlo de más no genera avisos repetidos.
+    let alertsCreated = 0
+    let alertsDelivered = 0
+    try {
+      const { data: boutiques } = await admin.from('boutiques').select('id')
+      for (const b of boutiques ?? []) {
+        const created = await evaluateAlerts(admin, b.id)
+        alertsCreated += created.length
+        alertsDelivered += await notifyAlerts(admin, b.id, created)
+      }
+    } catch (e) {
+      console.error('Cron: error evaluando alertas', e)
+    }
+
     return NextResponse.json({
       ok: true,
       due: dueReminders.length,
       deliveries,
       skippedNoSubs,
       deadSubscriptionsRemoved: deadEndpoints.length,
+      alertsCreated,
+      alertsDelivered,
     })
   } catch (err: any) {
     console.error('Error push/send:', err)

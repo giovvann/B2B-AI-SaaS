@@ -53,6 +53,7 @@ interface PushData {
   title?: string;
   body?: string;
   url?: string;
+  tag?: string;
 }
 
 self.addEventListener("push", (event: PushEvent) => {
@@ -68,7 +69,7 @@ self.addEventListener("push", (event: PushEvent) => {
     body: data.body || "",
     icon: "/icons/icon-192x192.png",
     badge: "/icons/icon-192x192.png",
-    tag: "veliora-reminder",
+    tag: data.tag || "veliora-reminder",
     data: { url: data.url || "/dashboard" },
   };
 

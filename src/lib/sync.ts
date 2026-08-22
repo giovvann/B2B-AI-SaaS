@@ -105,6 +105,12 @@ export async function pushQueue(): Promise<void> {
 
   // Limpia ops completadas.
   await db.sync_queue.where('status').equals('done').delete()
+
+  // Cambios empujados (ventas/stock) → avisar al watcher de alertas para que
+  // evalúe récord/agotado/stock bajo contra datos ya commits en Supabase.
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('veliora-alerts-check', { detail: { force: true } }))
+  }
 }
 
 /** Pull incremental: baja remotos modificados tras el último updated_at local. */

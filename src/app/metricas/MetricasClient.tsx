@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Sun, Moon, X, TrendingUp, DollarSign, Award, Receipt, Package, Calendar,
+  Sun, Moon, X, TrendingUp, DollarSign, Award, Receipt, Package, PackageX, Calendar,
   Sparkles, Loader2, Send, BarChart3, PieChart as PieChartIcon, Activity, Wallet,
   Target, AlertTriangle, Clock, Shirt, Palette, Building2, Trophy,
   ArrowUpRight, ArrowDownRight, Minus, Flame, Snowflake, Coins, ShoppingBag,
@@ -437,7 +437,8 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
       })
     })
 
-    const criticalStock = allProducts.filter(p => (p.stock || 0) <= 3).sort((a, b) => (a.stock || 0) - (b.stock || 0))
+    const outOfStock = allProducts.filter(p => (p.stock || 0) <= 0)
+    const criticalStock = allProducts.filter(p => (p.stock || 0) > 0 && (p.stock || 0) <= 3).sort((a, b) => (a.stock || 0) - (b.stock || 0))
     const deadStock = allProducts.filter(p => {
       const last = lastSold[p.id]
       if (!last) return (p.stock || 0) > 0 // nunca se ha vendido y tiene stock
@@ -445,7 +446,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
     })
     const deadValue = deadStock.reduce((sum, p) => sum + (p.sale_price || 0) * (p.stock || 0), 0)
 
-    return { criticalStock, deadStock, deadValue, neverSold: deadStock.filter(p => !lastSold[p.id]) }
+    return { outOfStock, criticalStock, deadStock, deadValue, neverSold: deadStock.filter(p => !lastSold[p.id]) }
   }, [allProducts, sales])
 
   // ============ META DE VENTAS ============
@@ -501,6 +502,33 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
       diff,
       hasYesterday: yestTotal > 0 || todayTotal > 0,
     }
+  }, [sales])
+
+  // ============ RÉCORD 7 DÍAS (espejo client-side de lib/alerts.ts) ============
+  const record7d = useMemo(() => {
+    const daily: Record<string, number> = {}
+    sales.forEach(s => {
+      const d = new Date(s.created_at)
+      const k = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+      daily[k] = (daily[k] || 0) + s.total_amount
+    })
+    const now = new Date()
+    const todayKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`
+    const todayTotal = daily[todayKey] || 0
+    let daysWithSales = 0
+    let bestPast = 0
+    for (let i = 1; i <= 7; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i)
+      const k = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
+      const t = daily[k] || 0
+      if (t > 0) daysWithSales++
+      if (t > bestPast) bestPast = t
+    }
+    // Anti cold-start: misma regla que el servidor (>=3 días con ventas).
+    const hasHistory = daysWithSales >= 3
+    const isRecord = hasHistory && todayTotal > bestPast && todayTotal > 0
+    const pct = bestPast > 0 ? Math.min(100, (todayTotal / bestPast) * 100) : (todayTotal > 0 ? 100 : 0)
+    return { todayTotal, bestPast, hasHistory, isRecord, pct }
   }, [sales])
 
   // ============ ASESOR IA ============
@@ -967,6 +995,47 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
               </div>
             )}
 
+            {/* ============ RÉCORD 7 DÍAS ============ */}
+            {record7d.hasHistory && (
+              <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Trophy className="w-5 h-5 md:w-6 md:h-6 text-amber-500" />
+                  <h2 className="text-xl md:text-2xl font-black text-zinc-900 dark:text-white tracking-tight">
+                    RÉCORD DE LA SEMANA
+                  </h2>
+                </div>
+                {record7d.isRecord ? (
+                  <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <div className="flex-1">
+                      <div className="text-2xl md:text-3xl font-black text-amber-500 mb-1">¡Nuevo récord!</div>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                        Hoy llevas {fmt(record7d.todayTotal)} — superaste tu mejor día de los últimos 7 días ({fmt(record7d.bestPast)}).
+                      </p>
+                    </div>
+                    <div className="shrink-0 px-5 py-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/40 text-center">
+                      <div className="text-3xl font-black text-amber-600 dark:text-amber-400">{fmt(record7d.todayTotal)}</div>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">ventas de hoy</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-end justify-between mb-2">
+                      <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Hoy: {fmt(record7d.todayTotal)}</span>
+                      <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">Récord: {fmt(record7d.bestPast)}</span>
+                    </div>
+                    <div className="h-3 bg-zinc-100 dark:bg-white/5 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-500 transition-all duration-500" style={{ width: `${record7d.pct}%` }} />
+                    </div>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2">
+                      {record7d.bestPast > record7d.todayTotal
+                        ? `Te faltan ${fmt(record7d.bestPast - record7d.todayTotal)} para romper tu récord de los últimos 7 días.`
+                        : 'Sigue así: estás a nada de romper tu récord.'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* ============ SECCIÓN: INVENTARIO EN RIESGO ============ */}
             {allProducts.length > 0 && (
               <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-zinc-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm mb-6">
@@ -977,7 +1046,16 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-zinc-100 dark:bg-white/5 rounded-2xl p-5 border border-zinc-300 dark:border-white/10">
+                    <div className="flex items-center gap-2 mb-2">
+                      <PackageX className="w-5 h-5 text-zinc-600 dark:text-zinc-300" />
+                      <span className="text-xs font-bold text-zinc-700 dark:text-zinc-200 uppercase tracking-wider">Agotados</span>
+                    </div>
+                    <div className="text-3xl font-black text-zinc-800 dark:text-white">{inventoryAlerts.outOfStock.length}</div>
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">stock en 0, reponer</div>
+                  </div>
+
                   <div className="bg-red-50 dark:bg-red-900/10 rounded-2xl p-5 border border-red-200 dark:border-red-900/30">
                     <div className="flex items-center gap-2 mb-2">
                       <Snowflake className="w-5 h-5 text-red-500" />
@@ -1005,6 +1083,21 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                     <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">en productos parados</div>
                   </div>
                 </div>
+
+                {inventoryAlerts.outOfStock.length > 0 && (
+                  <div className="mb-4">
+                    <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2 flex items-center gap-2">
+                      <PackageX className="w-4 h-4 text-zinc-500" /> Agotados — reponer urgente
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {inventoryAlerts.outOfStock.slice(0, 8).map(p => (
+                        <span key={p.id} className="inline-flex items-center gap-1 px-3 py-1.5 bg-zinc-100 dark:bg-white/5 text-zinc-800 dark:text-zinc-100 text-xs font-bold rounded-lg border border-zinc-300 dark:border-white/15">
+                          {p.name} (0)
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {inventoryAlerts.criticalStock.length > 0 && (
                   <div className="mb-4">

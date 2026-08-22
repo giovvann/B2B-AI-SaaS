@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ReminderDock } from "@/app/components/ReminderDock";
+import { AlertsWatcher } from "@/app/components/AlertsWatcher";
 import { SyncProvider } from "@/components/SyncProvider";
 import OfflineBanner from "@/app/components/OfflineBanner";
 import { Toaster } from "@/components/toast";
@@ -81,6 +82,7 @@ export default function RootLayout({
           <Toaster>
             <SyncProvider>{children}</SyncProvider>
             <ReminderDock />
+            <AlertsWatcher />
             <OfflineBanner />
           </Toaster>
         </ThemeProvider>

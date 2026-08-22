@@ -17,6 +17,8 @@ export interface PushPayload {
   title: string;
   body: string;
   url?: string;
+  /** Tag único por notificación (evita que avisos distintos se pisen). */
+  tag?: string;
 }
 
 /**
