@@ -820,7 +820,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
               </div>
 
               <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm">
-                <div className="w-12 h-12 bg-violet-500 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-gold-400 to-gold-600 rounded-2xl flex items-center justify-center shadow-lg shadow-gold-400/30 mb-4">
                   <Package className="w-6 h-6 text-white" strokeWidth={2.5} />
                 </div>
                 <div className="text-xs font-bold text-espresso-600 dark:text-espresso-500 uppercase tracking-wider mb-1">
@@ -829,7 +829,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
                 <div className="text-3xl md:text-4xl font-black text-espresso-900 dark:text-white mb-1">
                   {metrics.totalUnitsSold.toLocaleString()}
                 </div>
-                <div className="text-xs text-violet-600 dark:text-violet-400 font-semibold">
+                <div className="text-xs text-gold-600 dark:text-gold-400 font-semibold">
                   {metrics.totalInventoryStock} en inventario
                 </div>
               </div>
@@ -1136,7 +1136,7 @@ export function MetricasClient({ boutiqueName = '', sales = [], allProducts = []
               {/* TOP 10 PRODUCTOS */}
               <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 md:p-8 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-sm lg:col-span-2">
                 <div className="flex items-center gap-2 mb-6">
-                  <Trophy className="w-5 h-5 md:w-6 md:h-6 text-violet-500" />
+                  <Trophy className="w-5 h-5 md:w-6 md:h-6 text-gold-500" />
                   <h2 className="text-xl md:text-2xl font-black text-espresso-900 dark:text-white tracking-tight">
                     TOP 10 PRODUCTOS MÁS VENDIDOS
                   </h2>
