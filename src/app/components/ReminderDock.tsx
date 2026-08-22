@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Bell, X, Check, Plus, Clock, AlertTriangle, Sun, Moon } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
+import { enablePushNotifications, getPushPermission } from '@/lib/push-client'
 import { useTheme } from 'next-themes'
 
 interface Reminder {
@@ -25,6 +26,60 @@ export function ReminderDock() {
   const [priority, setPriority] = useState<'low' | 'normal' | 'high'>('normal')
   const [boutiqueId, setBoutiqueId] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  const [pushPerm, setPushPerm] = useState<NotificationPermission | 'unsupported'>('default')
+  const [pushBusy, setPushBusy] = useState(false)
+
+  useEffect(() => { setPushPerm(getPushPermission()) }, [])
+
+  const enablePush = async () => {
+    setPushBusy(true)
+    await enablePushNotifications()
+    setPushPerm(getPushPermission())
+    setPushBusy(false)
+  }
+
+  // ── Alarma local exacta (app abierta) ──────────────────────────────────
+  // El cron de Vercel (Hobby) solo corre 1 vez al día; la puntualidad real
+  // la da este timer: cuando un recordatorio vence mientras la app está
+  // abierta, suena al minuto. Solo recordatorios del dueño, una sola vez
+  // por dispositivo (dedupe en localStorage), y marca push_notified_at para
+  // que el digest diario no lo repita. Cero spam: nada más dispara avisos.
+  useEffect(() => {
+    const check = () => {
+      if (typeof window === 'undefined' || !('Notification' in window)) return
+      if (Notification.permission !== 'granted') return
+      const now = Date.now()
+      items.forEach(async (r) => {
+        if (r.done) return
+        const dueT = new Date(r.due).getTime()
+        // Solo avisar si venció hace menos de 1h (si la app abre mucho
+        // después, ya no es una alarma útil — el digest diario lo cubre).
+        if (dueT > now || now - dueT > 3600000) return
+        const key = `veliora-local-notified-${r.id}`
+        try { if (localStorage.getItem(key)) return; localStorage.setItem(key, '1') } catch { return }
+        try {
+          const body = r.note ? `${r.title} — ${r.note}` : r.title
+          const opts: NotificationOptions = { body, icon: '/icons/icon-192x192.png', tag: `veliora-${r.id}` }
+          // Android/Chrome exigen mostrar la notificación vía service worker;
+          // `new Notification()` directo lanza TypeError en móvil.
+          const reg = await navigator.serviceWorker?.getRegistration?.()
+          if (reg && 'showNotification' in reg) {
+            reg.showNotification('Recordatorio de Veliora', opts)
+          } else {
+            new Notification('Recordatorio de Veliora', opts)
+          }
+          const supabase = createClient()
+          await supabase
+            .from('reminders')
+            .update({ push_notified_at: new Date().toISOString() })
+            .eq('id', r.id)
+        } catch { /* sin permisos o SW ausente: no romper la app */ }
+      })
+    }
+    check()
+    const t = setInterval(check, 30000)
+    return () => clearInterval(t)
+  }, [items])
 
   useEffect(() => {
     let alive = true
@@ -131,6 +186,18 @@ export function ReminderDock() {
             </div>
             <button onClick={() => setOpen(false)} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg text-zinc-400 dark:text-zinc-300 hover:text-zinc-800 dark:hover:text-white border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all" title="Cerrar"><X className="w-4 h-4" strokeWidth={2.5} /></button>
           </div>
+          {pushPerm !== 'unsupported' && pushPerm !== 'granted' && (
+            <button onClick={enablePush} disabled={pushBusy}
+              className="mb-3 w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-colors">
+              <Bell className="w-4 h-4" />
+              {pushBusy ? 'Activando...' : 'Activar avisos en este dispositivo'}
+            </button>
+          )}
+          {pushPerm === 'granted' && (
+            <div className="mb-3 flex items-center gap-2 px-3 py-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-semibold rounded-xl">
+              <Check className="w-4 h-4" /> Avisos activados en este dispositivo
+            </div>
+          )}
           <div className="space-y-2 max-h-60 overflow-auto">
             {items.map(r => (
               <div key={r.id} className={`flex items-center gap-2 p-2 rounded-xl border ${r.done ? 'border-zinc-200 dark:border-[rgba(200,164,118,0.16)] opacity-50' : 'border-zinc-200 dark:border-zinc-700'}`}>

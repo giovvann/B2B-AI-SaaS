@@ -46,3 +46,51 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+// ─── Notificaciones push (recordatorios fuera de la app) ───
+
+interface PushData {
+  title?: string;
+  body?: string;
+  url?: string;
+}
+
+self.addEventListener("push", (event: PushEvent) => {
+  let data: PushData = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data?.text() || "Tienes una notificación" };
+  }
+
+  const title = data.title || "Veliora";
+  const options: NotificationOptions = {
+    body: data.body || "",
+    icon: "/icons/icon-192x192.png",
+    badge: "/icons/icon-192x192.png",
+    tag: "veliora-reminder",
+    data: { url: data.url || "/dashboard" },
+  };
+
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event: NotificationEvent) => {
+  event.notification.close();
+  const target = event.notification.data?.url || "/dashboard";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      // Si ya hay una ventana abierta, enfocarla y navegar; si no, abrir una nueva
+      for (const client of clients) {
+        if ("focus" in client) {
+          client.focus();
+          if ("navigate" in client && target.startsWith("/")) {
+            (client as WindowClient).navigate(target);
+          }
+          return;
+        }
+      }
+      return self.clients.openWindow(target);
+    })
+  );
+});

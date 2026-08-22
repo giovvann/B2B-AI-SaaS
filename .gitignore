@@ -47,3 +47,4 @@ tsconfig.tsbuildinfo
 # Build output logs
 build-*.txt
 build-output*.txt
+.env*
