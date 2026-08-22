@@ -61,8 +61,16 @@ async function tryCreate(
   if (existing) return null
 
   const { data, error } = await admin.from('alerts').insert(row).select().single()
-  // Carrera por llave UNIQUE (otro proceso la creó primero) → no es error
-  if (error) return null
+  if (error) {
+    // 23505 = carrera por llave UNIQUE: otro proceso creó la misma alerta
+    // primero (dedupe esperado). Cualquier OTRO error es real y no debe
+    // tragarse en silencio — antes se devolvía null igual y el cron podía
+    // perder alertas sin dejar rastro.
+    if ((error as { code?: string }).code !== '23505') {
+      console.error(`Alerts: insert falló para ${row.type} (${row.dedupe_key}):`, error.message)
+    }
+    return null
+  }
   return data as AlertRow
 }
 
@@ -70,14 +78,25 @@ async function tryCreate(
  * Evalúa las condiciones de alerta para una boutique y crea las que falten.
  * Idempotente: correrlo 20 veces seguidas crea cada alerta una sola vez.
  */
+export interface EvaluateResult {
+  created: AlertRow[]
+  diag: {
+    productsSeen: number
+    productsNull: boolean
+    salesSeen: number
+    stockCandidates: number
+    productsRetried: boolean
+  }
+}
+
 export async function evaluateAlerts(
   admin: SupabaseClient,
   boutiqueId: string
-): Promise<AlertRow[]> {
+): Promise<EvaluateResult> {
   const created: AlertRow[] = []
   const eightDaysAgo = new Date(Date.now() - 8 * 24 * 3600 * 1000).toISOString()
 
-  const [{ data: products, error: pErr }, { data: recentSales, error: sErr }] = await Promise.all([
+  let [{ data: products, error: pErr }, { data: recentSales, error: sErr }] = await Promise.all([
     admin.from('products').select('id,name,size,color,stock').eq('boutique_id', boutiqueId),
     admin
       .from('sales')
@@ -87,6 +106,28 @@ export async function evaluateAlerts(
   ])
   if (pErr) throw pErr
   if (sErr) throw sErr
+
+  // Diagnóstico + retry: en Vercel el cron no veía productos (la query devolvía
+  // null/vacío sin error) y por tanto no creaba las alertas de stock, mientras
+  // la misma query local sí los devuelve. Reintenta una vez si sale null.
+  let productsRetried = false
+  if (products == null) {
+    console.error(`Alerts: productos null sin error (boutique ${boutiqueId}), reintentando`)
+    productsRetried = true
+    const retry = await admin
+      .from('products')
+      .select('id,name,size,color,stock')
+      .eq('boutique_id', boutiqueId)
+    if (!retry.error) products = retry.data
+  }
+
+  const diag: EvaluateResult['diag'] = {
+    productsSeen: products?.length ?? -1,
+    productsNull: products == null,
+    salesSeen: recentSales?.length ?? -1,
+    stockCandidates: (products ?? []).filter((p) => Number(p.stock || 0) <= LOW_STOCK_THRESHOLD).length,
+    productsRetried,
+  }
 
   // ── Récord de 7 días ──
   const daily: Record<string, number> = {}
@@ -171,7 +212,7 @@ export async function evaluateAlerts(
     }
   }
 
-  return created
+  return { created, diag }
 }
 
 /**

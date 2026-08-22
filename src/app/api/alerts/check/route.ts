@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
 
     const admin = createAdminClient()
-    const created = await evaluateAlerts(admin, boutiqueId)
+    const { created } = await evaluateAlerts(admin, boutiqueId)
     const delivered = await notifyAlerts(admin, boutiqueId, created)
 
     return NextResponse.json({

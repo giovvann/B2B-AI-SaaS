@@ -13,17 +13,30 @@ export const dynamic = 'force-dynamic'
 async function runAlertsSafetyNet(admin: ReturnType<typeof createAdminClient>) {
   let alertsCreated = 0
   let alertsDelivered = 0
-  try {
-    const { data: boutiques } = await admin.from('boutiques').select('id')
-    for (const b of boutiques ?? []) {
-      const created = await evaluateAlerts(admin, b.id)
+  const alertErrors: string[] = []
+
+  const { data: boutiques, error: bErr } = await admin.from('boutiques').select('id')
+  if (bErr) {
+    console.error('Cron: no pudo listar boutiques', bErr.message)
+    return { alertsCreated, alertsDelivered, alertErrors: [bErr.message] }
+  }
+
+  const alertDiag: Array<Record<string, unknown>> = []
+  for (const b of boutiques ?? []) {
+    // try/catch POR boutique: si una falla (error transitorio, datos raros),
+    // las demás se evalúan de todos modos. Antes un solo catch envolvía todo
+    // el loop y una boutique problemática dejaba al resto sin alertas.
+    try {
+      const { created, diag } = await evaluateAlerts(admin, b.id)
       alertsCreated += created.length
       alertsDelivered += await notifyAlerts(admin, b.id, created)
+      alertDiag.push({ id: String(b.id).slice(0, 8), ...diag, createdTypes: created.map((a) => a.type) })
+    } catch (e: any) {
+      console.error(`Cron: error evaluando alertas de la boutique ${b.id}`, e)
+      alertErrors.push(`${String(b.id).slice(0, 8)}: ${e?.message ?? String(e)}`)
     }
-  } catch (e) {
-    console.error('Cron: error evaluando alertas', e)
   }
-  return { alertsCreated, alertsDelivered }
+  return { alertsCreated, alertsDelivered, alertErrors, alertDiag }
 }
 
 /**
