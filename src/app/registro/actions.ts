@@ -6,7 +6,6 @@ import { createAdminClient } from '@/lib/supabase/admin'
 export async function registrarAction(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const trial = formData.get('trial') === 'true'
   const boutiqueName = (formData.get('boutique_name') as string) || 'Mi Boutique'
 
   if (!email || !password) {
@@ -59,22 +58,18 @@ export async function registrarAction(formData: FormData) {
     return { error: confirmError.message }
   }
 
-  const subscriptionExpiresAt = trial
-    ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-    : null
-
-  // NOTA: el trigger on_user_created (create_default_boutique) ya insertó una
-  // boutique con defaults de trial durante el mismo signUp. Con ignoreDuplicates:false,
-  // en conflicto (owner_id) esta upsert ACTUALIZA esa fila con el nombre y plan reales.
-  // Con true (= DO NOTHING) el plan/nombre nunca se aplicaban y TODA cuenta nueva
-  // quedaba como trial de 7 días (bug que rompía el freemium).
+  // ANTI-ABUSO (22-ago-2026): toda cuenta nueva nace en plan FREE. El trigger
+  // on_user_created ya crea la boutique free durante signUp; esta upsert solo
+  // fija el nombre (ignoreDuplicates:false = UPDATE en conflicto owner_id).
+  // El trial de 7 días se canjea UNA sola vez por dispositivo vía
+  // /api/claim-trial → función claim_trial (tabla trial_redemptions).
   const { error: boutiqueError } = await admin.from('boutiques').upsert({
     owner_id: signUpData.user.id,
     name: boutiqueName.trim(),
-    subscription_expires_at: subscriptionExpiresAt,
-    is_active: trial ? true : false,
-    is_trial: trial ? true : false,
-    plan_type: trial ? 'trial' : 'free',
+    subscription_expires_at: null,
+    is_active: true,
+    is_trial: false,
+    plan_type: 'free',
   }, { onConflict: 'owner_id', ignoreDuplicates: false })
 
   if (boutiqueError) {

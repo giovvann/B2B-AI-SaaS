@@ -32,10 +32,12 @@ export async function getOrCreateBoutique() {
   // 2. No existe: crear de forma atómica con UPSERT.
   //    Si dos peticiones corren a la vez, onConflict garantiza que solo haya una fila.
   const admin = createAdminClient()
+  // ANTI-ABUSO: boutiques nuevas nacen en plan free; el trial se canjea
+  // una sola vez por dispositivo vía /api/claim-trial → claim_trial().
   const { data: upserted, error: upsertError } = await admin
     .from('boutiques')
     .upsert(
-      { owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: true },
+      { owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: false, plan_type: 'free', subscription_expires_at: null },
       { onConflict: 'owner_id', ignoreDuplicates: false }
     )
     .select('id, name')

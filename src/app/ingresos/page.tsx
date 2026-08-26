@@ -25,9 +25,11 @@ export default async function IngresosPage() {
 
   if (!boutique) {
     const admin = createAdminClient()
+    // ANTI-ABUSO: las boutiques nuevas nacen en plan free (el trial se canjea
+    // una sola vez por dispositivo vía /api/claim-trial).
     const { data: newBoutique, error: insertError } = await admin
       .from('boutiques')
-      .insert({ owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: true })
+      .insert({ owner_id: user.id, name: 'Mi Boutique', is_active: true, is_trial: false, plan_type: 'free', subscription_expires_at: null })
       .select('id, name')
       .single()
 

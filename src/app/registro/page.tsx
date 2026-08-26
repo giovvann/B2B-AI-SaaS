@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { registrarAction } from './actions'
 import { Mail, Lock, UserPlus, Sparkles, MessageCircle, CheckCircle, Loader2, Store } from 'lucide-react'
-import { getDeviceId, getDeviceName } from '@/lib/device'
+import { getDeviceId, getDeviceName, getDeviceFingerprint } from '@/lib/device'
 import Link from 'next/link'
 
 function RegistroForm() {
@@ -19,6 +19,8 @@ function RegistroForm() {
   const [pin, setPin] = useState('')
   const [pinError, setPinError] = useState('')
   const [pinLoading, setPinLoading] = useState(false)
+  // Resultado del canje de la prueba: 'claimed' | 'used' | null (aún no evaluado)
+  const [trialStatus, setTrialStatus] = useState<'claimed' | 'used' | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -41,7 +43,6 @@ function RegistroForm() {
     const formData = new FormData()
     formData.append('email', email)
     formData.append('password', password)
-    formData.append('trial', String(trial))
     formData.append('boutique_name', boutiqueName.trim())
 
     const result = await registrarAction(formData)
@@ -124,6 +125,21 @@ function RegistroForm() {
 
       sessionStorage.setItem('veliora_pin_verified', 'true')
 
+      // ANTI-ABUSO: canjear la prueba de 7 días (una sola vez por dispositivo).
+      // Si este dispositivo ya la usó, la cuenta se queda en plan free y la UI
+      // lo explica con honestidad — nunca se bloquea el acceso.
+      try {
+        const claimRes = await fetch('/api/claim-trial', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ device_id: getDeviceId(), fingerprint: await getDeviceFingerprint() }),
+        })
+        const claimData = await claimRes.json()
+        setTrialStatus(claimData.claimed ? 'claimed' : 'used')
+      } catch {
+        setTrialStatus(null)
+      }
+
       setStep('ready')
       setTimeout(() => {
         router.push('/dashboard')
@@ -138,7 +154,7 @@ function RegistroForm() {
 
   const whatsappLink = `https://wa.me/528342177709?text=${encodeURIComponent(
     `Hola, acabo de registrarme en Veliora. Quiero activar mi membresía.${
-      trial ? ' Ya tengo 7 días de prueba.' : ''
+      trialStatus === 'claimed' ? ' Ya tengo 7 días de prueba.' : ''
     }`
   )}`
 
@@ -213,12 +229,14 @@ function RegistroForm() {
             <CheckCircle className="w-8 h-8 text-white" strokeWidth={2.5} />
           </div>
           <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#2a2420', marginBottom: '.6rem', fontFamily: "'Playfair Display',Georgia,serif" }}>
-            {trial ? '¡Todo listo!' : 'Cuenta creada'}
+            {trialStatus === 'claimed' ? '¡Todo listo!' : 'Cuenta creada'}
           </h1>
           <p style={{ color: 'rgba(42,36,32,.5)', fontSize: '.85rem', marginBottom: '1.5rem' }}>
-            Tu boutique está configurada. Serás redirigido a tu panel.
+            {trialStatus === 'used'
+              ? 'Este dispositivo ya usó su prueba gratuita. Tu cuenta está activa en plan gratuito; las funciones premium se desbloquean con la membresía.'
+              : 'Tu boutique está configurada. Serás redirigido a tu panel.'}
           </p>
-          {!trial && (
+          {trialStatus !== 'claimed' && (
             <a
               href={whatsappLink}
               target="_blank"

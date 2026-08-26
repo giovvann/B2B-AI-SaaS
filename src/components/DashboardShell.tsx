@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase'
 import { getDeviceId, getDeviceName } from '@/lib/device'
 import { HomePageContent } from '@/app/dashboard/HomePageContent'
@@ -12,9 +12,10 @@ interface DashboardShellProps {
   userName: string
   boutiqueName: string
   boutiqueId: string
+  children?: ReactNode
 }
 
-export function DashboardShell({ userName, boutiqueName, boutiqueId }: DashboardShellProps) {
+export function DashboardShell({ userName, boutiqueName, boutiqueId, children }: DashboardShellProps) {
   const [view, setView] = useState<View>('loading')
   const [message, setMessage] = useState('')
   const [pin, setPin] = useState('')
@@ -457,11 +458,14 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId }: Dashboard
 
   // Dueño o empleado aprobado -> HomePageContent
   return (
-    <HomePageContent
-      role={view as 'owner' | 'employee'}
-      userName={userName}
-      boutiqueName={boutiqueName}
-      showAdmin={view === 'owner'}
-    />
+    <>
+      {children}
+      <HomePageContent
+        role={view as 'owner' | 'employee'}
+        userName={userName}
+        boutiqueName={boutiqueName}
+        showAdmin={view === 'owner'}
+      />
+    </>
   )
 }

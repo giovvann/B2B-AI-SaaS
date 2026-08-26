@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { RoleSelector } from '@/app/RoleSelector'
 import { DashboardShell } from '@/components/DashboardShell'
+import { TrialClaimBanner } from '@/components/TrialClaimBanner'
 
 export const metadata = {
   title: 'Inicio | Mi Boutique',
@@ -28,11 +29,13 @@ export default async function DashboardPage() {
   // Obtener boutique
   let { data: boutique } = await supabase
     .from('boutiques')
-    .select('id, name')
+    .select('id, name, plan_type')
     .eq('owner_id', user.id)
     .maybeSingle()
 
-  // Cuentas nuevas sin boutique (ej. registro con Google): crearla con trial de 7 días
+  // Cuentas nuevas sin boutique (ej. registro con Google): nacen en plan FREE.
+  // ANTI-ABUSO: el trial de 7 días se canjea una sola vez por dispositivo
+  // desde el banner del dashboard (/api/claim-trial → claim_trial()).
   if (!boutique) {
     if (role === 'employee') {
       // Empleado sin boutique propia (ej. cuenta Google nueva): re-elegir rol
@@ -44,12 +47,12 @@ export default async function DashboardPage() {
       .upsert({
         owner_id: user.id,
         name: (user.user_metadata?.boutique_name as string) || 'Mi Boutique',
-        subscription_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        subscription_expires_at: null,
         is_active: true,
-        is_trial: true,
-        plan_type: 'trial',
+        is_trial: false,
+        plan_type: 'free',
       }, { onConflict: 'owner_id' })
-      .select('id, name')
+      .select('id, name, plan_type')
       .single()
     boutique = created
     if (!boutique) redirect('/login')
@@ -60,6 +63,8 @@ export default async function DashboardPage() {
       userName={user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario'}
       boutiqueName={boutique.name}
       boutiqueId={boutique.id}
-    />
+    >
+      {(boutique as { plan_type?: string }).plan_type === 'free' && <TrialClaimBanner />}
+    </DashboardShell>
   )
 }
