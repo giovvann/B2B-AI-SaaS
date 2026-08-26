@@ -23,7 +23,28 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // ROBUSTEZ (26-ago-2026): si la cookie de sesión viene corrupta (base64
+  // inválido), @supabase/ssr lanza al decodificarla DENTRO de getUser() y el
+  // middleware explota con 500 en TODA la app — el usuario quedaba atrapado
+  // sin poder entrar ni al login (QA anti-abuso lo destapó). Se trata como
+  // "sin sesión" y se destruye la cookie corrupta para que pueda re-loguearse.
+  let user: Awaited<ReturnType<typeof supabase.auth.getUser>>['data']['user'] = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {
+    user = null
+    const projRef = (process.env.NEXT_PUBLIC_SUPABASE_URL || '')
+      .replace('https://', '').split('.')[0]
+    const corruptCookie = `sb-${projRef}-auth-token`
+    request.cookies.delete(corruptCookie)
+    response.cookies.set(corruptCookie, '', { maxAge: 0, path: '/' })
+    for (let i = 0; i < 10; i++) {
+      const chunk = `${corruptCookie}.${i}`
+      request.cookies.delete(chunk)
+      response.cookies.set(chunk, '', { maxAge: 0, path: '/' })
+    }
+  }
   const pathname = request.nextUrl.pathname
 
   const SUPERADMIN_EMAIL = (process.env.SUPERADMIN_EMAIL || 'Giovva729@hotmail.com').toLowerCase()
