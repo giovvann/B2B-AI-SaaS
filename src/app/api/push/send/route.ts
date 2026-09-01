@@ -83,7 +83,11 @@ export async function GET(req: NextRequest) {
       // BUG FIX: antes se hacía early return aquí y el safety net de alertas
       // nunca corría en días sin recordatorios (la mayoría). Ahora siempre evalúa.
       const net = await runAlertsSafetyNet(admin)
-      return NextResponse.json({ ok: true, due: 0, deliveries: 0, message: 'Sin recordatorios vencidos', ...net })
+      // MISMA REGLA para el ciclo de vida del trial: casi nunca hay recordatorios
+      // vencidos, y este early return dejaba el aviso D-1 y el downgrade sin
+      // correr jamás (el return final con ...life era inalcanzable). Corre aquí.
+      const life = await runTrialLifecycle(admin)
+      return NextResponse.json({ ok: true, due: 0, deliveries: 0, message: 'Sin recordatorios vencidos', ...net, ...life })
     }
 
     const boutiqueIds = [...new Set(dueReminders.map(r => r.boutique_id))]
