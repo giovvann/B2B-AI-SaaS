@@ -3,6 +3,7 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase'
 import { getDeviceId, getDeviceName } from '@/lib/device'
+import { getPushPermission, isPushSupported, enablePushNotifications } from '@/lib/push-client'
 import { HomePageContent } from '@/app/dashboard/HomePageContent'
 import { Crown, User, Loader2, ShieldAlert, Smartphone, Lock, XCircle, ArrowLeft } from 'lucide-react'
 
@@ -455,6 +456,23 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId, children }:
       </main>
     )
   }
+
+  // ── Opt-in de notificaciones push (una sola vez por dispositivo) ──────
+  // Sin suscripciones no hay push que llegue (récord de ventas, stock,
+  // fin de prueba). Se pide permiso una única vez, solo a dueños y solo
+  // si aún no han decidido. Si aceptan, enablePushNotifications() suscribe
+  // el dispositivo vía /api/push/subscribe (upsert por endpoint).
+  useEffect(() => {
+    if (view !== 'owner') return
+    if (!isPushSupported() || getPushPermission() !== 'default') return
+    const key = 'veliora_push_prompted'
+    try { if (localStorage.getItem(key)) return } catch { return }
+    const t = setTimeout(async () => {
+      try { localStorage.setItem(key, '1') } catch { /* noop */ }
+      await enablePushNotifications()
+    }, 2500)
+    return () => clearTimeout(t)
+  }, [view])
 
   // Dueño o empleado aprobado -> HomePageContent
   return (

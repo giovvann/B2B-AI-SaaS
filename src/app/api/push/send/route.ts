@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendPush } from '@/lib/push'
 import { evaluateAlerts, notifyAlerts } from '@/lib/alerts'
+import { runTrialLifecycle } from '@/lib/trial-lifecycle'
 
 export const dynamic = 'force-dynamic'
 
@@ -161,6 +162,10 @@ export async function GET(req: NextRequest) {
     // Safety net de alertas (récord 7 días / agotado / stock bajo)
     const net = await runAlertsSafetyNet(admin)
 
+    // Ciclo de vida del trial: aviso único 24h antes de expirar, aviso al
+    // expirar y downgrade — idempotente vía trial_notifications.
+    const life = await runTrialLifecycle(admin)
+
     return NextResponse.json({
       ok: true,
       due: dueReminders.length,
@@ -168,6 +173,7 @@ export async function GET(req: NextRequest) {
       skippedNoSubs,
       deadSubscriptionsRemoved: deadEndpoints.length,
       ...net,
+      ...life,
     })
   } catch (err: any) {
     console.error('Error push/send:', err)
