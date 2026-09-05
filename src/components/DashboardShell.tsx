@@ -24,6 +24,29 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId, children }:
   const [pinLoading, setPinLoading] = useState(false)
   const supabase = createClient()
 
+  // ── Opt-in de notificaciones push (una sola vez por dispositivo) ──────
+  // Sin suscripciones no hay push que llegue (récord de ventas, stock,
+  // fin de prueba). Se pide permiso una única vez, solo a dueños y solo
+  // si aún no han decidido. Si aceptan, enablePushNotifications() suscribe
+  // el dispositivo vía /api/push/subscribe (upsert por endpoint).
+  //
+  // FIX QA (03-sep-2026): este hook DEBE vivir antes de todos los
+  // early-returns de vista. Estaba después de ellos, de modo que al pasar
+  // de 'pin' a 'owner' React ejecutaba más hooks que en el render anterior
+  // → "Rendered more hooks than during the previous render" → overlay de
+  // error y el dueño nunca veía su panel tras verificar el PIN.
+  useEffect(() => {
+    if (view !== 'owner') return
+    if (!isPushSupported() || getPushPermission() !== 'default') return
+    const key = 'veliora_push_prompted'
+    try { if (localStorage.getItem(key)) return } catch { return }
+    const t = setTimeout(async () => {
+      try { localStorage.setItem(key, '1') } catch { /* noop */ }
+      await enablePushNotifications()
+    }, 2500)
+    return () => clearTimeout(t)
+  }, [view])
+
   // Al montar, verificar el estado de este dispositivo
   useEffect(() => {
     checkDevice()
@@ -456,23 +479,6 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId, children }:
       </main>
     )
   }
-
-  // ── Opt-in de notificaciones push (una sola vez por dispositivo) ──────
-  // Sin suscripciones no hay push que llegue (récord de ventas, stock,
-  // fin de prueba). Se pide permiso una única vez, solo a dueños y solo
-  // si aún no han decidido. Si aceptan, enablePushNotifications() suscribe
-  // el dispositivo vía /api/push/subscribe (upsert por endpoint).
-  useEffect(() => {
-    if (view !== 'owner') return
-    if (!isPushSupported() || getPushPermission() !== 'default') return
-    const key = 'veliora_push_prompted'
-    try { if (localStorage.getItem(key)) return } catch { return }
-    const t = setTimeout(async () => {
-      try { localStorage.setItem(key, '1') } catch { /* noop */ }
-      await enablePushNotifications()
-    }, 2500)
-    return () => clearTimeout(t)
-  }, [view])
 
   // Dueño o empleado aprobado -> HomePageContent
   return (

@@ -137,7 +137,7 @@ export function InventarioClient({ products, totalProducts, inventoryValue }: Pr
       {isEmpty ? (
         <div className="text-center py-20 bg-white dark:bg-[#16130f] rounded-3xl border-2 border-dashed border-espresso-300 dark:border-[rgba(200,164,118,0.16)]">
           <Package className="w-20 h-20 mx-auto mb-5 text-espresso-300 dark:text-espresso-700" strokeWidth={1.5} />
-          <h2 className="text-2xl font-black text-espresso-700 dark:text-espresso-300 mb-2">Tu inventario esta vacio</h2>
+          <h2 className="text-2xl font-black text-espresso-700 dark:text-espresso-300 mb-2">Tu inventario está vacío</h2>
           <p className="text-base text-espresso-600 dark:text-espresso-400">
             Usa <span className="font-bold text-gold-500">NUEVO INGRESO (IA)</span> para empezar
           </p>

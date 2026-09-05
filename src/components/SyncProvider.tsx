@@ -15,8 +15,15 @@ const Ctx = createContext<SyncState>({
 export const useSync = () => useContext(Ctx)
 
 export function SyncProvider({ children }: { children: ReactNode }) {
+  // FIX QA (04-sep-2026): el estado inicial DEBE ser determinista para que
+  // SSR y primer render del cliente pinten lo mismo. Antes se leía
+  // `navigator.onLine` en el initializer: en Node >= 21 `navigator` existe
+  // como global pero `onLine` es undefined → el servidor pintaba el banner
+  // amber de "Modo sin conexión" y el cliente no → error de hidratación en
+  // TODAS las páginas ("Did not expect server HTML to contain a <svg>").
+  // La detección real de conectividad ya vive en el useEffect (ping + eventos).
   const [state, setState] = useState<SyncState>({
-    online: typeof navigator !== 'undefined' ? navigator.onLine : true,
+    online: true,
     pending: 0,
     syncing: false,
     lastSync: null,

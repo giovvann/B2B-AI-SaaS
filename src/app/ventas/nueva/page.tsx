@@ -307,7 +307,7 @@ export default function NuevaVentaPage() {
             {cart.length === 0 ? (
               <div className="text-center py-12 text-espresso-400">
                 <ShoppingCart className="w-24 h-24 mx-auto mb-4 opacity-50" />
-                <p className="text-xl font-semibold">El carrito esta vacio</p>
+                <p className="text-xl font-semibold">El carrito está vacío</p>
                 <p className="text-sm">Haz clic en un producto para agregarlo</p>
               </div>
             ) : (
