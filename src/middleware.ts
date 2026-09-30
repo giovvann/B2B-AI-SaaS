@@ -68,12 +68,21 @@ export async function middleware(request: NextRequest) {
   // REGLA: Rutas públicas
   // ============================================
   const publicRoutes = ['/login', '/registro', '/auth', '/privacidad', '/terminos', '/seguridad', '/suscripcion-expirada']
-  const publicApiRoutes = ['/api/ping', '/api/push/send', '/api/extract-invoice', '/api/analyze-business', '/api/whatsapp-alert', '/api/products-by-sku', '/api/add-stock', '/api/export-all', '/api/assistant']
+  // SEGURIDAD (30-sep-2026): solo health + cron son públicos.
+  // Todo lo demás (/api/*) exige sesión y devuelve 401 JSON (no redirect HTML).
+  const publicApiRoutes = ['/api/ping', '/api/push/send']
   const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))
   const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
 
   if (pathname === '/' || isPublic || isPublicApi) {
     return response
+  }
+
+  // ============================================
+  // REGLA: API sin sesión -> 401 JSON (no redirect)
+  // ============================================
+  if (!user && pathname.startsWith('/api/')) {
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
   }
 
   // ============================================
