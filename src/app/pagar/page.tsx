@@ -85,6 +85,12 @@ export default function PagarPage() {
           <p>Envía <b>$10.50 USDC (red Solana)</b> a:</p>
           <div style={{ background: '#f4f4f5', padding: 12, borderRadius: 10, wordBreak: 'break-all' }}><b>{WALLET || 'Wallet en configuración'}</b></div>
           <p>Incluye en el memo tu ID de boutique (te lo muestra tu dashboard). La activación es instantánea al confirmarse la red.</p>
+          <div style={{ background: '#fffbeb', padding: 12, borderRadius: 10, marginTop: 12 }}>
+            <p style={{ margin: 0 }}><b>¿Primera vez? Solo tardas ~10 min una vez:</b></p>
+            <p style={{ margin: '8px 0 0' }}>1. Si tienes <b>Bitso</b>: deposita por SPEI, compra USDC y retíralo por la <b>red Solana</b> a la dirección de arriba.</p>
+            <p style={{ margin: '8px 0 0' }}>2. Si no: descarga <b>Phantom</b>, compra USDC con tu tarjeta y envíalo aquí escaneando el QR.</p>
+            <p style={{ margin: '8px 0 0' }}>Los siguientes pagos te toman 1 minuto.</p>
+          </div>
         </section>
       )}
 
