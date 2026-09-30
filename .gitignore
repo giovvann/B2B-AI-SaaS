@@ -48,4 +48,5 @@ tsconfig.tsbuildinfo
 build-*.txt
 build-output*.txt
 .env*
+!.env.example
 .qa-boutique-backup.json
