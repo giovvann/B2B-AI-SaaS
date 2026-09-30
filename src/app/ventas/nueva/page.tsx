@@ -232,10 +232,10 @@ export default function NuevaVentaPage() {
               className="p-4 bg-espresso-100 dark:bg-[#201b16] rounded-2xl hover:bg-espresso-200 dark:hover:bg-espresso-700 transition-colors">
               {theme === 'dark' ? <Sun className="w-6 h-6 text-espresso-800 dark:text-espresso-200" /> : <Moon className="w-6 h-6 text-espresso-800 dark:text-espresso-200" />}
             </button>
-            <button onClick={() => router.push('/ingresos')}
+            <button onClick={() => router.push('/ingresos/nuevo')}
               className="flex items-center gap-2 px-5 md:px-6 py-4 bg-gold-50 dark:bg-gold-900/20 hover:bg-gold-100 dark:hover:bg-gold-900/30 text-gold-600 dark:text-gold-400 font-bold rounded-2xl transition-colors border border-gold-200 dark:border-gold-800/50">
               <ShoppingCart className="w-5 h-5" />
-              <span className="text-base md:text-lg">IR AL INVENTARIO</span>
+              <span className="text-base md:text-lg">AGREGAR PRODUCTO</span>
             </button>
           </div>
         </div>
@@ -260,6 +260,10 @@ export default function NuevaVentaPage() {
                   <ShoppingCart className="w-20 h-20 mx-auto mb-4 opacity-50" />
                   <p className="text-xl font-semibold">No hay productos</p>
                   <p className="text-sm mt-1">Agrega productos desde &quot;Nuevo Ingreso&quot; para empezar a vender</p>
+                  <button onClick={() => router.push('/ingresos/nuevo')}
+                    className="mt-6 px-6 py-4 bg-espresso-900 dark:bg-white text-white dark:text-espresso-900 font-bold rounded-2xl transition-all active:scale-[0.98]">
+                    Agregar producto ahora
+                  </button>
                 </div>
               ) : (
                 filteredProducts.map(product => (
