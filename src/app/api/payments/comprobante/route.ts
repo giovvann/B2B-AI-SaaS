@@ -107,12 +107,9 @@ export async function POST(req: NextRequest) {
       const { data: dup } = await admin.from('payments')
         .select('id').eq('folio_hash', hash).maybeSingle()
       if (dup) {
-        await admin.from('payments').insert({
-          boutique_id: boutique.id, user_id: user.id, rail: 'spei_comprobante',
-          amount_mxn: expected, status: 'rejected', folio_hash: hash,
-          ai_confidence: confianza, ai_reason: 'folio duplicado', reviewed_by: 'auto',
-        })
-        return NextResponse.json({ ok: false, error: 'Este comprobante ya fue usado.' }, { status: 409 })
+        // Sin insert: el hash ya existe (unique index) y la fila original
+        // ya registra el intento. Insertar aquí tronaría con 500.
+        return NextResponse.json({ ok: false, error: 'Este comprobante ya está registrado (en revisión o usado). Te avisamos por WhatsApp.' }, { status: 409 })
       }
       if (razones.length === 0 && confianza >= 0.75) {
         const { data: expires } = await admin.rpc('activate_premium', {
