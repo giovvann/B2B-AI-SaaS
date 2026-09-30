@@ -31,10 +31,15 @@ export async function POST(req: NextRequest) {
     if (!ficha) return NextResponse.json({ error: 'Código inexistente.' }, { status: 404 })
     if (ficha.redeemed_at) return NextResponse.json({ error: 'Código ya usado.' }, { status: 409 })
 
-    const { error: lock } = await admin.from('fichas')
+    // Canje atómico: solo la primera petición concurrente actualiza la fila.
+    const { data: locked, error: lock } = await admin.from('fichas')
       .update({ redeemed_at: new Date().toISOString(), boutique_id: boutique.id })
       .eq('code', normalized).is('redeemed_at', null)
+      .select('code')
     if (lock) throw lock
+    if (!locked || locked.length === 0) {
+      return NextResponse.json({ error: 'Código ya usado.' }, { status: 409 })
+    }
 
     const { data: expires } = await admin.rpc('activate_premium', {
       p_boutique_id: boutique.id, p_days: ficha.days ?? 30,
