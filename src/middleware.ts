@@ -72,7 +72,9 @@ export async function middleware(request: NextRequest) {
   // Todo lo demás (/api/*) exige sesión y devuelve 401 JSON (no redirect HTML).
   // EXCEPCIÓN: /api/payments/crypto-webhook lo llama Helius servidor-a-servidor
   // sin cookie de sesión; se autentica con HELIUS_AUTH dentro del route.
-  const publicApiRoutes = ['/api/ping', '/api/push/send', '/api/payments/crypto-webhook']
+  // EXCEPCIÓN: /api/whatsapp-alert GET lo consulta el worker Baileys con
+  // VELIORA_WA_SECRET (el route acepta sesión O secret); bloquearlo mataría las alertas.
+  const publicApiRoutes = ['/api/ping', '/api/push/send', '/api/payments/crypto-webhook', '/api/whatsapp-alert']
   const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))
   const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
 
