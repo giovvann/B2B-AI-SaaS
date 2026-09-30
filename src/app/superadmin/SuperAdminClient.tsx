@@ -45,10 +45,42 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
   const [selectedBoutique, setSelectedBoutique] = useState<Boutique | null>(null)
   const [detailsData, setDetailsData] = useState<any>(null)
   const [detailsLoading, setDetailsLoading] = useState(false)
+  const [pendingPays, setPendingPays] = useState<any[]>([])
+  const [paysLoading, setPaysLoading] = useState(false)
+
+  const loadPendingPays = async () => {
+    setPaysLoading(true)
+    try {
+      const r = await fetch('/api/payments/revisar')
+      const j = await r.json()
+      setPendingPays(j.pending || [])
+    } catch { /* sin conexión: se reintenta manual */ }
+    setPaysLoading(false)
+  }
+
+  const handlePayDecision = (id: string, action: 'approve' | 'reject') => {
+    startTransition(async () => {
+      try {
+        const r = await fetch('/api/payments/revisar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ payment_id: id, action }),
+        })
+        const j = await r.json()
+        if (!r.ok) throw new Error(j.error || 'Error al decidir')
+        toast.success(action === 'approve' ? 'Pago aprobado, premium activado' : 'Pago rechazado')
+        loadPendingPays()
+        router.refresh()
+      } catch (err) {
+        toast.error((err as Error).message)
+      }
+    })
+  }
   
   // Patrón mounted para evitar errores de hidratación con el tema
   useEffect(() => {
     setMounted(true)
+    loadPendingPays()
   }, [])
   
   const now = new Date()
@@ -303,6 +335,55 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
               ${metrics.potentialIncome.toLocaleString('es-MX')}
             </div>
           </div>
+        </div>
+
+        <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-black text-espresso-900 dark:text-white flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-gold-500" />
+              Pagos pendientes ({pendingPays.length})
+            </h2>
+            <button
+              onClick={loadPendingPays}
+              disabled={paysLoading}
+              className="px-4 py-2 rounded-2xl font-bold text-xs bg-espresso-100 dark:bg-[#201b16] text-espresso-600 dark:text-espresso-300 hover:bg-espresso-200 transition-all"
+            >
+              {paysLoading ? 'Cargando…' : 'Recargar'}
+            </button>
+          </div>
+          {pendingPays.length === 0 ? (
+            <p className="text-sm text-espresso-500 dark:text-espresso-400">
+              Sin comprobantes por revisar. Los pagos con IA de alta confianza se aprueban solos.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {pendingPays.map((p) => (
+                <div key={p.id} className="flex flex-col md:flex-row md:items-center gap-3 p-4 rounded-2xl bg-espresso-50 dark:bg-espresso-900/40 border border-espresso-200 dark:border-[rgba(200,164,118,0.12)]">
+                  <div className="flex-1 text-sm text-espresso-700 dark:text-espresso-200">
+                    <div className="font-bold">${p.amount_mxn} MXN · {p.rail}</div>
+                    <div className="opacity-70">confianza IA: {p.ai_confidence ?? '—'} · {p.ai_reason || 'sin detalle'}</div>
+                    <div className="opacity-50 text-xs">{new Date(p.created_at).toLocaleString('es-MX')}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handlePayDecision(p.id, 'approve')}
+                      disabled={isPending}
+                      className="px-4 py-2.5 rounded-2xl font-bold text-xs bg-green-600 hover:bg-green-700 text-white transition-all flex items-center gap-1"
+                    >
+                      <CheckCircle className="w-4 h-4" /> Aprobar
+                    </button>
+                    <button
+                      onClick={() => handlePayDecision(p.id, 'reject')}
+                      disabled={isPending}
+                      className="px-4 py-2.5 rounded-2xl font-bold text-xs bg-red-600 hover:bg-red-700 text-white transition-all flex items-center gap-1"
+                    >
+                      <Ban className="w-4 h-4" /> Rechazar
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         
         <div className="bg-white dark:bg-[#16130f] rounded-3xl p-6 border border-espresso-200 dark:border-[rgba(200,164,118,0.16)] shadow-xl mb-6">
