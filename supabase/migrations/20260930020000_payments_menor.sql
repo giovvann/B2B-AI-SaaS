@@ -43,9 +43,8 @@ create policy "payments_owner_insert" on public.payments
   for insert with check (auth.uid() = user_id);
 
 alter table public.fichas enable row level security;
-drop policy if exists "fichas_read_all_auth" on public.fichas;
-create policy "fichas_read_all_auth" on public.fichas
-  for select using (auth.role() = 'authenticated');
+-- Sin políticas SELECT para anon/authenticated: las fichas solo se tocan
+-- vía service_role (canje atómico). Evita enumerar códigos válidos.
 
 create or replace function public.activate_premium(p_boutique_id uuid, p_days int default 30)
 returns timestamptz
@@ -66,3 +65,10 @@ begin
   return v_expires;
 end;
 $$;
+
+-- Solo service_role puede activar premium (los routes usan admin client).
+-- Sin esto, cualquier usuario autenticado podría invocar el RPC y pagar $0.
+-- Nota: en Postgres el EXECUTE viene de PUBLIC por defecto; el revoke a PUBLIC es el que cierra.
+revoke all on function public.activate_premium(uuid, int) from anon, authenticated;
+revoke all on function public.activate_premium(uuid, int) from public;
+grant execute on function public.activate_premium(uuid, int) to service_role;
