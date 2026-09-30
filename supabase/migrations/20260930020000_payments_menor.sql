@@ -40,7 +40,7 @@ create policy "payments_owner_read" on public.payments
   for select using (auth.uid() = user_id);
 drop policy if exists "payments_owner_insert" on public.payments;
 create policy "payments_owner_insert" on public.payments
-  for insert with check (auth.uid() = user_id);
+  for insert with check (auth.uid() = user_id and status = 'pending');
 
 alter table public.fichas enable row level security;
 -- Sin políticas SELECT para anon/authenticated: las fichas solo se tocan
