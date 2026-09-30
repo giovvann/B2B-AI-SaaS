@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import {
   Sun, Moon, X, Store, Activity, AlertTriangle, DollarSign,
   Search, CalendarPlus, Clock, Ban, CheckCircle, Eye, Loader2,
-  TrendingUp, Package, ShoppingBag
+  TrendingUp, Package, ShoppingBag, Ticket
 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
@@ -362,6 +362,11 @@ export function SuperAdminClient({ boutiques }: SuperAdminClientProps) {
                   <div className="flex-1 text-sm text-espresso-700 dark:text-espresso-200">
                     <div className="font-bold">${p.amount_mxn} MXN · {p.rail}</div>
                     <div className="opacity-70">confianza IA: {p.ai_confidence ?? '—'} · {p.ai_reason || 'sin detalle'}</div>
+                    {p.code && (
+                      <div className="mt-1 font-mono text-xs bg-black/10 dark:bg-white/10 rounded-lg px-2 py-1 break-all flex items-center gap-1.5">
+                        <Ticket className="w-3.5 h-3.5 flex-shrink-0" /> {p.code} <span className="opacity-60 font-sans">(cánjealo en OXXO y luego aprueba)</span>
+                      </div>
+                    )}
                     <div className="opacity-50 text-xs">{new Date(p.created_at).toLocaleString('es-MX')}</div>
                   </div>
                   <div className="flex gap-2">

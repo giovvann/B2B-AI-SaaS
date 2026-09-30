@@ -1,9 +1,11 @@
 'use client'
 import { useState } from 'react'
+import { Store, Landmark, Zap, Ticket } from 'lucide-react'
 
 /**
- * /pagar — 3 rieles sin adultos: 1) Transferencia/OXXO + comprobante (IA activa),
- * 2) USDC Solana (instantáneo), 3) Ficha VEL-XXXX. Sin Stripe.
+ * /pagar — rieles sin adultos: 1) OXXO $200 (tarjeta al portador, IA activa),
+ * 2) USDC Solana (instantáneo), 3) Ficha VEL-XXXX. Transferencia/SPEI solo
+ * visible con CLABE configurada (pausado por restricción N2). Sin Stripe.
  * Env pública: NEXT_PUBLIC_PAY_CLABE, NEXT_PUBLIC_PAY_TITULAR, NEXT_PUBLIC_PAY_WALLET
  */
 const CLABE = process.env.NEXT_PUBLIC_PAY_CLABE || '0000 0000 0000 000000'
@@ -12,8 +14,10 @@ const WALLET = process.env.NEXT_PUBLIC_PAY_WALLET || ''
 const MONTO = 199
 
 export default function PagarPage() {
-  const [tab, setTab] = useState<'spei' | 'usdc' | 'ficha'>('spei')
+  const [tab, setTab] = useState<'oxxo' | 'spei' | 'usdc' | 'ficha'>('oxxo')
   const [file, setFile] = useState<File | null>(null)
+  const [file2, setFile2] = useState<File | null>(null)
+  const speiConfigured = CLABE && !CLABE.startsWith('0000')
   const [code, setCode] = useState('')
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
@@ -25,6 +29,23 @@ export default function PagarPage() {
     fd.append('image', file); fd.append('expected_amount', String(MONTO))
     try {
       const r = await fetch('/api/payments/comprobante', { method: 'POST', body: fd })
+      const j = await r.json()
+      if (j.ok) { window.location.href = '/dashboard?bienvenida=premium' }
+      else setMsg(j.error || 'Quedó en revisión, te avisamos por WhatsApp.')
+    } catch {
+      setMsg('Error de red. Intenta de nuevo.')
+    }
+    setBusy(false)
+  }
+
+  async function subirOxxo() {
+    if (!file) return setMsg('Toma foto del ticket y de la tarjeta.')
+    setBusy(true); setMsg('Revisando tu tarjeta…')
+    const fd = new FormData()
+    fd.append('image', file)
+    if (file2) fd.append('image2', file2)
+    try {
+      const r = await fetch('/api/payments/oxxo-giftcard', { method: 'POST', body: fd })
       const j = await r.json()
       if (j.ok) { window.location.href = '/dashboard?bienvenida=premium' }
       else setMsg(j.error || 'Quedó en revisión, te avisamos por WhatsApp.')
@@ -54,14 +75,31 @@ export default function PagarPage() {
     <main style={{ maxWidth: 520, margin: '0 auto', padding: 20, fontFamily: 'system-ui' }}>
       <h1>Activa Veliora Premium — ${MONTO}/mes</h1>
       <p>Sin tarjeta. Sin vueltas. El acceso se activa solo.</p>
-      <div style={{ display: 'flex', gap: 8, margin: '16px 0' }}>
-        {(['spei', 'usdc', 'ficha'] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)} disabled={busy}
-            style={{ flex: 1, padding: 12, borderRadius: 10, border: tab === t ? '2px solid #000' : '1px solid #ccc', fontWeight: tab === t ? 700 : 400 }}>
-            {t === 'spei' ? '🏦 Transferencia / OXXO' : t === 'usdc' ? '⚡ USDC instantáneo' : '🎟️ Tengo ficha'}
+      <div style={{ display: 'flex', gap: 8, margin: '16px 0', flexWrap: 'wrap' }}>
+        {(speiConfigured
+          ? [{ id: 'oxxo', label: 'OXXO $200', Icon: Store }, { id: 'spei', label: 'Transferencia', Icon: Landmark }, { id: 'usdc', label: 'USDC', Icon: Zap }, { id: 'ficha', label: 'Tengo ficha', Icon: Ticket }]
+          : [{ id: 'oxxo', label: 'OXXO $200', Icon: Store }, { id: 'usdc', label: 'USDC', Icon: Zap }, { id: 'ficha', label: 'Tengo ficha', Icon: Ticket }]
+        ).map(({ id, label, Icon }) => (
+          <button key={id} onClick={() => setTab(id as typeof tab)} disabled={busy}
+            style={{ flex: 1, padding: 12, borderRadius: 10, border: tab === id ? '2px solid #000' : '1px solid #ccc', fontWeight: tab === id ? 700 : 400, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+            <Icon size={16} />{label}
           </button>
         ))}
       </div>
+
+      {tab === 'oxxo' && (
+        <section>
+          <p>1. En cualquier OXXO pide una <b>tarjeta de regalo OXXO de $200</b> (se paga en efectivo, 2 min).</p>
+          <p>2. Raspa el PIN del reverso y tómale foto <b>al ticket y a la tarjeta</b> (que se vean código y PIN).</p>
+          <p>3. Súbelas aquí:</p>
+          <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+          <input type="file" accept="image/*" onChange={(e) => setFile2(e.target.files?.[0] || null)} style={{ marginTop: 8 }} />
+          <button onClick={subirOxxo} disabled={busy || !file}
+            style={{ display: 'block', width: '100%', marginTop: 12, padding: 14, borderRadius: 10, background: '#000', color: '#fff', fontWeight: 700 }}>
+            {busy ? 'Revisando…' : 'Activar mi Premium'}
+          </button>
+        </section>
+      )}
 
       {tab === 'spei' && (
         <section>
