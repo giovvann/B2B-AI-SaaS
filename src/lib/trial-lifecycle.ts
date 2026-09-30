@@ -16,6 +16,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { sendPush } from './push'
 
 const DAY = 24 * 60 * 60 * 1000
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://velioralat.vercel.app').replace(/\/$/, '')
 
 export interface TrialLifecycleResult {
   trialD1Sent: number
@@ -159,14 +160,14 @@ export async function runTrialLifecycle(
           await pushToBoutique(admin, b.id, {
             title: 'Tu prueba de Veliora termina mañana',
             body: 'Activa tu membresía para conservar tus métricas, alertas y escaneo IA. Tus datos siguen intactos.',
-            url: '/dashboard',
+            url: '/pagar',
             tag: `trial-ending-${b.id}`,
           })
           await logWhatsApp(
             admin,
             b,
             'trial_ending',
-            `*PRUEBA POR TERMINAR* - ${b.name}\n\nTu prueba gratuita de Veliora termina mañana. Activa tu membresía para seguir con todas las funciones. Responde este mensaje para activarla.`
+            `*PRUEBA POR TERMINAR* - ${b.name}\n\nTu prueba gratuita de Veliora termina mañana. Activa tu membresía para seguir con todas las funciones. Paga aquí y se activa solo: ${SITE}/pagar`
           )
           result.trialD1Sent++
         }
@@ -185,7 +186,7 @@ export async function runTrialLifecycle(
             admin,
             b,
             'trial_expired',
-            `*PRUEBA TERMINADA* - ${b.name}\n\nTu prueba gratuita de Veliora terminó. Tus datos están seguros; activa tu membresía para recuperar las funciones premium. Responde este mensaje para activarla.`
+            `*PRUEBA TERMINADA* - ${b.name}\n\nTu prueba gratuita de Veliora terminó. Tus datos están seguros; activa tu membresía para recuperar las funciones premium. Paga aquí y se activa solo: ${SITE}/pagar`
           )
           result.trialExpiredSent++
         }
