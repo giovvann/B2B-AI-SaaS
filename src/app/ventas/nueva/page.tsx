@@ -35,7 +35,7 @@ interface CartItem {
 
 export default function NuevaVentaPage() {
   const router = useRouter();
-  const { error } = useToast();
+  const { error, success } = useToast();
   const { theme, setTheme } = useTheme();
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -172,12 +172,13 @@ export default function NuevaVentaPage() {
         }
       }
 
+      const charged = total;
       setShowSuccess(true);
       setTimeout(() => {
         setCart([]);
         setShowSuccess(false);
-        router.push('/dashboard');
-      }, 2000);
+        success(`Venta $${charged.toFixed(2)} guardada`, 'Lista para la siguiente clienta');
+      }, 1200);
     } catch (err) {
       console.error('Error completando venta:', err);
       error('Error al completar la venta', (err as Error).message);
@@ -216,7 +217,7 @@ export default function NuevaVentaPage() {
         <div className="text-center">
           <CheckCircle className="w-32 h-32 text-white mx-auto mb-6" strokeWidth={2} />
           <h1 className="text-5xl font-black text-white mb-4">VENTA COMPLETADA</h1>
-          <p className="text-2xl text-white">Redirigiendo...</p>
+          <p className="text-2xl text-white">Venta guardada</p>
         </div>
       </div>
     );
