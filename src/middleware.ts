@@ -70,7 +70,9 @@ export async function middleware(request: NextRequest) {
   const publicRoutes = ['/login', '/registro', '/auth', '/privacidad', '/terminos', '/seguridad', '/suscripcion-expirada']
   // SEGURIDAD (30-sep-2026): solo health + cron son públicos.
   // Todo lo demás (/api/*) exige sesión y devuelve 401 JSON (no redirect HTML).
-  const publicApiRoutes = ['/api/ping', '/api/push/send']
+  // EXCEPCIÓN: /api/payments/crypto-webhook lo llama Helius servidor-a-servidor
+  // sin cookie de sesión; se autentica con HELIUS_AUTH dentro del route.
+  const publicApiRoutes = ['/api/ping', '/api/push/send', '/api/payments/crypto-webhook']
   const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith('/auth'))
   const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
 
