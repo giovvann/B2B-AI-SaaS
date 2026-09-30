@@ -91,6 +91,30 @@ export default async function SuscripcionExpiradaPage() {
             ))}
           </div>
 
+          {/* Garantía */}
+          <div className="rounded-2xl p-5 mb-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 text-left">
+            <p className="text-sm font-bold text-green-800 dark:text-green-300 mb-1">
+              Garantía Flojera-Proof de 14 días
+            </p>
+            <p className="text-sm text-green-700 dark:text-green-400">
+              Si en 14 días no te ahorra 5 horas/semana, te devuelvo el dinero y te quedas tu inventario ordenado gratis.
+            </p>
+          </div>
+
+          {/* Bonos */}
+          <div className="text-left text-sm text-espresso-600 dark:text-espresso-200 bg-gold-50/60 dark:bg-white/[0.03] border border-gold-100 dark:border-white/[0.06] rounded-2xl p-5 mb-4">
+            <p className="font-bold mb-2">Hoy incluye gratis:</p>
+            <ul className="space-y-1.5">
+              <li>✓ Migración concierge: manda foto de tu cuaderno y lo cargamos en 24h</li>
+              <li>✓ Guion Rescata-Muertos para mover lo estancado 30+ días</li>
+              <li>✓ Calendario de temporadas: qué surtir cada mes</li>
+            </ul>
+          </div>
+
+          <p className="text-xs text-espresso-400 mb-6">
+            Precio lanzamiento $199/mes (luego $449). Solo 20 migraciones al mes.
+          </p>
+
           {/* CTA pago automático */}
           <a
             href="/pagar"
