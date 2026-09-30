@@ -91,15 +91,27 @@ export default async function SuscripcionExpiradaPage() {
             ))}
           </div>
 
+          {/* CTA pago automático */}
+          <a
+            href="/pagar"
+            className="w-full min-h-[56px] flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-br from-gold-400 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-600 hover:to-gold-700 text-white font-bold rounded-2xl shadow-lg shadow-gold-400/30 transition-all active:scale-[0.98]"
+          >
+            <Crown className="w-5 h-5" strokeWidth={2.5} />
+            PAGAR Y ACTIVAR AL INSTANTE
+          </a>
+          <p className="text-xs text-espresso-400 mt-2 mb-4">
+            Transferencia, OXXO, USDC o ficha. Tu acceso se activa solo.
+          </p>
+
           {/* CTA WhatsApp */}
           <a
             href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full min-h-[56px] flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-br from-gold-400 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-600 hover:to-gold-700 text-white font-bold rounded-2xl shadow-lg shadow-gold-400/30 transition-all active:scale-[0.98]"
+            className="w-full min-h-[52px] flex items-center justify-center gap-3 px-8 py-3.5 border border-[rgba(200,164,118,0.3)] text-espresso-700 dark:text-espresso-200 font-semibold rounded-2xl transition-all active:scale-[0.98]"
           >
             <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
-            ACTIVAR MEMBRESÍA POR WHATSAPP
+            O activar por WhatsApp
           </a>
 
           {/* Divider */}

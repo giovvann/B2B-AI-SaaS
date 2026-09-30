@@ -113,7 +113,7 @@ export async function middleware(request: NextRequest) {
       const isExpiredPremium = !boutique.is_active && planType !== 'free'
       const isPastTrial = planType === 'trial' && expiresAt && expiresAt < now
 
-      if ((isExpiredPremium || isPastTrial) && pathname !== '/suscripcion-expirada') {
+      if ((isExpiredPremium || isPastTrial) && pathname !== '/suscripcion-expirada' && pathname !== '/pagar') {
         const url = request.nextUrl.clone()
         url.pathname = '/suscripcion-expirada'
         return NextResponse.redirect(url)
