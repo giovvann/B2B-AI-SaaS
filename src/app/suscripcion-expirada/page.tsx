@@ -101,27 +101,13 @@ export default async function SuscripcionExpiradaPage() {
             </p>
           </div>
 
-          {/* Bonos */}
-          <div className="text-left text-sm text-espresso-600 dark:text-espresso-200 bg-gold-50/60 dark:bg-white/[0.03] border border-gold-100 dark:border-white/[0.06] rounded-2xl p-5 mb-4">
-            <p className="font-bold mb-2">Hoy incluye gratis:</p>
-            <ul className="space-y-1.5">
-              <li>✓ Migración concierge: manda foto de tu cuaderno y lo cargamos en 24h</li>
-              <li>✓ Guion Rescata-Muertos para mover lo estancado 30+ días</li>
-              <li>✓ Calendario de temporadas: qué surtir cada mes</li>
-            </ul>
-          </div>
-
-          <p className="text-xs text-espresso-400 mb-6">
-            Precio lanzamiento $199/mes (luego $449). Solo 20 migraciones al mes.
-          </p>
-
           {/* CTA pago automático */}
           <a
             href="/pagar"
             className="w-full min-h-[56px] flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-br from-gold-400 via-gold-500 to-gold-600 hover:from-gold-500 hover:via-gold-600 hover:to-gold-700 text-white font-bold rounded-2xl shadow-lg shadow-gold-400/30 transition-all active:scale-[0.98]"
           >
             <Crown className="w-5 h-5" strokeWidth={2.5} />
-            PAGAR Y ACTIVAR AL INSTANTE
+            Reactivar membresía
           </a>
           <p className="text-xs text-espresso-400 mt-2 mb-4">
             Transferencia, OXXO, USDC o ficha. Tu acceso se activa solo.
