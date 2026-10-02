@@ -7,11 +7,13 @@ export const dynamic = 'force-dynamic'
 
 /**
  * POST /api/payments/oxxo-giftcard
- * Riel tarjeta de regalo OXXO ($200, al portador, se compra en efectivo).
- * La clienta sube foto del ticket de compra + tarjeta con PIN visible.
- * La IA valida monto + fecha + comercio y extrae el código; el código se
- * guarda CIFRADO (nunca en claro) y solo el superadmin lo ve para canjearlo
- * en tienda. Anti doble-uso: hash del código (único).
+ * Riel tarjetas de regalo compradas en OXXO ($200, al portador, en efectivo).
+ * Dos variantes: tarjeta propia OXXO (se canjea en tienda con código+PIN) y
+ * Google Play (canje 100% por código, sin depender del cajero; cuenta Google
+ * propia desde los 13 años en México). La clienta sube foto del ticket +
+ * tarjeta con código visible. La IA valida monto + fecha + comercio y extrae
+ * el código; el código se guarda CIFRADO (nunca en claro) y solo el
+ * superadmin lo ve para canjearlo. Anti doble-uso: hash del código (único).
  *
  * Form-data: image (File ticket), image2 (File tarjeta, opcional pero recomendada)
  * Env: GOOGLE_GEMINI_API_KEY / NVIDIA_NIM_* (mismo patrón que comprobante),
@@ -21,9 +23,9 @@ export const dynamic = 'force-dynamic'
 const EXPECTED = 200
 const WINDOW_HOURS = 30
 
-const PROMPT = `Eres auditor de pagos con tarjeta de regalo OXXO en México. Analiza la(s) imagen(es) y devuelve SOLO JSON:
-{"monto": number, "fecha_iso": string|null, "comercio": string|null, "codigo": string|null, "pin": string|null, "confianza": number}
-Reglas: monto = cantidad pagada en MXN por la tarjeta. comercio = nombre del comercio visible (esperado OXXO). codigo = número/código de barras de la tarjeta de regalo si visible. pin = PIN del reverso si visible. confianza 0-1 según legibilidad y completitud. Solo JSON puro.`
+const PROMPT = `Eres auditor de pagos con tarjeta de regalo en México. Analiza la(s) imagen(es) y devuelve SOLO JSON:
+{"monto": number, "fecha_iso": string|null, "comercio": string|null, "producto": string|null, "codigo": string|null, "pin": string|null, "confianza": number}
+Reglas: monto = cantidad pagada en MXN por la tarjeta. comercio = comercio del ticket (esperado OXXO). producto = "oxxo" si es tarjeta de regalo OXXO, "play" si es Google Play, otro texto si es otra marca. codigo = código de la tarjeta si visible. pin = PIN del reverso si visible (Google Play no tiene PIN). confianza 0-1 según legibilidad y completitud. Solo JSON puro.`
 
 async function visionValidate(images: { base64: string; mime: string }[]): Promise<any> {
   const nvKey = process.env.NVIDIA_NIM_API_KEY
@@ -96,12 +98,15 @@ export async function POST(req: NextRequest) {
     const codigo: string | null = v.codigo ? String(v.codigo).trim().toUpperCase() : null
     const pin: string | null = v.pin ? String(v.pin).trim() : null
     const fecha = v.fecha_iso ? new Date(v.fecha_iso) : null
+    const producto = String(v.producto || '').toLowerCase()
+    const rail = producto.includes('play') ? 'play_giftcard' : 'oxxo_giftcard'
     const razones: string[] = []
 
     if (Math.abs(monto - EXPECTED) > 1) razones.push(`monto ${monto} ≠ esperado ${EXPECTED}`)
     if (fecha && (Date.now() - fecha.getTime()) / 36e5 > WINDOW_HOURS) razones.push('ticket vencido (>30h)')
     if (!fecha) razones.push('fecha ilegible')
     if (v.comercio && !/oxxo/i.test(String(v.comercio))) razones.push('comercio no es OXXO')
+    if (!/oxxo|play|google/.test(producto)) razones.push('producto no reconocido (solo tarjeta OXXO o Google Play)')
     if (!codigo) razones.push('código de tarjeta ilegible')
 
     const admin = createAdminClient()
@@ -122,7 +127,7 @@ export async function POST(req: NextRequest) {
         p_boutique_id: boutique.id, p_days: 30,
       })
       await admin.from('payments').insert({
-        boutique_id: boutique.id, user_id: user.id, rail: 'oxxo_giftcard',
+        boutique_id: boutique.id, user_id: user.id, rail,
         amount_mxn: EXPECTED, status: 'approved', folio_hash: hash,
         code_enc: encryptCode(codePayload),
         ai_confidence: confianza, ai_reason: `oxxo $${monto} ${fecha?.toISOString()?.slice(0, 10) ?? ''}`.slice(0, 200),
@@ -133,7 +138,7 @@ export async function POST(req: NextRequest) {
 
     // Dudoso o sin código legible → revisión (se guarda cifrado para canje manual)
     await admin.from('payments').insert({
-      boutique_id: boutique.id, user_id: user.id, rail: 'oxxo_giftcard',
+      boutique_id: boutique.id, user_id: user.id, rail,
       amount_mxn: EXPECTED, status: 'pending', folio_hash: hash,
       code_enc: codePayload ? encryptCode(codePayload) : null,
       ai_confidence: confianza,

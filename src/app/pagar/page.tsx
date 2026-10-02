@@ -89,8 +89,8 @@ export default function PagarPage() {
 
       {tab === 'oxxo' && (
         <section>
-          <p>1. En cualquier OXXO pide una <b>tarjeta de regalo OXXO de $200</b> (se paga en efectivo, 2 min).</p>
-          <p>2. Raspa el PIN del reverso y tómale foto <b>al ticket y a la tarjeta</b> (que se vean código y PIN).</p>
+          <p>1. En cualquier OXXO pide una <b>tarjeta de regalo de $200</b> — OXXO o Google Play — (se paga en efectivo, 2 min).</p>
+          <p>2. Raspa el PIN del reverso si tiene y tómale foto <b>al ticket y a la tarjeta</b> (que se vea el código).</p>
           <p>3. Súbelas aquí:</p>
           <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
           <input type="file" accept="image/*" onChange={(e) => setFile2(e.target.files?.[0] || null)} style={{ marginTop: 8 }} />
@@ -98,6 +98,7 @@ export default function PagarPage() {
             style={{ display: 'block', width: '100%', marginTop: 12, padding: 14, borderRadius: 10, background: '#000', color: '#fff', fontWeight: 700 }}>
             {busy ? 'Revisando…' : 'Activar mi Premium'}
           </button>
+          <p style={{ fontSize: 13, opacity: 0.7 }}>Recuerda: tienes 7 días gratis. Pagas solo si Veliora te sirve — y con garantía de 14 días.</p>
         </section>
       )}
 

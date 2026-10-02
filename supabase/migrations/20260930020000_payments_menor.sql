@@ -9,7 +9,7 @@ create table if not exists public.payments (
   id uuid primary key default gen_random_uuid(),
   boutique_id uuid not null references public.boutiques(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
-  rail text not null check (rail in ('spei_comprobante','usdc_solana','ficha','oxxo_giftcard')),
+  rail text not null check (rail in ('spei_comprobante','usdc_solana','ficha','oxxo_giftcard','play_giftcard')),
   amount_mxn numeric not null check (amount_mxn > 0),
   status text not null default 'pending' check (status in ('pending','approved','rejected')),
   folio_hash text,
