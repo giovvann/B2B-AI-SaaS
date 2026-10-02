@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase'
-import { X, Smartphone, Crown, User, CheckCircle, XCircle, Loader2, Lock } from 'lucide-react'
+import { X, Smartphone, Crown, User, CheckCircle, XCircle, Loader2, Lock, Eye, EyeOff } from 'lucide-react'
 
 interface Dispositivo {
   id: string
@@ -25,6 +25,7 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
   const [error, setError] = useState('')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [newPin, setNewPin] = useState('')
+  const [showNewPin, setShowNewPin] = useState(false)
   const [showPinChange, setShowPinChange] = useState(false)
   const [pinLoading, setPinLoading] = useState(false)
   const [pinError, setPinError] = useState('')
@@ -289,17 +290,27 @@ export function AdminPanel({ open, onClose }: AdminPanelProps) {
                 <Lock className="w-4 h-4" strokeWidth={2.5} />
                 Nuevo PIN
               </h4>
+              <div className="relative">
               <input
-                type="password"
+                type={showNewPin ? 'text' : 'password'}
                 inputMode="numeric"
                 maxLength={6}
                 value={newPin}
                 onChange={e => setNewPin(e.target.value.replace(/\D/g, ''))}
                 placeholder="4-6 dígitos"
-                className="w-full text-center text-xl tracking-[0.4em] bg-[#fdfaf5] dark:bg-[#201b16] border border-[rgba(200,164,118,0.12)] dark:border-espresso-700 rounded-2xl px-4 py-3 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.5)] dark:placeholder-espresso-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-gold-400 transition-colors"
+                className="w-full text-center text-xl tracking-[0.4em] bg-[#fdfaf5] dark:bg-[#201b16] border border-[rgba(200,164,118,0.12)] dark:border-espresso-700 rounded-2xl px-4 py-3 pr-12 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.5)] dark:placeholder-espresso-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-gold-400 transition-colors"
                 autoFocus
                 disabled={pinLoading}
               />
+              <button
+                type="button"
+                onClick={() => setShowNewPin(v => !v)}
+                aria-label={showNewPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[rgba(42,36,32,0.45)] dark:text-espresso-400 hover:text-[#2a2420] dark:hover:text-white transition-colors p-1"
+              >
+                {showNewPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+              </div>
               {pinError && <p className="text-red-400 text-sm">{pinError}</p>}
               {pinSuccess && <p className="text-gold-400 text-sm flex items-center gap-1.5"><CheckCircle className="w-4 h-4" /> PIN actualizado correctamente</p>}
               <div className="flex gap-2">

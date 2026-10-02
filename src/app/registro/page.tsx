@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { registrarAction } from './actions'
-import { Mail, Lock, UserPlus, Sparkles, MessageCircle, CheckCircle, Loader2, Store } from 'lucide-react'
+import { Mail, Lock, UserPlus, Sparkles, MessageCircle, CheckCircle, Loader2, Store, Eye, EyeOff } from 'lucide-react'
 import { getDeviceId, getDeviceName, getDeviceFingerprint } from '@/lib/device'
 import Link from 'next/link'
 
@@ -17,6 +17,7 @@ function RegistroForm() {
   const [error, setError] = useState('')
   const [step, setStep] = useState<'form' | 'pin' | 'ready'>('form')
   const [pin, setPin] = useState('')
+  const [showPin, setShowPin] = useState(false)
   const [pinError, setPinError] = useState('')
   const [pinLoading, setPinLoading] = useState(false)
   // Resultado del canje de la prueba: 'claimed' | 'used' | null (aún no evaluado)
@@ -188,19 +189,29 @@ function RegistroForm() {
             Este PIN protegerá el acceso a métricas, gastos y configuración. Compártelo solo con personas de confianza.
           </p>
           <div style={{ background: '#fff', borderRadius: '1rem', padding: '1.5rem', border: '1px solid rgba(200,164,118,.12)' }}>
+            <div style={{ position: 'relative' }}>
             <input
-              type="password"
+              type={showPin ? 'text' : 'password'}
               inputMode="numeric"
               maxLength={6}
               value={pin}
               onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
               placeholder="4-6 dígitos"
               disabled={pinLoading}
-              style={{ width: '100%', textAlign: 'center', fontSize: '1.5rem', letterSpacing: '.5em', background: '#fdfaf5', border: '1px solid rgba(42,36,32,.1)', borderRadius: '.75rem', padding: '.85rem 1rem', color: '#2a2420', outline: 'none' }}
+              style={{ width: '100%', textAlign: 'center', fontSize: '1.5rem', letterSpacing: '.5em', background: '#fdfaf5', border: '1px solid rgba(42,36,32,.1)', borderRadius: '.75rem', padding: '.85rem 3rem .85rem 1rem', color: '#2a2420', outline: 'none' }}
               onFocus={(e) => e.currentTarget.style.borderColor = '#c8a476'}
               onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(42,36,32,.1)'}
               autoFocus
             />
+            <button
+              type="button"
+              onClick={() => setShowPin(v => !v)}
+              aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+              style={{ position: 'absolute', right: '.6rem', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(42,36,32,.45)', padding: '.4rem' }}
+            >
+              {showPin ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+            </div>
             {pinError && <p style={{ color: '#dc2626', fontSize: '.8rem', marginTop: '.5rem' }}>{pinError}</p>}
             <button
               onClick={handleSetPin}

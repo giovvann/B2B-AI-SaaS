@@ -315,7 +315,7 @@ export default function NewIncomePage() {
 
   // Función cancelar - LLEVA AL INICIO (/)
   
-  // ====== C�DIGO DE BARRAS ======
+  // ====== CÓDIGO DE BARRAS ======
   const [barcodeOpen, setBarcodeOpen] = useState(false)
   const [barcodeResult, setBarcodeResult] = useState<{found: boolean; product?: any; code: string} | null>(null)
   const [barcodeLoading, setBarcodeLoading] = useState(false)
@@ -340,7 +340,7 @@ export default function NewIncomePage() {
 
   const handleAddStockFromBarcode = async () => {
     if (!barcodeResult?.product) return
-    const qty = parseInt(prompt('�Cu�ntas unidades agregar al stock actual?', '1') || '0')
+    const qty = parseInt(prompt('¿Cuántas unidades agregar al stock actual?', '1') || '0')
     if (qty <= 0) return
     try {
       const res = await fetch('/api/add-stock', {
@@ -350,7 +350,7 @@ export default function NewIncomePage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      setSuccess('� ' + qty + ' unidad(es) agregada(s) a "' + barcodeResult.product.name + '". Stock actual: ' + data.newStock)
+      setSuccess('✓ ' + qty + ' unidad(es) agregada(s) a "' + barcodeResult.product.name + '". Stock actual: ' + data.newStock)
       setBarcodeOpen(false)
       setBarcodeResult(null)
       setTimeout(() => setSuccess(''), 3000)
@@ -378,7 +378,7 @@ export default function NewIncomePage() {
     setProducts(prev => [...prev, newProduct])
     setBarcodeOpen(false)
     setBarcodeResult(null)
-    setSuccess('� C�digo ' + barcodeResult.code + ' agregado. Edita los datos del producto.')
+      setSuccess('✓ Código ' + barcodeResult.code + ' agregado. Edita los datos del producto.')
     setTimeout(() => setSuccess(''), 3000)
   }
 

@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase'
 import { getDeviceId, getDeviceName } from '@/lib/device'
 import { getPushPermission, isPushSupported, enablePushNotifications } from '@/lib/push-client'
 import { HomePageContent } from '@/app/dashboard/HomePageContent'
-import { Crown, User, Loader2, ShieldAlert, Smartphone, Lock, XCircle, ArrowLeft } from 'lucide-react'
+import { Crown, User, Loader2, ShieldAlert, Smartphone, Lock, XCircle, ArrowLeft, Eye, EyeOff } from 'lucide-react'
 
 type View = 'loading' | 'choice' | 'pin' | 'create_pin' | 'pending' | 'owner' | 'employee' | 'revoked' | 'error'
 
@@ -20,6 +20,7 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId, children }:
   const [view, setView] = useState<View>('loading')
   const [message, setMessage] = useState('')
   const [pin, setPin] = useState('')
+  const [showPin, setShowPin] = useState(false)
   const [pinError, setPinError] = useState('')
   const [pinLoading, setPinLoading] = useState(false)
   const supabase = createClient()
@@ -335,17 +336,27 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId, children }:
             Solo se pedirá una vez por sesión.
           </p>
           <div className="space-y-4">
+            <div className="relative">
             <input
-              type="password"
+              type={showPin ? 'text' : 'password'}
               inputMode="numeric"
               maxLength={6}
               value={pin}
               onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
               placeholder="Ingresa tu PIN"
-              className="w-full text-center text-2xl tracking-[0.5em] bg-white dark:bg-[#16130f] border border-[rgba(200,164,118,0.12)] dark:border-espresso-700 rounded-2xl px-6 py-4 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.5)] dark:placeholder-espresso-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-gold-400 transition-colors"
+              className="w-full text-center text-2xl tracking-[0.5em] bg-white dark:bg-[#16130f] border border-[rgba(200,164,118,0.12)] dark:border-espresso-700 rounded-2xl px-6 py-4 pr-14 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.5)] dark:placeholder-espresso-400 focus:outline-none focus:border-[#c8a476] dark:focus:border-gold-400 transition-colors"
               autoFocus
               disabled={pinLoading}
             />
+            <button
+              type="button"
+              onClick={() => setShowPin(v => !v)}
+              aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[rgba(42,36,32,0.45)] dark:text-espresso-400 hover:text-[#2a2420] dark:hover:text-white transition-colors p-1"
+            >
+              {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+            </div>
             {pinError && (
               <p className="text-red-500 text-sm">{pinError}</p>
             )}
@@ -392,17 +403,27 @@ export function DashboardShell({ userName, boutiqueName, boutiqueId, children }:
             métricas, gastos y configuración.
           </p>
           <div className="space-y-4">
+            <div className="relative">
             <input
-              type="password"
+              type={showPin ? 'text' : 'password'}
               inputMode="numeric"
               maxLength={6}
               value={pin}
               onChange={e => setPin(e.target.value.replace(/\D/g, ''))}
               placeholder="4-6 dígitos"
-              className="w-full text-center text-2xl tracking-[0.5em] bg-white dark:bg-[#16130f] border border-[rgba(200,164,118,0.12)] dark:border-espresso-700 rounded-2xl px-6 py-4 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.5)] dark:placeholder-espresso-400 focus:outline-none focus:border-[#c8a476] transition-colors"
+              className="w-full text-center text-2xl tracking-[0.5em] bg-white dark:bg-[#16130f] border border-[rgba(200,164,118,0.12)] dark:border-espresso-700 rounded-2xl px-6 py-4 pr-14 text-[#2a2420] dark:text-white placeholder-[rgba(42,36,32,0.5)] dark:placeholder-espresso-400 focus:outline-none focus:border-[#c8a476] transition-colors"
               autoFocus
               disabled={pinLoading}
             />
+            <button
+              type="button"
+              onClick={() => setShowPin(v => !v)}
+              aria-label={showPin ? 'Ocultar PIN' : 'Mostrar PIN'}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[rgba(42,36,32,0.45)] dark:text-espresso-400 hover:text-[#2a2420] dark:hover:text-white transition-colors p-1"
+            >
+              {showPin ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+            </div>
             {pinError && (
               <p className="text-red-500 text-sm">{pinError}</p>
             )}
