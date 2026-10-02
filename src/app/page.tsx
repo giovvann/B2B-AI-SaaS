@@ -487,7 +487,7 @@ return (
         </div>
         <p className="pricing-desc">Perfecto para empezar a organizar tu boutique.</p>
         <ul className="pricing-features">
-          <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Hasta 100 productos</li>
+          <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Hasta 150 productos</li>
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> Registro b&aacute;sico de ventas</li>
           
           <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13.3 4.3L6 11.6 2.7 8.3" strokeLinecap="round" strokeLinejoin="round"/></svg> 1 empleado</li>

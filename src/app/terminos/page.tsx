@@ -75,7 +75,7 @@ export default function TerminosPage() {
             <div style={{"display":"grid","gridTemplateColumns":"repeat(auto-fit,minmax(200px,1fr))","gap":".6rem","marginBottom":".6rem"}}>
               <div style={{"background":"rgba(200,164,118,.05)","borderRadius":".75rem","padding":".8rem 1rem","border":"1px solid rgba(200,164,118,.1)"}}>
                 <div style={{"fontSize":"1rem","fontWeight":700,"color":"#2a2420","marginBottom":".15rem"}}>Plan Gratis</div>
-                <p style={{"fontSize":".72rem","color":"rgba(42,36,32,.5)"}}>$0 siempre. Hasta 50 productos, 1 dispositivo, funciones básicas.</p>
+                <p style={{"fontSize":".72rem","color":"rgba(42,36,32,.5)"}}>$0 siempre. Hasta 150 productos, 1 dispositivo, funciones básicas.</p>
               </div>
               <div style={{"background":"rgba(200,164,118,.08)","borderRadius":".75rem","padding":".8rem 1rem","border":"1px solid rgba(200,164,118,.2)"}}>
                 <div style={{"fontSize":"1rem","fontWeight":700,"color":"#2a2420","marginBottom":".15rem"}}>Plan Premium</div>
