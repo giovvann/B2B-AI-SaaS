@@ -54,16 +54,19 @@ export async function POST(req: NextRequest) {
 
       const { data: owner } = await admin.from('boutiques')
         .select('owner_id').eq('id', boutique.id).single()
-      const { data: expires } = await admin.rpc('activate_premium', {
-        p_boutique_id: boutique.id, p_days: 30,
-      })
-      await admin.from('payments').insert({
+      // Insert PRIMERO (tx_signature único = candado): entregas duplicadas
+      // de Helius no duplican la activación.
+      const { error: insErr } = await admin.from('payments').insert({
         boutique_id: boutique.id,
         user_id: owner?.owner_id,
         rail: 'usdc_solana', amount_mxn: 199, status: 'approved',
         tx_signature: sig, ai_confidence: 1,
         ai_reason: `usdc ${hit.tokenAmount ?? hit.amount} sig ${sig.slice(0, 12)}`,
         reviewed_by: 'helius', decided_at: new Date().toISOString(),
+      })
+      if (insErr) continue // 23505 u otro: ya registrado o fila inválida
+      const { data: expires } = await admin.rpc('activate_premium', {
+        p_boutique_id: boutique.id, p_days: 30,
       })
       activated.push(`${boutique.id}→${expires}`)
     }

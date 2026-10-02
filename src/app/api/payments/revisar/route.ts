@@ -33,16 +33,21 @@ export async function POST(req: NextRequest) {
     if (action === 'reject') {
       await admin.from('payments').update({
         status: 'rejected', reviewed_by: user.email, decided_at: new Date().toISOString(),
-      }).eq('id', payment_id)
+      }).eq('id', payment_id).eq('status', 'pending')
       return NextResponse.json({ ok: true, action: 'rejected' })
     }
 
+    // El update VA PRIMERO con guarda .eq('status','pending'): solo el primer
+    // approve concurrente marca la fila; el segundo ve 0 filas y se rinde.
+    const { data: claimed } = await admin.from('payments').update({
+      status: 'approved', reviewed_by: user.email, decided_at: new Date().toISOString(),
+    }).eq('id', payment_id).eq('status', 'pending').select('id')
+    if (!claimed || claimed.length === 0) {
+      return NextResponse.json({ error: 'Ya fue procesado por otra revisión' }, { status: 409 })
+    }
     const { data: expires } = await admin.rpc('activate_premium', {
       p_boutique_id: pay.boutique_id, p_days: 30,
     })
-    await admin.from('payments').update({
-      status: 'approved', reviewed_by: user.email, decided_at: new Date().toISOString(),
-    }).eq('id', payment_id)
     return NextResponse.json({ ok: true, action: 'approved', expires_at: expires })
   } catch (e: any) {
     console.error('payments/revisar:', e)

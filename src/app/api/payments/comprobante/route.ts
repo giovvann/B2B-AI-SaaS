@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import crypto from 'crypto'
+import { isVisionReady } from '@/lib/payment-crypto'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,6 +70,10 @@ export async function POST(req: NextRequest) {
       .from('boutiques').select('id').eq('owner_id', user.id).maybeSingle()
     if (!boutique) return NextResponse.json({ error: 'Boutique no encontrada' }, { status: 404 })
 
+    if (!isVisionReady()) {
+      return NextResponse.json({ error: 'Riel en mantenimiento. Usa ficha o USDC.' }, { status: 503 })
+    }
+
     const form = await req.formData()
     const image = form.get('image') as File | null
     const expected = Number(form.get('expected_amount')) || 199
@@ -112,14 +117,23 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: false, error: 'Este comprobante ya está registrado (en revisión o usado). Te avisamos por WhatsApp.' }, { status: 409 })
       }
       if (razones.length === 0 && confianza >= 0.75) {
-        const { data: expires } = await admin.rpc('activate_premium', {
-          p_boutique_id: boutique.id, p_days: 30,
-        })
-        await admin.from('payments').insert({
+        // El insert VA PRIMERO: el unique index es el candado. Si dos
+        // peticiones corren a la vez, solo una inserta; la otra recibe
+        // 23505 y se trata como éxito (el pago ya quedó registrado).
+        const { error: insErr } = await admin.from('payments').insert({
           boutique_id: boutique.id, user_id: user.id, rail: 'spei_comprobante',
           amount_mxn: expected, status: 'approved', folio_hash: hash,
           ai_confidence: confianza, ai_reason: JSON.stringify(v).slice(0, 500),
           reviewed_by: 'auto', decided_at: new Date().toISOString(),
+        })
+        if (insErr) {
+          if ((insErr as { code?: string }).code === '23505') {
+            return NextResponse.json({ ok: true, auto: true, already: true })
+          }
+          throw insErr
+        }
+        const { data: expires } = await admin.rpc('activate_premium', {
+          p_boutique_id: boutique.id, p_days: 30,
         })
         return NextResponse.json({ ok: true, auto: true, expires_at: expires })
       }

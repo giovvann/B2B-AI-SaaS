@@ -9,10 +9,18 @@ import crypto from 'crypto'
 
 function getKey(): Buffer {
   const hex = process.env.PAY_CODE_KEY || ''
-  if (!/^[0-9a-fA-F]{64}$/.test(hex)) {
+  if (!isCodeKeyReady()) {
     throw new Error('PAY_CODE_KEY ausente o inválida (se requieren 64 hex chars)')
   }
   return Buffer.from(hex, 'hex')
+}
+
+export function isCodeKeyReady(): boolean {
+  return /^[0-9a-fA-F]{64}$/.test(process.env.PAY_CODE_KEY || '')
+}
+
+export function isVisionReady(): boolean {
+  return !!(process.env.NVIDIA_NIM_API_KEY || process.env.GOOGLE_GEMINI_API_KEY)
 }
 
 export function encryptCode(plain: string): string {
