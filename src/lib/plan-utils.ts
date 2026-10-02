@@ -70,7 +70,7 @@ export const PLAN_FEATURES = {
     badge: 'GRATIS',
     color: 'text-green-400',
     features: [
-      'Inventario manual (agregar, editar, eliminar)',
+      'Inventario manual hasta 150 productos (agregar, editar, eliminar)',
       'Registro de ventas e historial',
       'Registro de gastos',
       'Dashboard básico',

@@ -2,6 +2,7 @@
 
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getOrCreateBoutique } from '@/lib/boutique'
+import { assertProductLimit } from '@/lib/product-limits'
 import { revalidatePath } from 'next/cache'
 
 interface ProductInput {
@@ -25,6 +26,10 @@ export async function saveProductsAction(products: ProductInput[]) {
   if ('error' in boutique) {
     return { error: boutique.error }
   }
+
+  // Tope del plan Gratis: se rechaza el lote completo (no guardados parciales)
+  const limit = await assertProductLimit(boutique.boutiqueId, products.length)
+  if (limit) return limit
 
   // Insertar productos con admin client
   const admin = createAdminClient()

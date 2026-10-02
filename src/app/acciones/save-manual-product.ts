@@ -2,6 +2,7 @@
 
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getOrCreateBoutique } from '@/lib/boutique'
+import { assertProductLimit } from '@/lib/product-limits'
 import { revalidatePath } from 'next/cache'
 
 interface ManualProductInput {
@@ -21,6 +22,10 @@ export async function saveManualProductAction(input: ManualProductInput) {
   if ('error' in boutique) {
     return { error: boutique.error }
   }
+
+  // Tope del plan Gratis (150 productos)
+  const limit = await assertProductLimit(boutique.boutiqueId, 1)
+  if (limit) return limit
 
   // Insertar producto con admin client (bypassa RLS)
   const admin = createAdminClient()

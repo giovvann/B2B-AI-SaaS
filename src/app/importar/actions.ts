@@ -1,6 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { assertProductLimit } from '@/lib/product-limits'
 import { revalidatePath } from 'next/cache'
 
 interface ProductImport {
@@ -26,6 +28,10 @@ export async function importProducts(products: ProductImport[]) {
 
   const validRows = products.filter(p => p.name && p.name.trim().length > 0)
   if (validRows.length === 0) throw new Error('No hay productos válidos para importar')
+
+  // Tope del plan Gratis (usa admin para contar; el insert de abajo va con RLS)
+  const limit = await assertProductLimit(boutique.id, validRows.length)
+  if (limit) throw new Error(limit.error)
 
   const productsToInsert = validRows.map(row => ({
     name: row.name.trim(),
