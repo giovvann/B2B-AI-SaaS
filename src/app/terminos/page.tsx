@@ -83,10 +83,10 @@ export default function TerminosPage() {
               </div>
             </div>
             <ul style={{"listStyle":"disc","paddingLeft":"1.25rem","display":"flex","flexDirection":"column","gap":".25rem","fontSize":".78rem","color":"rgba(42,36,32,.55)"}}>
-              <li>El pago se realiza por depósito bancario, transferencia SPEI o efectivo, coordinado vía WhatsApp.</li>
+              <li>El pago se realiza con tarjeta de regalo OXXO o Google Play ($200), USDC en red Solana, ficha prepago o en efectivo, desde /pagar o coordinado vía WhatsApp.</li>
               <li>La membresía se activa una vez confirmado el pago (típicamente en menos de 30 minutos).</li>
               <li>Usted puede cancelar su membresía en cualquier momento sin multas ni penalizaciones.</li>
-              <li>No se realizan reembolsos por meses parciales ya utilizados.</li>
+              <li>Garantía de 14 días: si el servicio no le ahorra tiempo en los primeros 14 días de su primera membresía, le devolvemos el mes. Pasado ese plazo, no hay reembolsos por meses parciales ya utilizados.</li>
               <li>El precio de lanzamiento se mantiene mientras sea miembro activo sin interrupciones.</li>
             </ul>
           </Section>

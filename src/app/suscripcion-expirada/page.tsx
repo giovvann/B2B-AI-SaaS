@@ -110,7 +110,7 @@ export default async function SuscripcionExpiradaPage() {
             Reactivar membresía
           </a>
           <p className="text-xs text-espresso-400 mt-2 mb-4">
-            Transferencia, OXXO, USDC o ficha. Tu acceso se activa solo.
+            Tarjeta OXXO, Google Play, USDC o ficha. Tu acceso se activa solo.
           </p>
 
           {/* CTA WhatsApp */}
